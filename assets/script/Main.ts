@@ -34,7 +34,7 @@ export class Main extends Component {
         scaleMode.designHeight_min = 1000;
         scaleMode.designHeight_max = 1000;
 
-        this.initClickEffContainer();
+        // this.initClickEffContainer();
         SceneMgr.inst.run(MapEditorScene, { name: '红红火火恍恍惚惚' });
     }
 
