@@ -1,0 +1,293 @@
+{
+  "ver": "1.0.8",
+  "importer": "sprite-atlas",
+  "imported": true,
+  "uuid": "882f4618-3166-46db-b969-55ce0514db9b",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {
+    "1bcb7": {
+      "importer": "sprite-frame",
+      "uuid": "882f4618-3166-46db-b969-55ce0514db9b@1bcb7",
+      "displayName": "",
+      "id": "1bcb7",
+      "name": "kai_231_destroy_light_10",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 0,
+        "trimY": 0,
+        "width": 39,
+        "height": 42,
+        "rawWidth": 39,
+        "rawHeight": 42,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [],
+          "indexes": [],
+          "uv": [],
+          "nuv": [],
+          "minPos": [],
+          "maxPos": []
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d77807fb-e66e-4e1e-8037-71f13fbf3704@6c48a",
+        "atlasUuid": "882f4618-3166-46db-b969-55ce0514db9b"
+      },
+      "ver": "1.0.11",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "7009a": {
+      "importer": "sprite-frame",
+      "uuid": "882f4618-3166-46db-b969-55ce0514db9b@7009a",
+      "displayName": "",
+      "id": "7009a",
+      "name": "kai_231_destroy_light_11",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 39,
+        "trimY": 0,
+        "width": 54,
+        "height": 54,
+        "rawWidth": 54,
+        "rawHeight": 54,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [],
+          "indexes": [],
+          "uv": [],
+          "nuv": [],
+          "minPos": [],
+          "maxPos": []
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d77807fb-e66e-4e1e-8037-71f13fbf3704@6c48a",
+        "atlasUuid": "882f4618-3166-46db-b969-55ce0514db9b"
+      },
+      "ver": "1.0.11",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "8e3b7": {
+      "importer": "sprite-frame",
+      "uuid": "882f4618-3166-46db-b969-55ce0514db9b@8e3b7",
+      "displayName": "",
+      "id": "8e3b7",
+      "name": "kai_231_destroy_light_12",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 0,
+        "trimY": 54,
+        "width": 75,
+        "height": 75,
+        "rawWidth": 75,
+        "rawHeight": 75,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [],
+          "indexes": [],
+          "uv": [],
+          "nuv": [],
+          "minPos": [],
+          "maxPos": []
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d77807fb-e66e-4e1e-8037-71f13fbf3704@6c48a",
+        "atlasUuid": "882f4618-3166-46db-b969-55ce0514db9b"
+      },
+      "ver": "1.0.11",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "03ecd": {
+      "importer": "sprite-frame",
+      "uuid": "882f4618-3166-46db-b969-55ce0514db9b@03ecd",
+      "displayName": "",
+      "id": "03ecd",
+      "name": "kai_231_destroy_light_13",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 0,
+        "trimY": 129,
+        "width": 79,
+        "height": 80,
+        "rawWidth": 79,
+        "rawHeight": 80,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [],
+          "indexes": [],
+          "uv": [],
+          "nuv": [],
+          "minPos": [],
+          "maxPos": []
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d77807fb-e66e-4e1e-8037-71f13fbf3704@6c48a",
+        "atlasUuid": "882f4618-3166-46db-b969-55ce0514db9b"
+      },
+      "ver": "1.0.11",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "90f75": {
+      "importer": "sprite-frame",
+      "uuid": "882f4618-3166-46db-b969-55ce0514db9b@90f75",
+      "displayName": "",
+      "id": "90f75",
+      "name": "kai_231_destroy_light_14",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 0,
+        "trimY": 209,
+        "width": 81,
+        "height": 82,
+        "rawWidth": 81,
+        "rawHeight": 82,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [],
+          "indexes": [],
+          "uv": [],
+          "nuv": [],
+          "minPos": [],
+          "maxPos": []
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d77807fb-e66e-4e1e-8037-71f13fbf3704@6c48a",
+        "atlasUuid": "882f4618-3166-46db-b969-55ce0514db9b"
+      },
+      "ver": "1.0.11",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    },
+    "72b3b": {
+      "importer": "sprite-frame",
+      "uuid": "882f4618-3166-46db-b969-55ce0514db9b@72b3b",
+      "displayName": "",
+      "id": "72b3b",
+      "name": "kai_231_destroy_light_15",
+      "userData": {
+        "trimType": "auto",
+        "trimThreshold": 1,
+        "rotated": false,
+        "offsetX": 0,
+        "offsetY": 0,
+        "trimX": 0,
+        "trimY": 291,
+        "width": 85,
+        "height": 87,
+        "rawWidth": 85,
+        "rawHeight": 87,
+        "borderTop": 0,
+        "borderBottom": 0,
+        "borderLeft": 0,
+        "borderRight": 0,
+        "packable": true,
+        "pixelsToUnit": 100,
+        "pivotX": 0.5,
+        "pivotY": 0.5,
+        "meshType": 0,
+        "vertices": {
+          "rawPosition": [],
+          "indexes": [],
+          "uv": [],
+          "nuv": [],
+          "minPos": [],
+          "maxPos": []
+        },
+        "isUuid": true,
+        "imageUuidOrDatabaseUri": "d77807fb-e66e-4e1e-8037-71f13fbf3704@6c48a",
+        "atlasUuid": "882f4618-3166-46db-b969-55ce0514db9b"
+      },
+      "ver": "1.0.11",
+      "imported": true,
+      "files": [
+        ".json"
+      ],
+      "subMetas": {}
+    }
+  },
+  "userData": {
+    "atlasTextureName": "crush_atlas.png",
+    "format": 3,
+    "uuid": "882f4618-3166-46db-b969-55ce0514db9b",
+    "textureUuid": "d77807fb-e66e-4e1e-8037-71f13fbf3704@6c48a"
+  }
+}

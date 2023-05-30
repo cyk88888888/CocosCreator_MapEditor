@@ -1,20 +1,27 @@
 {
-  "__version__": "3.0.5",
+  "__version__": "3.0.7",
   "game": {
-    "name": "UNKNOW GAME",
+    "name": "未知游戏",
     "app_id": "UNKNOW",
     "c_id": "0"
   },
   "appConfigMaps": [
     {
       "app_id": "UNKNOW",
-      "config_id": "4d690b"
+      "config_id": "d7d3d5"
     }
   ],
   "configs": [
     {
+      "app_id": "wxf6b4a2b919cd1e2c",
+      "config_id": "a8cc4d",
+      "config_name": "Default",
+      "config_remarks": "",
+      "services": []
+    },
+    {
       "app_id": "UNKNOW",
-      "config_id": "4d690b",
+      "config_id": "d7d3d5",
       "config_name": "Default",
       "config_remarks": "",
       "services": []
