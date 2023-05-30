@@ -7,7 +7,6 @@ import { Node, _decorator } from 'cc';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { UIMenu } from '../../framework/ui/UIMenu';
 import { HomeLayer } from './HomeLayer';
-import { SweetLayer } from './sweet/SweetLayer';
 import { VideoLayer } from './video/VideoLayer';
 import { List } from '../../framework/uiComp/List';
 const { ccclass, property } = _decorator;
@@ -24,7 +23,6 @@ export class BottomTabLayer extends UIMenu {
     protected onEnter() {
         let self = this;
         self._layerInfos = [
-            { layer: SweetLayer.__className, icon: 'dy/xiaoxiaole/sweets/Blue', preRes: [SweetLayer.prefabUrl] },
             { layer: HomeLayer.__className, icon: 'dy/xiaoxiaole/sweets/Colors', preRes: [HomeLayer.prefabUrl] },
             { layer: VideoLayer.__className, icon: 'dy/xiaoxiaole/sweets/Green', preRes: [VideoLayer.prefabUrl] },
         ];
