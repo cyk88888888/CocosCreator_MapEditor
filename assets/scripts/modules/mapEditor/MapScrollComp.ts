@@ -3,6 +3,7 @@ import { UIComp } from '../../framework/ui/UIComp';
 import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
 import { ResMgr } from '../../framework/mgr/ResMgr';
+import { BaseUT } from '../../framework/base/BaseUtil';
 const { ccclass, property } = _decorator;
 
 /*
@@ -22,11 +23,11 @@ export class MapScrollComp extends UIComp {
     protected onEnter() {
         let self = this;
         self.onEmitter(CONST.GEVT.ImportMapJson, self.onImportMapJson);//导入josn地图数据成功
-
     }
 
     private onImportMapJson() {
         let self = this;
+        self.grp_mapSlices.removeAllChildren();
         self.importFloorBg(() => {
 
         });
@@ -62,9 +63,7 @@ export class MapScrollComp extends UIComp {
                         totHeight += spriteFrame.texture.height;
                         hasFinishOneLine = true;
                     };
-                    let mapSliceNode = new Node(floorInfo.sourceName);
-                    mapSliceNode.addComponent(UITransform);
-                    mapSliceNode.layer = Layers.Enum.UI_2D;
+                    let mapSliceNode = BaseUT.newUINode(floorInfo.sourceName);
                     let sprite = mapSliceNode.addComponent(Sprite);
                     sprite.spriteFrame = spriteFrame;
                     mapSliceNode.setParent(self.grp_mapSlices);
