@@ -1,6 +1,8 @@
 import { _decorator, Button, Component, Node } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
 import { FileIOHandler } from '../../framework/mgr/FileIOHandler';
+import { MapScrollComp } from './MapScrollComp';
+import { MapMgr } from '../base/MapMgr';
 const { ccclass, property } = _decorator;
 
 /*
@@ -30,7 +32,8 @@ export class MapEditorLayer extends UILayer {
     private btn_editPath: Button;
     @property({ type: Button })
     private btn_putMapThing: Button;
-
+    @property({ type: MapScrollComp, tooltip:"编辑器地图滚动组件" })
+    private mapScrollComp: MapScrollComp;
 
     protected onEnter() {
         let self = this;
@@ -39,8 +42,7 @@ export class MapEditorLayer extends UILayer {
     
     /** 打开文件选择器+读取数据 */
     private async _tap_btn_changeMap() {
-        let root = await FileIOHandler.inst.getDirTreeMap();
-        console.log(root);
+        MapMgr.inst.changeMap();
     }
 
      /** 保存数据到文件 */

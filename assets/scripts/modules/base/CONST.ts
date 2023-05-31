@@ -56,4 +56,10 @@ export namespace CONST {
         BOMB_BIRD_DELAY = 0.7,
         DIE_SHAKE = 0.4 // 死前抖动
     }
+
+
+    export enum GEVT {
+        ImportMapJson = "ImportMapJson",
+        UpdateMapInfo = "UpdateMapInfo",
+    }
 }

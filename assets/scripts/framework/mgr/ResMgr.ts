@@ -3,7 +3,7 @@
  * @Author: CYK
  * @Date: 2022-05-12 16:15:52
  */
-import { Asset, Node, Prefab, resources } from "cc";
+import { Asset, ImageAsset, Prefab, SpriteFrame, Texture2D, assetManager, resources } from "cc";
 import { JuHuaDlg } from "../ui/JuHuaDlg";
 
 export class ResMgr {
@@ -135,9 +135,9 @@ export class ResMgr {
             if (this.get(resName)) {//缓存已有
                 loadSucc(resName, true);
             } else {
-                resources.load(resName, (finished: number, total: number, item: any)=>{
-                    onProgress.call(ctx,finished,total,item)
-                },(err: Error | null, asset: Asset) => {
+                resources.load(resName, (finished: number, total: number, item: any) => {
+                    onProgress.call(ctx, finished, total, item)
+                }, (err: Error | null, asset: Asset) => {
                     if (!err) {
                         loadSucc(resName);
                     } else {
@@ -148,14 +148,14 @@ export class ResMgr {
         }
     }
 
-      /**
-     * 加载资源
-     * @param res 资源路径
-     * @param onProgress 加载进度
-     * @param cb 下载完成回调
-     * @param ctx 
-     */
-    public loadWithProgress(res: string, onProgress:(finished: number, total: number, item: any) => void, cb?: Function, ctx?: any, needJuHua: boolean = true) {
+    /**
+   * 加载资源
+   * @param res 资源路径
+   * @param onProgress 加载进度
+   * @param cb 下载完成回调
+   * @param ctx 
+   */
+    public loadWithProgress(res: string, onProgress: (finished: number, total: number, item: any) => void, cb?: Function, ctx?: any, needJuHua: boolean = true) {
         this._loadWithProgress(res, onProgress, cb, ctx, needJuHua);
     }
 
@@ -217,6 +217,22 @@ export class ResMgr {
      */
     public loadToWithoutJuHua(sceneName: string, resList: string[] | string, cb?: Function, ctx?: any) {
         this._loadWithItor(resList, null, cb, ctx, false, sceneName);
+    }
+
+    /**
+     * 加载本地图片
+     * @param url 资源地址
+     * @param cb 
+     * @param ctx 
+     */
+    public loadLocalImg(url: string, cb?: Function, ctx?: any) {
+        assetManager.loadRemote<ImageAsset>(url, { ext: '.png' }, function (err, imageAsset) {
+            const spriteFrame = new SpriteFrame();
+            const texture = new Texture2D();
+            texture.image = imageAsset;
+            spriteFrame.texture = texture;
+            cb && cb.call(ctx, spriteFrame);
+        });
     }
 
     /**获取已加载缓存的资源 */
