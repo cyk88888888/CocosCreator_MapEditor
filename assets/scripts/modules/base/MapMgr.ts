@@ -64,9 +64,9 @@ export class MapMgr {
 
         self.mapFloorArr.sort(function (a: any, b: any): number {
             if (a.row < b.row) {
-                return 1;
-            } else if (a.row > b.row) {
                 return -1;
+            } else if (a.row > b.row) {
+                return 1;
             } else {
                 if (a.col > b.col) {
                     return 1;
