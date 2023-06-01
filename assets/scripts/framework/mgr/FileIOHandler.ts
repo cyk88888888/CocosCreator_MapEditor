@@ -60,9 +60,9 @@ export class FileIOHandler {
     public async saveTextToLocal(data: string) {
         try {
             const opts = {
+                suggestedName: "mapData.json",
                 types: [
                     {
-                        suggestedName: "mapData.json",
                         description: "保存的文件名称",
                         accept: { "text/plain": [".json"] },
                     },
