@@ -47,8 +47,8 @@ export class MapScrollComp extends UIComp {
         var hasFinishOneLine: boolean;
         let mapSliceLayout = self.grp_mapSlices.getComponent(Layout);
         mapSliceLayout.constraintNum = mapslice;
-        for await (const iterator of mapFloorArr) {
-            await showFloorItor(iterator);
+        for(let i = 0; i < mapFloorArr.length; i++){
+            await showFloorItor(mapFloorArr[i]);
         }
 
         mapMgr.mapWidth = totWidth;
@@ -57,7 +57,7 @@ export class MapScrollComp extends UIComp {
         uiTransform.width = totWidth;
         uiTransform.height = totHeight;
         self.emit(CONST.GEVT.UpdateMapInfo);
-        console.log("地图宽高:" + mapMgr.mapWidth, mapMgr.mapHeight);
+        console.log("地图宽高:", mapMgr.mapWidth, mapMgr.mapHeight);
 
         async function showFloorItor(floorInfo: any) {
             let url: string = floorInfo.nativePath;
