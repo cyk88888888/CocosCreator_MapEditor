@@ -16,10 +16,11 @@ export class MapMgr {
         return this._inst;
     }
 
-    public mapFloorArr: any[];//地图切片数组
-    public mapslice:number;//地图切片列数
+    public mapFloorArr: any[];//导入的地图切片数组
+    public mapslice: number;//导入等待地图切片列数
     public mapWidth: number;//地图宽
     public mapHeight: number;//地图高
+    public mapThingArr: any[];//导入的地图场景物件数组
     /**
      * 切换地图目录
      */
@@ -30,8 +31,9 @@ export class MapMgr {
         console.log(root);
         if (!root) return;
         self.mapFloorArr = [];
+        self.mapThingArr = [];
         self.mapslice = 0;
-        let firstRow:number;
+        let firstRow: number;
         await getFilesRecursively(root);
         async function getFilesRecursively(parent: FileSystemDirectoryHandle | FileSystemFileHandle) {
             if (parent.kind === 'directory') {
@@ -39,6 +41,11 @@ export class MapMgr {
                 if (parent.name === 'floor') {
                     for (let i = 0; i < children.length; i++) {
                         children[i]["rootName"] = "floor";
+                        await getFilesRecursively(children[i]);
+                    }
+                } else if (parent.name === 'thing') {
+                    for (let i = 0; i < children.length; i++) {
+                        children[i]["rootName"] = "thing";
                         await getFilesRecursively(children[i]);
                     }
                 } else {
@@ -53,11 +60,16 @@ export class MapMgr {
                     let col = Number(splitNameArr[1]);//列
                     let row = Number(splitNameArr[0]);//行
                     let file: File = await parent.getFile();
-                    if(!firstRow) firstRow = row;
-                    if(firstRow == row){
+                    if (!firstRow) firstRow = row;
+                    if (firstRow == row) {
                         self.mapslice++;
                     }
                     self.mapFloorArr.push({ col: col, row: row, sourceName: parent.name, nativePath: fileIOHandler.createObjectURL(file) });
+                } else if (parent["rootName"] == "thing") {
+                    if (parent.name.indexOf("_") == -1) {
+                        let file: File = await parent.getFile();
+                        self.mapThingArr.push({ sourceName: parent.name, nativePath: fileIOHandler.createObjectURL(file) });
+                    }
                 }
             }
         }

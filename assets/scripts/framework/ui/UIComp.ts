@@ -1,6 +1,5 @@
 import { _decorator, Component, Node, Tween, tween, EventTouch, js } from 'cc';
 import { emmiter } from '../base/Emmiter';
-import { SoundMgr } from '../mgr/SoundMgr';
 import { List, SelectedType_List, SlideType } from '../uiComp/List';
 import { ListItem } from '../uiComp/ListItem';
 const { ccclass, property } = _decorator;
@@ -138,7 +137,6 @@ export class UIComp extends Component {
 
     private onNodeClick(event: EventTouch) {
         let self = this;
-        SoundMgr.inst.playClickSound();
         let eventFuncName = "_tap_" + event.currentTarget.name;
         self[eventFuncName](event);
     }
