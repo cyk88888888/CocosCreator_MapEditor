@@ -4,6 +4,7 @@ import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
+import { JuHuaDlg } from '../../framework/ui/JuHuaDlg';
 const { ccclass, property } = _decorator;
 
 /*
@@ -25,16 +26,16 @@ export class MapScrollComp extends UIComp {
         self.onEmitter(CONST.GEVT.ImportMapJson, self.onImportMapJson);//导入josn地图数据成功
     }
 
-    private onImportMapJson() {
+    private async onImportMapJson() {
         let self = this;
-        self.grp_mapSlices.removeAllChildren();
-        self.importFloorBg(() => {
-
-        });
+        let juhuaDlg = await JuHuaDlg.show();
+        await self.addMapSlices();
+        juhuaDlg.close();
     }
 
-    private importFloorBg(cb: Function) {
+    private async addMapSlices() {
         let self = this;
+        self.grp_mapSlices.removeAllChildren();
         let mapMgr = MapMgr.inst;
         var mapFloorArr = mapMgr.mapFloorArr;
         var mapslice = mapMgr.mapslice;
@@ -46,11 +47,21 @@ export class MapScrollComp extends UIComp {
         var hasFinishOneLine: boolean;
         let mapSliceLayout = self.grp_mapSlices.getComponent(Layout);
         mapSliceLayout.constraintNum = mapslice;
-        showFloorItor();
-        function showFloorItor() {
-            if (mapFloorArr.length > 0) {
-                let floorInfo: any = mapFloorArr.shift();
-                let url: string = floorInfo.nativePath;
+        for await (const iterator of mapFloorArr) {
+            await showFloorItor(iterator);
+        }
+
+        mapMgr.mapWidth = totWidth;
+        mapMgr.mapHeight = totHeight;
+        let uiTransform = self.grp_map.getComponent(UITransform);
+        uiTransform.width = totWidth;
+        uiTransform.height = totHeight;
+        self.emit(CONST.GEVT.UpdateMapInfo);
+        console.log("地图宽高:" + mapMgr.mapWidth, mapMgr.mapHeight);
+
+        async function showFloorItor(floorInfo: any) {
+            let url: string = floorInfo.nativePath;
+            return new Promise<void>((resolve, reject) => {
                 ResMgr.inst.loadLocalImg(url, (spriteFrame: SpriteFrame) => {
                     index++;
                     console.log(floorInfo.sourceName, spriteFrame.texture.width, spriteFrame.texture.height);
@@ -67,18 +78,9 @@ export class MapScrollComp extends UIComp {
                     let sprite = mapSliceNode.addComponent(Sprite);
                     sprite.spriteFrame = spriteFrame;
                     mapSliceNode.setParent(self.grp_mapSlices);
-                    showFloorItor();
+                    resolve();
                 }, self);
-            } else {
-                mapMgr.mapWidth = totWidth;
-                mapMgr.mapHeight = totHeight;
-                let uiTransform = self.grp_map.getComponent(UITransform);
-                uiTransform.width = totWidth;
-                uiTransform.height = totHeight;
-                self.emit(CONST.GEVT.UpdateMapInfo);
-                console.log("地图宽高:" + mapMgr.mapWidth, mapMgr.mapHeight);
-                cb.call(self);
-            }
+            })
         }
     }
 }
