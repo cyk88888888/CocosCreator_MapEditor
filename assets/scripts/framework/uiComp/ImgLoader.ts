@@ -26,7 +26,7 @@ export class ImgLoader extends Component {
             let spriteAtlas = <SpriteAtlas>ResMgr.inst.get(atlassUrl);
             if (!spriteAtlas) {
                 ResMgr.inst.loadWithoutJuHua(atlassUrl, function () {
-                    self._sprite.spriteFrame = <SpriteFrame>ResMgr.inst.get(value);
+                    if(self._sprite) self._sprite.spriteFrame = <SpriteFrame>ResMgr.inst.get(value);
                 }, self);
             } else {
                 self._sprite.spriteFrame = <SpriteFrame>ResMgr.inst.get(value);
@@ -39,7 +39,7 @@ export class ImgLoader extends Component {
             let spriteFrameUrl = value + '/spriteFrame';
             ResMgr.inst.loadWithoutJuHua(spriteFrameUrl, function () {
                 let spriteFrame = <SpriteFrame>ResMgr.inst.get(spriteFrameUrl);
-                if (spriteFrame) self._sprite.spriteFrame = spriteFrame;
+                if (spriteFrame && self._sprite) self._sprite.spriteFrame = spriteFrame;
             }, self)
         }
 
