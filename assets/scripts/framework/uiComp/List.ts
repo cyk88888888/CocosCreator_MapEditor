@@ -251,6 +251,8 @@ export class List extends Component {
     private _cyclicNum: number;
     private _cyclicPos1: number;
     private _cyclicPos2: number;
+    private _cyclicAllItemSize: number;
+    private _cycilcAllItemSizeNoEdge: number;
     //列表数量
     @property({
         serializable: false
@@ -396,7 +398,9 @@ export class List extends Component {
     //----------------------------------------------------------------------------
 
     onLoad() {
-        this._init();
+        let self = this;
+        self._init();
+        if(self._dataList) self.dataList = self._dataList;
     }
 
     onDestroy() {
@@ -439,7 +443,7 @@ export class List extends Component {
     }
     //注册事件
     _registerEvent() {
-        let t: any = this;
+        let t = this;
         t.node.on(Node.EventType.TOUCH_START, t._onTouchStart, t);
         t.node.on('touch-up', t._onTouchUp, t);
         t.node.on(Node.EventType.TOUCH_CANCEL, t._onTouchCancelled, t);
@@ -450,7 +454,7 @@ export class List extends Component {
     }
     //卸载事件
     _unregisterEvent() {
-        let t: any = this;
+        let t = this;
         t.node.off(Node.EventType.TOUCH_START, t._onTouchStart, t);
         t.node.off('touch-up', t._onTouchUp, t);
         t.node.off(Node.EventType.TOUCH_CANCEL, t._onTouchCancelled, t);
@@ -730,7 +734,7 @@ export class List extends Component {
     }
     //禁用 Layout 组件，自行计算 Content Size
     _resizeContent() {
-        let t: any = this;
+        let t = this;
         let result: number;
 
         switch (t._align) {

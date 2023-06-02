@@ -68,7 +68,7 @@ export class MapMgr {
                 } else if (parent["rootName"] == "thing") {
                     if (parent.name.indexOf("_") == -1) {
                         let file: File = await parent.getFile();
-                        self.mapThingArr.push({ sourceName: parent.name, nativePath: fileIOHandler.createObjectURL(file) });
+                        self.mapThingArr.push({ sourceName: parent.name.split(".")[0], nativePath: fileIOHandler.createObjectURL(file) });
                     }
                 }
             }
@@ -91,4 +91,24 @@ export class MapMgr {
         emmiter.emit(CONST.GEVT.ImportMapJson);
         // fileIOHandler.readLocalText();
     }
+
+    /**
+     * 根据格子类型获取对应颜色
+     * @param type 格子类型
+     * @returns 
+     */
+    public getColorByType(type: CONST.PathType): string {
+        switch (type) {
+            case CONST.PathType.GridType_walk:
+                return '#00FF00';
+            case CONST.PathType.GridType_WaterVerts:
+                return '#FF00FF';
+            case CONST.PathType.GridType_start:
+                return '#FFFF00';
+            default:
+                return '#000000';
+        }
+    }
+
+
 }
