@@ -48,9 +48,9 @@ export class FileIOHandler {
             }
             let reader = new FileReader();
             reader.readAsText(file, "utf-8");
-            reader.onprogress = (e: ProgressEvent) => {
-                console.log("pg =", e.loaded);
-            }
+            // reader.onprogress = (e: ProgressEvent) => {
+            //     console.log(`${file.name}加载进度: ${e.loaded}`);
+            // }
             reader.onload = () => {
                 resolve(reader.result + '');
             }
