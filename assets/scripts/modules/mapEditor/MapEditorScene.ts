@@ -1,4 +1,4 @@
-import { _decorator } from 'cc';
+import { _decorator, profiler } from 'cc';
 import { UIScene } from '../../framework/ui/UIScene';
 import { registerModule } from '../../framework/mgr/ModuleMgr';
 import { MapEditorLayer } from './MapEditorLayer';
@@ -21,7 +21,7 @@ export class MapEditorScene extends UIScene {
     }
 
     protected onEnter() {
-
+        profiler.hideStats()
     }
 }
 registerModule(MapEditorScene);
