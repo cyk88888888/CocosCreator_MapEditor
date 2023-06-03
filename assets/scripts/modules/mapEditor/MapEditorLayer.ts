@@ -122,7 +122,17 @@ export class MapEditorLayer extends UILayer {
             const message = '我终于搞定web文件存储到本地了';
           
             // Get handle to draft file
-            const root = await navigator.storage.getDirectory();
+            // const root = await navigator.storage.getDirectory();
+            const opts = {
+                suggestedName: "mapData.json",
+                types: [
+                    {
+                        description: "保存的文件名称",
+                        accept: { "text/plain": [".json"] },
+                    },
+                ],
+            };
+            let root = await window["showSaveFilePicker"](opts);
             const draftHandle = await root.getFileHandle("draft.txt", { create: true });
             // Get sync access handle
             const accessHandle = await draftHandle["createSyncAccessHandle"]();
