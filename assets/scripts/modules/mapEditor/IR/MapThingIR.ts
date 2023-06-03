@@ -1,6 +1,7 @@
 import { Label, Node, SpriteFrame, UITransform, _decorator } from 'cc';
 import { ListItem } from '../../../framework/uiComp/ListItem';
 import { ImgLoader } from '../../../framework/uiComp/ImgLoader';
+import { BaseUT } from '../../../framework/base/BaseUtil';
 const { ccclass, property } = _decorator;
 
 @ccclass('MapThingIR')
@@ -15,12 +16,10 @@ export class MapThingIR extends ListItem {
         self.lbl_name.string = data.sourceName;
         let loader = self.img_mapthing.getComponent(ImgLoader);
         loader.loadComplete = function(spriteFrame: SpriteFrame) {
-            let uiTransform = self.img_mapthing.getComponent(UITransform);
             let normalSize = 112;
             let maxSize = Math.max(spriteFrame.width, spriteFrame.height);
             let scale = normalSize / maxSize;
-            uiTransform.width = spriteFrame.width * scale;
-            uiTransform.height = spriteFrame.height * scale;
+            BaseUT.setSize(self.img_mapthing, spriteFrame.width * scale,spriteFrame.height * scale);
         }
         loader.ctx = self; 
         loader.url = data.nativePath;
