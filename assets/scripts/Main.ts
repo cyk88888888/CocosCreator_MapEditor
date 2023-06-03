@@ -3,7 +3,7 @@
  * @Author: CYK
  * @Date: 2022-05-13 09:40:14
  */
-import { _decorator, Component, Prefab, Node, EventTouch, instantiate } from 'cc';
+import { _decorator, Component, Prefab, Node, EventTouch, instantiate, sys } from 'cc';
 import { BaseUT } from './framework/base/BaseUtil';
 import { ResMgr } from './framework/mgr/ResMgr';
 import { SceneMgr } from './framework/mgr/SceneMgr';
@@ -26,7 +26,7 @@ export class Main extends Component {
             'dy/sound/click',
             'ui/common'
         )
-
+        console.log(sys);
         SceneMgr.inst.run(MapEditorScene, { name: '红红火火恍恍惚惚' });
     }
 

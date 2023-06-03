@@ -79,8 +79,8 @@ export class FileIOHandler {
             await writableStream.close();
             juhua.close();
             MessageTip.show({ msg: '保存成功' });
-        } catch {
-            alert("用户取消了保存操作");
+        } catch(e) {
+            alert(e);
         }
     }
 
