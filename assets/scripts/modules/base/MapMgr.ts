@@ -34,6 +34,7 @@ export class MapMgr {
         self.mapThingArr = [];
         self.mapslice = 0;
         let firstRow: number;
+        let mapData: any, thingPram: any;
         await getFilesRecursively(root);
         async function getFilesRecursively(parent: FileSystemDirectoryHandle | FileSystemFileHandle) {
             if (parent.kind === 'directory') {
@@ -71,10 +72,19 @@ export class MapMgr {
                         self.mapThingArr.push({ sourceName: parent.name.split(".")[0], nativePath: fileIOHandler.createObjectURL(file) });
                     }
                 }
+                if (parent.name == "map.json") {
+                    let file: File = await parent.getFile();
+                    let content = await fileIOHandler.readLocalText(file);
+                    mapData = JSON.parse(content);
+                } else if (parent.name == "thingPram.json") {
+                    let file: File = await parent.getFile();
+                    let content = await fileIOHandler.readLocalText(file);
+                    thingPram = JSON.parse(content);
+                }
             }
         }
 
-        self.mapFloorArr.sort(function (a: any, b: any): number {
+        self.mapFloorArr.sort((a: any, b: any): number => {
             if (a.row < b.row) {
                 return -1;
             } else if (a.row > b.row) {
@@ -87,9 +97,8 @@ export class MapMgr {
                 }
             }
         })
-        // console.log(self.mapFloorArr);
-        emmiter.emit(CONST.GEVT.ImportMapJson);
-        // fileIOHandler.readLocalText();
+        console.log(mapData, thingPram);
+        emmiter.emit(CONST.GEVT.ImportMapJson, { mapData: mapData, thingPram: thingPram });
     }
 
     /**

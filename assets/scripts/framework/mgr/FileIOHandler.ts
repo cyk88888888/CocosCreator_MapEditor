@@ -28,7 +28,6 @@ export class FileIOHandler {
 
         async function getFilesRecursively(handle: FileSystemDirectoryHandle | FileSystemFileHandle) {
             if (handle.kind === "file") {
-                handle.getFile();
                 return handle;
             }
             handle["children"] = [];
@@ -41,19 +40,24 @@ export class FileIOHandler {
     }
 
     /** 读取本地文件内容*/
-    public readLocalText(file: File, cb?: Function, errCb?: Function, ctx?: any) {
-        if (!file) return;
-        let reader = new FileReader();
-        reader.readAsText(file, "utf-8");
-        reader.onprogress = (e: ProgressEvent) => {
-            console.log("pg =", e.loaded);
-        }
-        reader.onload = () => {
-            cb && cb.call(ctx, reader.result);
-        }
-        reader.onerror = (ev: ProgressEvent) => {
-            errCb && errCb.call(ctx, ev);
-        }
+    public async readLocalText(file: File): Promise<string> {
+        return new Promise<string>((resolve, reject) => {
+            if (!file) {
+                reject(null);
+                return;
+            }
+            let reader = new FileReader();
+            reader.readAsText(file, "utf-8");
+            reader.onprogress = (e: ProgressEvent) => {
+                console.log("pg =", e.loaded);
+            }
+            reader.onload = () => {
+                resolve(reader.result + '');
+            }
+            reader.onerror = (ev: ProgressEvent) => {
+                reject(null);
+            }
+        })
     }
 
     /**保存文本到本地 */

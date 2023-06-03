@@ -105,12 +105,46 @@ export class MapEditorLayer extends UILayer {
         profiler.isShowingStats() ? profiler.hideStats() : profiler.showStats();
     }
 
-    private select_toogle_group(event: EventTouch, clickData: any) {
+    /** 选中对应编辑页签*/
+    private select_toogle_group(event: EventTouch, index: any) {
         let self = this;
-        let selectIdx = Number(clickData);
+        let selectIdx = Number(index);
         if (self._selectIdx == selectIdx) return;
         self._selectIdx = selectIdx;
         self.showEditOperate();
+    }
+
+    private  _tap_btn_runDemo() {
+        onmessage();
+        // Get handle to draft file
+        async function onmessage() {
+            // Retrieve message sent to work from main script
+            const message = '我终于搞定web文件存储到本地了';
+          
+            // Get handle to draft file
+            const root = await navigator.storage.getDirectory();
+            const draftHandle = await root.getFileHandle("draft.txt", { create: true });
+            // Get sync access handle
+            const accessHandle = await draftHandle["createSyncAccessHandle"]();
+          
+            // Get size of the file.
+            const fileSize = accessHandle.getSize();
+            // Read file content to a buffer.
+            const buffer = new DataView(new ArrayBuffer(fileSize));
+            const readBuffer = accessHandle.read(buffer, { at: 0 });
+          
+            // Write the message to the end of the file.
+            const encoder = new TextEncoder();
+            const encodedMessage = encoder.encode(message);
+            const writeBuffer = accessHandle.write(encodedMessage, { at: readBuffer });
+          
+            // Persist changes to disk.
+            accessHandle.flush();
+          
+            // Always close FileSystemSyncAccessHandle if done.
+            accessHandle.close();
+          };
+          
     }
 }
 
