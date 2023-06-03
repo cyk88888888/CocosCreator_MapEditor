@@ -1,4 +1,4 @@
-import { _decorator, Button } from 'cc';
+import { _decorator, Button, profiler } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
 import { FileIOHandler } from '../../framework/mgr/FileIOHandler';
 import { MapScrollComp } from './MapScrollComp';
@@ -30,6 +30,8 @@ export class MapEditorLayer extends UILayer {
     private btn_showPath: Button;
     @property({ type: Button })
     private btn_showMapThing: Button;
+    @property({ type: Button })
+    private btn_profiler: Button;
     @property({ type: MapScrollComp, tooltip: "编辑器地图滚动组件" })
     private mapScrollComp: MapScrollComp;
     @property({ type: Node })
@@ -64,7 +66,7 @@ export class MapEditorLayer extends UILayer {
 
     private onImportMapJson() {
         let self = this;
-        if(self.list_mapThing.content) self.list_mapThing.content.setPosition(0,0);
+        if (self.list_mapThing.content) self.list_mapThing.content.setPosition(0, 0);
         self.refreshList("list_mapThing");
     }
 
@@ -96,6 +98,11 @@ export class MapEditorLayer extends UILayer {
     private _tap_btn_exportJson() {
         let list = [{ type: 1, aa: 5 }, { type: 3, bb: 66 }, { desc: "我终于搞定web文件存储到本地了!!!" }];
         FileIOHandler.inst.saveTextToLocal(JSON.stringify(list));
+    }
+
+    /** 显隐fps*/
+    private _tap_btn_profiler() {
+        profiler.isShowingStats() ? profiler.hideStats() : profiler.showStats();
     }
 
     private select_toogle_group(event: EventTouch, clickData: any) {
