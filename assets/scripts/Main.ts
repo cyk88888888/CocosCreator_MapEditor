@@ -29,8 +29,8 @@ export class Main extends Component {
         )
         scaleMode.designWidth = 1400;
         scaleMode.designHeight = 900;
-        scaleMode.designHeight_min = 640;
-        scaleMode.designHeight_max = 900;
+        scaleMode.designWidth_min = 700;
+        scaleMode.designWidth_max = 1400;
 
         SceneMgr.inst.run(MapEditorScene, { name: '红红火火恍恍惚惚' });
     }

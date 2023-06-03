@@ -16,8 +16,8 @@ export namespace BaseUT {
     /** 获取宽度适配下，layer容器宽高 */
     export function getLayerScaleSize() {
         let windowSize = BaseUT.getStageSize();
-        let designHeight = windowSize.height < scaleMode.designHeight_max ? windowSize.height : scaleMode.designHeight_max;
-        return new Size(windowSize.width, designHeight);
+        let designWidth = windowSize.width < scaleMode.designWidth_max ? windowSize.height : scaleMode.designWidth_max;
+        return new Size(designWidth, windowSize.height);
     }
     /**
      * 根据屏幕宽高自适应设置comp大小

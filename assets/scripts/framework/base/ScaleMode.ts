@@ -13,12 +13,12 @@ export class ScaleMode {
      */
     public designHeight: number;
     /**
-     * 设计最小高度
+     * 设计最小宽度
      */
-    public designHeight_min: number;
+    public designWidth_min: number;
      /**
-     * 设计最大高度
+     * 设计最大宽度
      */
-    public designHeight_max: number;
+    public designWidth_max: number;
 }
 export let scaleMode = new ScaleMode();

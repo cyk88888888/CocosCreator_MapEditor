@@ -3,7 +3,8 @@
  * @Author: CYK
  * @Date: 2022-06-13 14:50:10
  */
-import { Component, Node, Prefab, _decorator, director, instantiate, resources, tween } from 'cc';
+import { Color, Component, Gradient, Graphics, Node, Prefab, _decorator, director, instantiate, resources, tween } from 'cc';
+import { BaseUT } from '../base/BaseUtil';
 const { ccclass, property } = _decorator;
 
 @ccclass('JuHuaDlg')
@@ -17,7 +18,14 @@ export class JuHuaDlg extends Component {
     private _delayShowTime: number;
     onLoad() {
         let self = this;
-        self.img_maskBg.active = false;
+        self.img_maskBg.active = false; 
+        let bg = self.img_maskBg.getComponent(Graphics);
+        let stageSize = BaseUT.getStageSize();
+        let modalLayerColor: Color = new Color(0x00, 0x00, 0x00, 255 * 0.4);
+        bg.fillColor = modalLayerColor;
+        bg.rect(-stageSize.width / 2, -stageSize.height / 2, stageSize.width, stageSize.height);
+        bg.fill();
+
         let img_wait = self.img_maskBg.getChildByName('img_wait');
         let delay = self._delayShowTime || 0;
         self._tid = setTimeout(() => {
