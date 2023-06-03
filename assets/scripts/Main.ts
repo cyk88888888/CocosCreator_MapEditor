@@ -5,7 +5,6 @@
  */
 import { _decorator, Component, Prefab, Node, EventTouch, instantiate } from 'cc';
 import { BaseUT } from './framework/base/BaseUtil';
-import { scaleMode } from './framework/base/ScaleMode';
 import { ResMgr } from './framework/mgr/ResMgr';
 import { SceneMgr } from './framework/mgr/SceneMgr';
 import { SoundMgr } from './framework/mgr/SoundMgr';
@@ -27,10 +26,6 @@ export class Main extends Component {
             'dy/sound/click',
             'ui/common'
         )
-        scaleMode.designWidth = 1400;
-        scaleMode.designHeight = 900;
-        scaleMode.designWidth_min = 700;
-        scaleMode.designWidth_max = 1400;
 
         SceneMgr.inst.run(MapEditorScene, { name: '红红火火恍恍惚惚' });
     }
