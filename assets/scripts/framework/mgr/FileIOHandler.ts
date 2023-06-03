@@ -1,3 +1,8 @@
+/*
+ * @Descripttion: 说明
+ * @Author: CYK
+ * @Date: 2023-06-01 09:05:10
+ */
 import { MessageTip } from "../../modules/common/message/MessageTip";
 import { JuHuaDlg } from "../ui/JuHuaDlg";
 
@@ -22,8 +27,8 @@ export class FileIOHandler {
             const directoryHandle: FileSystemDirectoryHandle = await window["showDirectoryPicker"]();
             const root = await getFilesRecursively(directoryHandle);
             return root;
-        } catch {
-            alert("用户取消授权读取文件内容");
+        } catch(e) {
+            alert(e);
         }
 
         async function getFilesRecursively(handle: FileSystemDirectoryHandle | FileSystemFileHandle) {
