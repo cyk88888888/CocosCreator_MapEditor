@@ -114,7 +114,7 @@ export class MapEditorLayer extends UILayer {
         self.showEditOperate();
     }
 
-    private  _tap_btn_runDemo() {
+    private _tap_btn_runDemo() {
         onmessage();
         // Get handle to draft file
         async function onmessage() {

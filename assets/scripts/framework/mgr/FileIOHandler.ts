@@ -76,6 +76,7 @@ export class FileIOHandler {
                         accept: { "text/plain": [".json"] },
                     },
                 ],
+                excludeAcceptAllOption: true,
             };
             let newHandle = await window["showSaveFilePicker"](opts);
             const writableStream = await newHandle.createWritable();
