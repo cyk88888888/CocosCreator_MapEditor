@@ -12,6 +12,7 @@ export class ResMgr {
         if (!this._inst) {
             this._inst = new ResMgr();
             this._inst.moduleResMap = {};
+            this._inst._localTexture = [];
         }
         return this._inst;
     }
@@ -219,6 +220,7 @@ export class ResMgr {
         this._loadWithItor(resList, null, cb, ctx, false, sceneName);
     }
 
+    private _localTexture: Asset[];
     /**
      * 加载本地图片
      * @param url 资源地址
@@ -226,13 +228,25 @@ export class ResMgr {
      * @param ctx 
      */
     public loadLocalImg(url: string, cb?: Function, ctx?: any) {
+        let self = this;
         assetManager.loadRemote<ImageAsset>(url, { ext: '.png' }, function (err, imageAsset) {
             const spriteFrame = new SpriteFrame();
             const texture = new Texture2D();
             texture.image = imageAsset;
             spriteFrame.texture = texture;
+            self._localTexture.push(texture);
             cb && cb.call(ctx, spriteFrame);
         });
+    }
+
+    /** 释放所有加载的本地资源 */
+    public relaseAllLocal() {
+        let self = this;
+        while (self._localTexture.length > 0) {
+            let asset = self._localTexture.shift();
+            assetManager.releaseAsset(asset);
+        }
+        console.log("清除所有本地资源！！！");
     }
 
     /**获取已加载缓存的资源 */

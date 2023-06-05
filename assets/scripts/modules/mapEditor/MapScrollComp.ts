@@ -35,8 +35,9 @@ export class MapScrollComp extends UIComp {
 
     private async addMapSlices() {
         let self = this;
-        self.grp_mapSlices.removeAllChildren();
-        self.grp_map.setPosition(0,0);
+        self.grp_mapSlices.destroyAllChildren();
+        // self.grp_mapSlices.removeAllChildren();
+        self.grp_map.setPosition(0, 0);
         let mapMgr = MapMgr.inst;
         var mapFloorArr = mapMgr.mapFloorArr;
         var mapslice = mapMgr.mapslice;
@@ -48,7 +49,7 @@ export class MapScrollComp extends UIComp {
         var hasFinishOneLine: boolean;
         let mapSliceLayout = self.grp_mapSlices.getComponent(Layout);
         mapSliceLayout.constraintNum = mapslice;
-        for(let i = 0; i < mapFloorArr.length; i++){
+        for (let i = 0; i < mapFloorArr.length; i++) {
             await showFloorItor(mapFloorArr[i]);
         }
         mapMgr.mapWidth = totWidth;
