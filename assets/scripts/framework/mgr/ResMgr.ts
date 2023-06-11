@@ -234,19 +234,37 @@ export class ResMgr {
             const texture = new Texture2D();
             texture.image = imageAsset;
             spriteFrame.texture = texture;
+            texture.addRef();
             self._localTexture.push(texture);
             cb && cb.call(ctx, spriteFrame);
         });
     }
 
+    /** 减少资源引用计数（用于切换地图时，释放之前的旧资源） */
+    public decRefLocalImg() {
+        let self = this;
+        let len = self._localTexture.length;
+        for (let i = 0; i < len; i++) {
+            self._localTexture[i].decRef();
+        }
+    }
+
     /** 释放所有加载的本地资源 */
     public relaseAllLocal() {
         let self = this;
-        while (self._localTexture.length > 0) {
-            let asset = self._localTexture.shift();
-            assetManager.releaseAsset(asset);
+        console.log(`清除前数量：${self._localTexture.length}`);
+        let releaseCount = 0;
+        for (let i = self._localTexture.length - 1; i >= 0; i--) {
+            let asset = self._localTexture[i];
+            if (!asset.refCount) {
+                releaseCount++;
+                self._localTexture.splice(i, 1);
+                assetManager.releaseAsset(asset);
+            }
         }
-        console.log("清除所有本地资源！！！");
+        
+        console.log(`清除所有本地无用资源！！！清除数量：${releaseCount}`);
+        console.log(`清除后数量：${self._localTexture.length}`);
     }
 
     /**获取已加载缓存的资源 */

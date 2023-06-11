@@ -1,10 +1,9 @@
-import { _decorator, Button, Component, Layers, Layout, Node, Sprite, SpriteFrame, UITransform } from 'cc';
+import { _decorator, Button, Component, Layers, Layout, Node, ScrollView, Sprite, SpriteFrame, UITransform } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
-import { JuHuaDlg } from '../../framework/ui/JuHuaDlg';
 const { ccclass, property } = _decorator;
 
 /*
@@ -20,23 +19,19 @@ export class MapScrollComp extends UIComp {
     private grp_map: Node;
     @property({ type: Node, tooltip: "地图切片容器" })
     private grp_mapSlices: Node;
+    @property({ type: ScrollView})
+    private scroll_map: ScrollView;
 
-    protected onEnter() {
+    public async onImportMapJson() {
         let self = this;
-        self.onEmitter(CONST.GEVT.ImportMapJson, self.onImportMapJson);//导入josn地图数据成功
-    }
-
-    private async onImportMapJson() {
-        let self = this;
-        let juhuaDlg = await JuHuaDlg.show();
         await self.addMapSlices();
-        juhuaDlg.close();
     }
 
     private async addMapSlices() {
         let self = this;
         self.grp_mapSlices.destroyAllChildren();
-        // self.grp_mapSlices.removeAllChildren();
+        self.scroll_map.stopAutoScroll();
+        self.scroll_map.scrollToTop();
         self.grp_map.setPosition(0, 0);
         let mapMgr = MapMgr.inst;
         var mapFloorArr = mapMgr.mapFloorArr;

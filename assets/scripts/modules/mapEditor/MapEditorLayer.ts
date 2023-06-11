@@ -1,4 +1,4 @@
-import { _decorator, Button, profiler } from 'cc';
+import { _decorator, Button, profiler, ScrollView } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
 import { FileIOHandler } from '../../framework/mgr/FileIOHandler';
 import { MapScrollComp } from './MapScrollComp';
@@ -7,6 +7,9 @@ import { EventTouch } from 'cc';
 import { Node } from 'cc';
 import { List } from '../../framework/uiComp/List';
 import { CONST } from '../base/CONST';
+import { JuHuaDlg } from '../../framework/ui/JuHuaDlg';
+import { ResMgr } from '../../framework/mgr/ResMgr';
+import { TickMgr } from '../../framework/mgr/TickMgr';
 const { ccclass, property } = _decorator;
 
 /*
@@ -64,10 +67,23 @@ export class MapEditorLayer extends UILayer {
         self.grp_editMathing.active = self._selectIdx == 2;
     }
 
-    private onImportMapJson() {
+    private async onImportMapJson() {
         let self = this;
-        if (self.list_mapThing.content) self.list_mapThing.content.setPosition(0, 0);
+        let juhuaDlg = await JuHuaDlg.show();
+        let scrollView = self.list_mapThing.getComponent(ScrollView);
+        scrollView.stopAutoScroll();
+        scrollView.scrollToTop();
+        ResMgr.inst.decRefLocalImg();
         self.refreshList("list_mapThing");
+        await self.mapScrollComp.onImportMapJson();
+        juhuaDlg.close();
+        //清除上一次导入的地图资源
+        await new Promise<void>((resolve, reject) => {
+            self.setTimeout(() => {
+                ResMgr.inst.relaseAllLocal();
+                resolve();
+            },500);
+        })
     }
 
     private _data_list_path() {

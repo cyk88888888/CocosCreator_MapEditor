@@ -43,7 +43,7 @@ export class TickMgr {
     }
 
     /**延迟一帧执行 */
-    public nextTick(callback: Function, ctx: any) {
+    public nextTick(callback: Function, ctx?: any) {
         this.mainNode.scheduleOnce(function () {
             if (callback) callback.call(ctx);
         })
