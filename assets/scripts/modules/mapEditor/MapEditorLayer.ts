@@ -9,7 +9,6 @@ import { List } from '../../framework/uiComp/List';
 import { CONST } from '../base/CONST';
 import { JuHuaDlg } from '../../framework/ui/JuHuaDlg';
 import { ResMgr } from '../../framework/mgr/ResMgr';
-import { TickMgr } from '../../framework/mgr/TickMgr';
 const { ccclass, property } = _decorator;
 
 /*
