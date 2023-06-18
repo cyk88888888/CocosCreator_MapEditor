@@ -16,6 +16,7 @@ export class Main extends Component {
         //转成全部变量，可在浏览器console直接输出
         globalThis.BaseUT = BaseUT;
         TickMgr.inst.mainNode = this;
+        console.log('系统相关环境变量: ');
         console.log(sys);
         SceneMgr.inst.run(MapEditorScene, { name: '测试数据' });
     }
