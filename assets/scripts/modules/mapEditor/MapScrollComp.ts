@@ -149,7 +149,7 @@ export class MapScrollComp extends UIComp {
         let scale = self.grp_scrollMap.scale.x + t;
         let editAreaWidth = self._editAreaSize.x;
         let editAreaHeight = self._editAreaSize.y;
-        let minScale = Math.max(editAreaWidth / 1400, editAreaHeight / 900);
+        let minScale = Math.max(editAreaWidth / self.mapMgr.mapWidth, editAreaHeight / self.mapMgr.mapHeight);
         if (scale > 2) scale = 2;
         if (scale < minScale) scale = minScale;
         let r = e.getLocation();
