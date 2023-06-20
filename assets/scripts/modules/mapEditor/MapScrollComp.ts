@@ -1,4 +1,4 @@
-import { _decorator, Button, Component, Event, EventKeyboard, EventMouse, EventTouch, game, input, Input, KeyCode, Layers, Layout, Node, ScrollView, Size, Sprite, SpriteFrame, UITransform, Vec2 } from 'cc';
+import { _decorator, Button, Component, Event, EventKeyboard, EventMouse, EventTouch, game, input, Input, KeyCode, Layers, Layout, Node, ScrollView, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3 } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
@@ -21,15 +21,18 @@ export class MapScrollComp extends UIComp {
     private grp_scrollMap: Node;
     @property({ type: Node, tooltip: "地图切片容器" })
     private grp_mapSlices: Node;
-    
-    private _nodeSize: Size;
+
+    /**编辑区域宽高 */
+    private _editAreaSize: Size;
     private _pressSpace: boolean;
     private _isInEditArea: boolean;
     private _preUIPos: Vec2;
     private mapMgr: MapMgr;
+    private _scrollMapUITranstorm: UITransform;
     protected onEnter(): void {
         let self = this;
         self.mapMgr = MapMgr.inst;
+        self._scrollMapUITranstorm = self.grp_scrollMap.getComponent(UITransform);
     }
     public async onImportMapJson() {
         let self = this;
@@ -86,69 +89,101 @@ export class MapScrollComp extends UIComp {
         }
     }
 
-    private initEvent(){
+    private initEvent() {
         let self = this;
-        self._nodeSize = BaseUT.getSize(self.node);
+        self._editAreaSize = BaseUT.getSize(self.node);
         // this.node.on(Node.EventType.MOUSE_MOVE, this.onShowRoadMsg, self),
-        self.node.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self),
-        self.node.on(Node.EventType.MOUSE_UP, self.onMouseUp, self),
-        self.node.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self),
-        self.node.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, self),
-        self.node.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self),
+        self.node.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self);
+        self.node.on(Node.EventType.MOUSE_UP, self.onMouseUp, self);
+        self.node.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self);
+        self.node.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, self);
+        self.node.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self);
 
         input.on(Input.EventType.KEY_DOWN, self.onKeyDown, self);
         input.on(Input.EventType.KEY_UP, self.onKeyUp, self);
     }
 
-    private onMouseDown(e:EventMouse){
+    private onMouseDown(e: EventMouse) {
         let self = this;
         self._preUIPos = e.getUILocation();
         self.node.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
     }
 
-    private onMouseMove(e:EventMouse){
+    private onMouseMove(e: EventMouse) {
         let self = this;
-        if(!self._pressSpace) return;
+        if (!self._pressSpace) return;
         let curUILocation = e.getUILocation();
         let deltaX = curUILocation.x - self._preUIPos.x;
         let deltaY = curUILocation.y - self._preUIPos.y;
         let toX = self.grp_scrollMap.position.x + deltaX;
         let toY = self.grp_scrollMap.position.y + deltaY;
-        let mapMgr = self.mapMgr;
-        if(toX > 0) toX = 0;
-        if(toY > 0) toY = 0;
-        let maxScrollX = mapMgr.mapWidth - self._nodeSize.x;
-        let maxScrollY = mapMgr.mapHeight - self._nodeSize.y;
-        if(toX < -maxScrollX) toX = -maxScrollX;;
-        if(toY < -maxScrollY) toY = -maxScrollY;
         self.grp_scrollMap.setPosition(toX, toY);
         self._preUIPos = curUILocation;
+        self.checkLimitPos();
     }
 
-    private onMouseUp(e:EventMouse){
+    private onMouseUp(e: EventMouse) {
         this.node.hasEventListener(Node.EventType.MOUSE_MOVE) && this.node.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
     }
 
-    private onMouseEnter(e:EventMouse){
+    private onMouseEnter(e: EventMouse) {
         let self = this;
         self._isInEditArea = true;
         self.checkMousCursor();
     }
 
-    private onMouseLeave(e:EventMouse){
+    private onMouseLeave(e: EventMouse) {
         let self = this;
         self._isInEditArea = false;
         self.checkMousCursor();
     }
-    
-    
-    onMouseWheel(event:EventMouse) {
-        console.log('event.getScrollX(): '+event.getScrollX(),'event.getScrollY(): '+event.getScrollY());
+
+
+    private onMouseWheel(event: EventMouse) {
+        event.getScrollY() > 0 ? this.scaleMap(.1, event) : this.scaleMap(-.1, event);
     }
 
-    onKeyDown(event: EventKeyboard) {
+    private scaleMap(t: number, e: EventMouse) {
         let self = this;
-        switch(event.keyCode) {
+        let scale = self.grp_scrollMap.scale.x + t;
+        let editAreaWidth = self._editAreaSize.x;
+        let editAreaHeight = self._editAreaSize.y;
+        let minScale = Math.max(editAreaWidth / 1400, editAreaHeight / 900);
+        if (scale > 2) scale = 2;
+        if (scale < minScale) scale = minScale;
+        let r = e.getLocation();
+        let a = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(r.x, r.y));
+        self.grp_scrollMap.setScale(new Vec3(scale, scale));
+        let s = self._scrollMapUITranstorm.convertToWorldSpaceAR(new Vec3(a.x, a.y));
+        let h = new Vec2(r.x - s.x, r.y - s.y);
+        self.grp_scrollMap.setPosition(self.grp_scrollMap.position.x + h.x, self.grp_scrollMap.position.y + h.y);
+        self.checkLimitPos();
+    }
+
+    /**检测地图滚动容器边界 */
+    private checkLimitPos() {
+        let self = this;
+        let maxScrollX = self.stageWidth - self._editAreaSize.x;
+        let maxScrollY = self.stageHeight - self._editAreaSize.y;
+        if (self.grp_scrollMap.position.x > 0) self.grp_scrollMap.setPosition(new Vec3(0, self.grp_scrollMap.position.y));
+        if (self.grp_scrollMap.position.x < -maxScrollX) self.grp_scrollMap.setPosition(new Vec3(-maxScrollX, self.grp_scrollMap.position.y));
+        if (self.grp_scrollMap.position.y > 0) self.grp_scrollMap.setPosition(new Vec3(self.grp_scrollMap.position.x, 0));
+        if (self.grp_scrollMap.position.y < -maxScrollY) self.grp_scrollMap.setPosition(new Vec3(self.grp_scrollMap.position.x, -maxScrollY));
+    }
+
+    private get stageWidth() {
+        let self = this;
+        return self.mapMgr.mapWidth * self.grp_scrollMap.scale.x;
+    }
+
+    private get stageHeight() {
+        let self = this;
+        return self.mapMgr.mapHeight * self.grp_scrollMap.scale.y;
+    }
+
+    private onKeyDown(event: EventKeyboard) {
+        let self = this;
+        switch (event.keyCode) {
             case KeyCode.SPACE:
                 self._pressSpace = true;
                 self.checkMousCursor();
@@ -156,9 +191,9 @@ export class MapScrollComp extends UIComp {
         }
     }
 
-    onKeyUp(event: EventKeyboard) {
+    private onKeyUp(event: EventKeyboard) {
         let self = this;
-        switch(event.keyCode) {
+        switch (event.keyCode) {
             case KeyCode.SPACE:
                 self._pressSpace = false;
                 self.checkMousCursor();
@@ -166,9 +201,9 @@ export class MapScrollComp extends UIComp {
         }
     }
 
-    private checkMousCursor(){
+    private checkMousCursor() {
         let self = this;
-        if(self._pressSpace && self._isInEditArea) BaseUT.changeMouseCursor("move");
+        if (self._pressSpace && self._isInEditArea) BaseUT.changeMouseCursor("move");
         else BaseUT.changeMouseCursor("auto");
     }
 }
