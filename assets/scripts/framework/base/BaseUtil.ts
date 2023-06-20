@@ -3,8 +3,7 @@
  * @Author: CYK
  * @Date: 2022-05-19 11:39:05
  */
-import { Layers, Node, Scene, screen, Size, UIOpacity, UITransform, Vec2, view } from "cc";
-import { scaleMode } from "./ScaleMode";
+import { game, Layers, Node, Scene, screen, Size, UIOpacity, UITransform, Vec2, view } from "cc";
 export namespace BaseUT {
     /** 获取宽度适配下屏幕的视图宽高*/
     export function getStageSize() {
@@ -60,7 +59,7 @@ export namespace BaseUT {
     /**获取node宽高 */
     export function getSize(node: Node | Scene) {
         let uiTransform = node.getComponent(UITransform);
-        return new Size(uiTransform.width,uiTransform.height);
+        return new Size(uiTransform.width, uiTransform.height);
     }
 
     export function getFitY(min: number, max: number) {
@@ -68,32 +67,37 @@ export namespace BaseUT {
         return min + (max - min) * (windowSize.height - 1068) / (1280 - 1068);
     }
 
-      // 角度转弧度
-      export function angle_to_radian (angle: number): number {
+    /** 改变鼠标样式*/
+    export function changeMouseCursor(type: string = "auto") {
+        game.canvas.style.cursor = type;
+    }
+
+    // 角度转弧度
+    export function angle_to_radian(angle: number): number {
         // 角度转弧度公式
         // π / 180 * 角度
 
         // 计算出弧度
         let radian = Math.PI / 180 * angle;
         // 返回弧度
-        return(radian);
+        return (radian);
     }
 
 
     // 弧度转角度
-    export function radian_to_angle (radian: number): number {
+    export function radian_to_angle(radian: number): number {
         // 弧度转角度公式
         // 180 / π * 弧度
 
         // 计算出角度
         let angle = 180 / Math.PI * radian;
         // 返回弧度
-        return(angle);
+        return (angle);
     }
 
 
     // 角度转向量   
-    export function angle_to_vector (angle: number): Vec2 {
+    export function angle_to_vector(angle: number): Vec2 {
         // tan = sin / cos
         // 将传入的角度转为弧度
         let radian = this.angle_to_radian(angle);
@@ -104,12 +108,12 @@ export namespace BaseUT {
         // 结合在一起并归一化
         let vec = new Vec2(cos, sin).normalize();
         // 返回向量
-        return(vec);
+        return (vec);
     }
 
 
     // 向量转角度
-    export function vector_to_angle (vector: Vec2): number {
+    export function vector_to_angle(vector: Vec2): number {
         // 将传入的向量归一化
         let dir = vector.normalize();
         // 计算出目标角度的弧度
@@ -117,6 +121,6 @@ export namespace BaseUT {
         // 把弧度计算成角度
         let angle = -this.radian_to_angle(radian);
         // 返回角度
-        return(angle);
+        return (angle);
     }
 }

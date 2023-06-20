@@ -1,4 +1,4 @@
-import { _decorator, Button, Component, Event, EventKeyboard, EventMouse, EventTouch, input, Input, KeyCode, Layers, Layout, Node, ScrollView, Size, Sprite, SpriteFrame, UITransform, Vec2 } from 'cc';
+import { _decorator, Button, Component, Event, EventKeyboard, EventMouse, EventTouch, game, input, Input, KeyCode, Layers, Layout, Node, ScrollView, Size, Sprite, SpriteFrame, UITransform, Vec2 } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
@@ -24,6 +24,7 @@ export class MapScrollComp extends UIComp {
     
     private _nodeSize: Size;
     private _pressSpace: boolean;
+    private _isInEditArea: boolean;
     private _preUIPos: Vec2;
     private mapMgr: MapMgr;
     protected onEnter(): void {
@@ -88,19 +89,21 @@ export class MapScrollComp extends UIComp {
     private initEvent(){
         let self = this;
         self._nodeSize = BaseUT.getSize(self.node);
-        // this.node.on(Node.EventType.MOUSE_MOVE, this.onShowRoadMsg, this),
-        self.node.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, this),
-        self.node.on(Node.EventType.MOUSE_UP, self.onMouseUp, this),
-        self.node.on(Node.EventType.MOUSE_LEAVE, self.onMouseUp, this),
-        self.node.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, this),
+        // this.node.on(Node.EventType.MOUSE_MOVE, this.onShowRoadMsg, self),
+        self.node.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self),
+        self.node.on(Node.EventType.MOUSE_UP, self.onMouseUp, self),
+        self.node.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self),
+        self.node.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, self),
+        self.node.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self),
 
         input.on(Input.EventType.KEY_DOWN, self.onKeyDown, self);
         input.on(Input.EventType.KEY_UP, self.onKeyUp, self);
     }
 
     private onMouseDown(e:EventMouse){
-        this._preUIPos = e.getUILocation();
-        this.node.on(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
+        let self = this;
+        self._preUIPos = e.getUILocation();
+        self.node.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
     }
 
     private onMouseMove(e:EventMouse){
@@ -126,6 +129,19 @@ export class MapScrollComp extends UIComp {
         this.node.hasEventListener(Node.EventType.MOUSE_MOVE) && this.node.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
     }
 
+    private onMouseEnter(e:EventMouse){
+        let self = this;
+        self._isInEditArea = true;
+        self.checkMousCursor();
+    }
+
+    private onMouseLeave(e:EventMouse){
+        let self = this;
+        self._isInEditArea = false;
+        self.checkMousCursor();
+    }
+    
+    
     onMouseWheel(event:EventMouse) {
         console.log('event.getScrollX(): '+event.getScrollX(),'event.getScrollY(): '+event.getScrollY());
     }
@@ -135,6 +151,7 @@ export class MapScrollComp extends UIComp {
         switch(event.keyCode) {
             case KeyCode.SPACE:
                 self._pressSpace = true;
+                self.checkMousCursor();
                 break;
         }
     }
@@ -144,10 +161,16 @@ export class MapScrollComp extends UIComp {
         switch(event.keyCode) {
             case KeyCode.SPACE:
                 self._pressSpace = false;
+                self.checkMousCursor();
                 break;
         }
     }
 
+    private checkMousCursor(){
+        let self = this;
+        if(self._pressSpace && self._isInEditArea) BaseUT.changeMouseCursor("move");
+        else BaseUT.changeMouseCursor("auto");
+    }
 }
 
 
