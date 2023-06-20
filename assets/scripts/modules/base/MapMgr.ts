@@ -24,6 +24,8 @@ export class MapMgr {
     public mapWidth: number;
     /** 地图高*/
     public mapHeight: number;
+    /**格子大小 */
+    public cellSize: number;
     /** 导入的地图场景物件数组*/
     public mapThingArr: any[];
     /**
@@ -39,7 +41,7 @@ export class MapMgr {
         self.mapThingArr = [];
         self.mapslice = 0;
         let firstRow: number;
-        let mapData: any, thingPram: any;
+        let mapData: CONST.MapJsonInfo, thingPram: CONST.thingPramInfo;
         await getFilesRecursively(root);
         async function getFilesRecursively(parent: FileSystemDirectoryHandle | FileSystemFileHandle) {
             if (parent.kind === 'directory') {
@@ -103,6 +105,7 @@ export class MapMgr {
             }
         })
         console.log(mapData, thingPram);
+        self.cellSize = mapData.cellSize;
         emmiter.emit(CONST.GEVT.ImportMapJson, { mapData: mapData, thingPram: thingPram });
     }
 

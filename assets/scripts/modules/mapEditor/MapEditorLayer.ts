@@ -34,6 +34,8 @@ export class MapEditorLayer extends UILayer {
     private btn_showMapThing: Button;
     @property({ type: Button })
     private btn_profiler: Button;
+    @property({ type: Button })
+    private btn_resetScale: Button;
     @property({ type: MapScrollComp, tooltip: "编辑器地图滚动组件" })
     private mapScrollComp: MapScrollComp;
     @property({ type: Node })
@@ -129,8 +131,15 @@ export class MapEditorLayer extends UILayer {
         self.showEditOperate();
     }
 
-    private _tap_btn_runDemo() {
-       
+    /**显隐网格 */
+    private _tap_btn_showGrid() {
+        let self = this;
+        self.mapScrollComp.graphicsGrid.node.active = !self.mapScrollComp.graphicsGrid.node.active;
+    }
+
+    private _tap_btn_resetScale(){
+        let self = this;
+        self.mapScrollComp.resetScale();
     }
 }
 

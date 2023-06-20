@@ -1,4 +1,4 @@
-import { _decorator, Button, Component, Event, EventKeyboard, EventMouse, EventTouch, game, input, Input, KeyCode, Layers, Layout, Node, ScrollView, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, EventKeyboard, EventMouse, Graphics, input, Input, KeyCode, Layout, Node, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3 } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
@@ -16,11 +16,13 @@ export class MapScrollComp extends UIComp {
     /** 预制体路径 */
     public static prefabUrl: string = 'prefab/mapEditor/MapScrollComp';
     @property({ type: Node, tooltip: "地图总容器" })
-    private grp_mapLayer: Node;
+    public grp_mapLayer: Node;
     @property({ type: Node, tooltip: "地图滚动容器" })
-    private grp_scrollMap: Node;
+    public grp_scrollMap: Node;
     @property({ type: Node, tooltip: "地图切片容器" })
-    private grp_mapSlices: Node;
+    public grp_mapSlices: Node;
+    @property({ type: Graphics })
+    public graphicsGrid: Graphics;
 
     /**编辑区域宽高 */
     private _editAreaSize: Size;
@@ -34,16 +36,18 @@ export class MapScrollComp extends UIComp {
         self.mapMgr = MapMgr.inst;
         self._scrollMapUITranstorm = self.grp_scrollMap.getComponent(UITransform);
     }
+
     public async onImportMapJson() {
         let self = this;
         await self.addMapSlices();
     }
 
+    /**导入地图切片 */
     private async addMapSlices() {
         let self = this;
         self.grp_mapSlices.destroyAllChildren();
-        self.grp_scrollMap.setPosition(0, 0);
-        self.grp_scrollMap.setScale(new Vec3(1, 1));
+        self.grp_scrollMap.setPosition(0, 0, 0);
+        self.grp_scrollMap.setScale(new Vec3(1, 1, 1));
         let mapMgr = self.mapMgr;
         var mapFloorArr = mapMgr.mapFloorArr;
         var mapslice = mapMgr.mapslice;
@@ -64,7 +68,7 @@ export class MapScrollComp extends UIComp {
         BaseUT.setSize(self.grp_mapSlices, totWidth, totHeight);
         self.emit(CONST.GEVT.UpdateMapInfo);
         console.log("地图宽高:", mapMgr.mapWidth, mapMgr.mapHeight);
-        self.initEvent();
+        self.init();
         async function showFloorItor(floorInfo: any) {
             let url: string = floorInfo.nativePath;
             return new Promise<void>((resolve, reject) => {
@@ -90,6 +94,48 @@ export class MapScrollComp extends UIComp {
         }
     }
 
+    private init() {
+        let self = this;
+        self.initGrid();
+        self.initEvent();
+    }
+
+    private initGrid() {
+        let self = this;
+        let cellSize = self.mapMgr.cellSize;
+        let numCols = Math.floor(self.mapMgr.mapWidth / cellSize);
+        let numRows = Math.floor(self.mapMgr.mapHeight / cellSize);
+
+        let lineGraphics = self.graphicsGrid;
+        lineGraphics.clear();
+        lineGraphics.lineWidth = 2;
+        for (let i = 0; i < numCols + 1; i++)//画竖线
+        {
+            lineGraphics.moveTo(i * cellSize, 0);
+            lineGraphics.lineTo(i * cellSize, numRows * cellSize);
+        }
+
+        for (let i = 0; i < numRows + 1; i++)//画横线
+        {
+            lineGraphics.moveTo(0, i * cellSize);
+            lineGraphics.lineTo(numCols * cellSize, i * cellSize);
+        }
+        lineGraphics.stroke();
+    }
+
+    /**重置缩放比例 */
+    public resetScale() {
+        let self = this;
+        let oldScale = self.grp_scrollMap.scale.x;
+        if (oldScale == 1) return;//已经是初始缩放比例
+        self.grp_scrollMap.setScale(new Vec3(1, 1, 1));
+        let toX = self.grp_scrollMap.position.x - (self.grp_scrollMap.position.x / oldScale) + self._editAreaSize.width / 2;
+        let toY = self.grp_scrollMap.position.y - (self.grp_scrollMap.position.y / oldScale) + self._editAreaSize.height / 2;
+        self.grp_scrollMap.setPosition(new Vec3(toX, toY));
+        self.checkLimitPos();
+    }
+
+    /**初始化事件 */
     private initEvent() {
         let self = this;
         self._editAreaSize = BaseUT.getSize(self.node);
@@ -139,7 +185,6 @@ export class MapScrollComp extends UIComp {
         self.checkMousCursor();
     }
 
-
     private onMouseWheel(event: EventMouse) {
         event.getScrollY() > 0 ? this.scaleMap(.1, event) : this.scaleMap(-.1, event);
     }
@@ -148,8 +193,8 @@ export class MapScrollComp extends UIComp {
     private scaleMap(deltaScale: number, evt: EventMouse) {
         let self = this;
         let scale = self.grp_scrollMap.scale.x + deltaScale;
-        let editAreaWidth = self._editAreaSize.x;
-        let editAreaHeight = self._editAreaSize.y;
+        let editAreaWidth = self._editAreaSize.width;
+        let editAreaHeight = self._editAreaSize.height;
         let minScale = Math.max(editAreaWidth / self.mapMgr.mapWidth, editAreaHeight / self.mapMgr.mapHeight);
         if (scale > 2) scale = 2;
         if (scale < minScale) scale = minScale;
@@ -167,8 +212,8 @@ export class MapScrollComp extends UIComp {
     /**检测地图滚动容器边界 */
     private checkLimitPos() {
         let self = this;
-        let maxScrollX = self.stageWidth - self._editAreaSize.x;
-        let maxScrollY = self.stageHeight - self._editAreaSize.y;
+        let maxScrollX = self.stageWidth - self._editAreaSize.width;
+        let maxScrollY = self.stageHeight - self._editAreaSize.height;
         if (self.grp_scrollMap.position.x > 0) self.grp_scrollMap.setPosition(new Vec3(0, self.grp_scrollMap.position.y));
         if (self.grp_scrollMap.position.x < -maxScrollX) self.grp_scrollMap.setPosition(new Vec3(-maxScrollX, self.grp_scrollMap.position.y));
         if (self.grp_scrollMap.position.y > 0) self.grp_scrollMap.setPosition(new Vec3(self.grp_scrollMap.position.x, 0));
