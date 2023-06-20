@@ -43,6 +43,7 @@ export class MapScrollComp extends UIComp {
         let self = this;
         self.grp_mapSlices.destroyAllChildren();
         self.grp_scrollMap.setPosition(0, 0);
+        self.grp_scrollMap.setScale(new Vec3(1, 1));
         let mapMgr = self.mapMgr;
         var mapFloorArr = mapMgr.mapFloorArr;
         var mapslice = mapMgr.mapslice;
