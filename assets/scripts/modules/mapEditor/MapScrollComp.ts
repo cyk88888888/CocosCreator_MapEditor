@@ -25,7 +25,11 @@ export class MapScrollComp extends UIComp {
     private _nodeSize: Size;
     private _pressSpace: boolean;
     private _preUIPos: Vec2;
-
+    private mapMgr: MapMgr;
+    protected onEnter(): void {
+        let self = this;
+        self.mapMgr = MapMgr.inst;
+    }
     public async onImportMapJson() {
         let self = this;
         await self.addMapSlices();
@@ -35,7 +39,7 @@ export class MapScrollComp extends UIComp {
         let self = this;
         self.grp_mapSlices.destroyAllChildren();
         self.grp_scrollMap.setPosition(0, 0);
-        let mapMgr = MapMgr.inst;
+        let mapMgr = self.mapMgr;
         var mapFloorArr = mapMgr.mapFloorArr;
         var mapslice = mapMgr.mapslice;
         var tempX: number = 0;
@@ -102,20 +106,20 @@ export class MapScrollComp extends UIComp {
     private onMouseMove(e:EventMouse){
         let self = this;
         if(!self._pressSpace) return;
-        console.log('e.getUILocation(): ' +e.getUILocation());
-        console.log('e.getLocation(): ' +e.getLocation());
-        console.log('e.getUIDelta(): ' +e.getUIDelta());
         let curUILocation = e.getUILocation();
-        let deltaX = curUILocation.x - this._preUIPos.x;
-        let deltaY = curUILocation.y - this._preUIPos.y;
+        let deltaX = curUILocation.x - self._preUIPos.x;
+        let deltaY = curUILocation.y - self._preUIPos.y;
         let toX = self.grp_scrollMap.position.x + deltaX;
         let toY = self.grp_scrollMap.position.y + deltaY;
-        let mapMgr = MapMgr.inst;
-        if(toX < 0) toX = 0;
-        if(toY < 0) toY = 0;
-        if(toX > mapMgr.mapWidth - self._nodeSize.x) toX = mapMgr.mapWidth - self._nodeSize.x;
-        if(toY > mapMgr.mapHeight - self._nodeSize.y) toY = mapMgr.mapHeight - self._nodeSize.y;
+        let mapMgr = self.mapMgr;
+        if(toX > 0) toX = 0;
+        if(toY > 0) toY = 0;
+        let maxScrollX = mapMgr.mapWidth - self._nodeSize.x;
+        let maxScrollY = mapMgr.mapHeight - self._nodeSize.y;
+        if(toX < -maxScrollX) toX = -maxScrollX;;
+        if(toY < -maxScrollY) toY = -maxScrollY;
         self.grp_scrollMap.setPosition(toX, toY);
+        self._preUIPos = curUILocation;
     }
 
     private onMouseUp(e:EventMouse){
