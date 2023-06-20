@@ -1,4 +1,4 @@
-import { _decorator, Button, Component, Layers, Layout, Node, ScrollView, Sprite, SpriteFrame, UITransform } from 'cc';
+import { _decorator, Button, Component, Event, EventKeyboard, EventMouse, EventTouch, input, Input, KeyCode, Layers, Layout, Node, ScrollView, Size, Sprite, SpriteFrame, UITransform, Vec2 } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
@@ -15,12 +15,16 @@ const { ccclass, property } = _decorator;
 export class MapScrollComp extends UIComp {
     /** 预制体路径 */
     public static prefabUrl: string = 'prefab/mapEditor/MapScrollComp';
+    @property({ type: Node, tooltip: "地图总容器" })
+    private grp_mapLayer: Node;
     @property({ type: Node, tooltip: "地图滚动容器" })
-    private grp_map: Node;
+    private grp_scrollMap: Node;
     @property({ type: Node, tooltip: "地图切片容器" })
     private grp_mapSlices: Node;
-    @property({ type: ScrollView})
-    private scroll_map: ScrollView;
+    
+    private _nodeSize: Size;
+    private _pressSpace: boolean;
+    private _preUIPos: Vec2;
 
     public async onImportMapJson() {
         let self = this;
@@ -30,9 +34,7 @@ export class MapScrollComp extends UIComp {
     private async addMapSlices() {
         let self = this;
         self.grp_mapSlices.destroyAllChildren();
-        self.scroll_map.stopAutoScroll();
-        self.scroll_map.scrollToTop();
-        self.grp_map.setPosition(0, 0);
+        self.grp_scrollMap.setPosition(0, 0);
         let mapMgr = MapMgr.inst;
         var mapFloorArr = mapMgr.mapFloorArr;
         var mapslice = mapMgr.mapslice;
@@ -49,12 +51,11 @@ export class MapScrollComp extends UIComp {
         }
         mapMgr.mapWidth = totWidth;
         mapMgr.mapHeight = totHeight;
-        let uiTransform = self.grp_map.getComponent(UITransform);
-        uiTransform.width = totWidth;
-        uiTransform.height = totHeight;
+        BaseUT.setSize(self.grp_scrollMap, totWidth, totHeight);
+        BaseUT.setSize(self.grp_mapSlices, totWidth, totHeight);
         self.emit(CONST.GEVT.UpdateMapInfo);
         console.log("地图宽高:", mapMgr.mapWidth, mapMgr.mapHeight);
-
+        self.initEvent();
         async function showFloorItor(floorInfo: any) {
             let url: string = floorInfo.nativePath;
             return new Promise<void>((resolve, reject) => {
@@ -77,6 +78,69 @@ export class MapScrollComp extends UIComp {
                     resolve();
                 }, self);
             })
+        }
+    }
+
+    private initEvent(){
+        let self = this;
+        self._nodeSize = BaseUT.getSize(self.node);
+        // this.node.on(Node.EventType.MOUSE_MOVE, this.onShowRoadMsg, this),
+        self.node.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, this),
+        self.node.on(Node.EventType.MOUSE_UP, self.onMouseUp, this),
+        self.node.on(Node.EventType.MOUSE_LEAVE, self.onMouseUp, this),
+        self.node.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, this),
+
+        input.on(Input.EventType.KEY_DOWN, self.onKeyDown, self);
+        input.on(Input.EventType.KEY_UP, self.onKeyUp, self);
+    }
+
+    private onMouseDown(e:EventMouse){
+        this._preUIPos = e.getUILocation();
+        this.node.on(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
+    }
+
+    private onMouseMove(e:EventMouse){
+        let self = this;
+        if(!self._pressSpace) return;
+        console.log('e.getUILocation(): ' +e.getUILocation());
+        console.log('e.getLocation(): ' +e.getLocation());
+        console.log('e.getUIDelta(): ' +e.getUIDelta());
+        let curUILocation = e.getUILocation();
+        let deltaX = curUILocation.x - this._preUIPos.x;
+        let deltaY = curUILocation.y - this._preUIPos.y;
+        let toX = self.grp_scrollMap.position.x + deltaX;
+        let toY = self.grp_scrollMap.position.y + deltaY;
+        let mapMgr = MapMgr.inst;
+        if(toX < 0) toX = 0;
+        if(toY < 0) toY = 0;
+        if(toX > mapMgr.mapWidth - self._nodeSize.x) toX = mapMgr.mapWidth - self._nodeSize.x;
+        if(toY > mapMgr.mapHeight - self._nodeSize.y) toY = mapMgr.mapHeight - self._nodeSize.y;
+        self.grp_scrollMap.setPosition(toX, toY);
+    }
+
+    private onMouseUp(e:EventMouse){
+        this.node.hasEventListener(Node.EventType.MOUSE_MOVE) && this.node.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
+    }
+
+    onMouseWheel(event:EventMouse) {
+        console.log('event.getScrollX(): '+event.getScrollX(),'event.getScrollY(): '+event.getScrollY());
+    }
+
+    onKeyDown(event: EventKeyboard) {
+        let self = this;
+        switch(event.keyCode) {
+            case KeyCode.SPACE:
+                self._pressSpace = true;
+                break;
+        }
+    }
+
+    onKeyUp(event: EventKeyboard) {
+        let self = this;
+        switch(event.keyCode) {
+            case KeyCode.SPACE:
+                self._pressSpace = false;
+                break;
         }
     }
 

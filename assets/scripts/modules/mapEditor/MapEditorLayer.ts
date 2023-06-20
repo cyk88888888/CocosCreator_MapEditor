@@ -130,46 +130,7 @@ export class MapEditorLayer extends UILayer {
     }
 
     private _tap_btn_runDemo() {
-        onmessage();
-        // Get handle to draft file
-        async function onmessage() {
-            // Retrieve message sent to work from main script
-            const message = '我终于搞定web文件存储到本地了';
-          
-            // Get handle to draft file
-            // const root = await navigator.storage.getDirectory();
-            const opts = {
-                suggestedName: "mapData.json",
-                types: [
-                    {
-                        description: "保存的文件名称",
-                        accept: { "text/plain": [".json"] },
-                    },
-                ],
-            };
-            let root = await window["showSaveFilePicker"](opts);
-            const draftHandle = await root.getFileHandle("draft.txt", { create: true });
-            // Get sync access handle
-            const accessHandle = await draftHandle["createSyncAccessHandle"]();
-          
-            // Get size of the file.
-            const fileSize = accessHandle.getSize();
-            // Read file content to a buffer.
-            const buffer = new DataView(new ArrayBuffer(fileSize));
-            const readBuffer = accessHandle.read(buffer, { at: 0 });
-          
-            // Write the message to the end of the file.
-            const encoder = new TextEncoder();
-            const encodedMessage = encoder.encode(message);
-            const writeBuffer = accessHandle.write(encodedMessage, { at: readBuffer });
-          
-            // Persist changes to disk.
-            accessHandle.flush();
-          
-            // Always close FileSystemSyncAccessHandle if done.
-            accessHandle.close();
-          };
-          
+       
     }
 }
 

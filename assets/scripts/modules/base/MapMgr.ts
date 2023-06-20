@@ -16,11 +16,16 @@ export class MapMgr {
         return this._inst;
     }
 
-    public mapFloorArr: any[];//导入的地图切片数组
-    public mapslice: number;//导入等待地图切片列数
-    public mapWidth: number;//地图宽
-    public mapHeight: number;//地图高
-    public mapThingArr: any[];//导入的地图场景物件数组
+    /** 导入的地图切片数组*/
+    public mapFloorArr: any[];
+    /** 导入等待地图切片列数*/
+    public mapslice: number;
+    /** 地图宽*/
+    public mapWidth: number;
+    /** 地图高*/
+    public mapHeight: number;
+    /** 导入的地图场景物件数组*/
+    public mapThingArr: any[];
     /**
      * 切换地图目录
      */
