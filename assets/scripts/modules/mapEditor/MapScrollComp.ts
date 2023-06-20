@@ -144,20 +144,23 @@ export class MapScrollComp extends UIComp {
         event.getScrollY() > 0 ? this.scaleMap(.1, event) : this.scaleMap(-.1, event);
     }
 
-    private scaleMap(t: number, e: EventMouse) {
+    /** 缩放地图*/
+    private scaleMap(deltaScale: number, evt: EventMouse) {
         let self = this;
-        let scale = self.grp_scrollMap.scale.x + t;
+        let scale = self.grp_scrollMap.scale.x + deltaScale;
         let editAreaWidth = self._editAreaSize.x;
         let editAreaHeight = self._editAreaSize.y;
         let minScale = Math.max(editAreaWidth / self.mapMgr.mapWidth, editAreaHeight / self.mapMgr.mapHeight);
         if (scale > 2) scale = 2;
         if (scale < minScale) scale = minScale;
-        let r = e.getLocation();
-        let a = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(r.x, r.y));
-        self.grp_scrollMap.setScale(new Vec3(scale, scale));
-        let s = self._scrollMapUITranstorm.convertToWorldSpaceAR(new Vec3(a.x, a.y));
-        let h = new Vec2(r.x - s.x, r.y - s.y);
-        self.grp_scrollMap.setPosition(self.grp_scrollMap.position.x + h.x, self.grp_scrollMap.position.y + h.y);
+        let location = evt.getLocation();
+        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(location.x, location.y));
+        self.grp_scrollMap.setScale(new Vec3(scale, scale, scale));//一定要设置z的scale，不然会影响转换成世界坐标的值
+        let globalPos = self._scrollMapUITranstorm.convertToWorldSpaceAR(new Vec3(localUIPos.x, localUIPos.y));
+        let moveDelta = new Vec2(location.x - globalPos.x, location.y - globalPos.y);
+        let toX = self.grp_scrollMap.position.x + moveDelta.x;
+        let toY = self.grp_scrollMap.position.y + moveDelta.y;
+        self.grp_scrollMap.setPosition(toX, toY);
         self.checkLimitPos();
     }
 
