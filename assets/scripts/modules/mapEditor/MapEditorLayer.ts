@@ -1,4 +1,4 @@
-import { _decorator, Button, profiler, ScrollView } from 'cc';
+import { _decorator, Button, Label, profiler, ScrollView } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
 import { FileIOHandler } from '../../framework/mgr/FileIOHandler';
 import { MapScrollComp } from './MapScrollComp';
@@ -36,6 +36,9 @@ export class MapEditorLayer extends UILayer {
     private btn_profiler: Button;
     @property({ type: Button })
     private btn_resetScale: Button;
+    @property({ type: Label })
+    private lbl_mapSize: Label;
+
     @property({ type: MapScrollComp, tooltip: "编辑器地图滚动组件" })
     private mapScrollComp: MapScrollComp;
     @property({ type: Node })
@@ -78,6 +81,7 @@ export class MapEditorLayer extends UILayer {
         self.refreshList("list_mapThing");
         await self.mapScrollComp.onImportMapJson();
         juhuaDlg.close();
+        self.updateMapInfo();
         //清除上一次导入的地图资源
         await new Promise<void>((resolve, reject) => {
             self.setTimeout(() => {
@@ -85,6 +89,12 @@ export class MapEditorLayer extends UILayer {
                 resolve();
             },500);
         })
+    }
+
+    /**导入成功后，更新显示地图数据 */
+    private updateMapInfo(){
+        let self = this;
+        self.lbl_mapSize.string = `地图宽高：${MapMgr.inst.mapWidth},${MapMgr.inst.mapHeight}`;
     }
 
     private _data_list_path() {
