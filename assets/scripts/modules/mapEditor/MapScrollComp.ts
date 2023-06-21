@@ -199,9 +199,9 @@ export class MapScrollComp extends UIComp {
         if (scale > 2) scale = 2;
         if (scale < minScale) scale = minScale;
         let location = evt.getLocation();
-        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(location.x, location.y));
+        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(location.x, location.y, 0));
         self.grp_scrollMap.setScale(new Vec3(scale, scale, scale));//一定要设置z的scale，不然会影响转换成世界坐标的值
-        let globalPos = self._scrollMapUITranstorm.convertToWorldSpaceAR(new Vec3(localUIPos.x, localUIPos.y));
+        let globalPos = self._scrollMapUITranstorm.convertToWorldSpaceAR(new Vec3(localUIPos.x, localUIPos.y, 0));
         let moveDelta = new Vec2(location.x - globalPos.x, location.y - globalPos.y);
         let toX = self.grp_scrollMap.position.x + moveDelta.x;
         let toY = self.grp_scrollMap.position.y + moveDelta.y;
