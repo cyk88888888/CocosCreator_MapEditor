@@ -204,7 +204,7 @@ export class MapScrollComp extends UIComp {
         if (scale > 2) scale = 2;
         if (scale < minScale) scale = minScale;
         let location = evt.getLocation();
-        let mousePos = BaseUT.getMousePos(location);
+        let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放值，会影响evt.getLocation()的时间坐标位置） 
         let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
         self.grp_scrollMap.setScale(new Vec3(scale, scale, scale));//一定要设置z的scale，不然会影响转换成世界坐标的值
         let globalPos = self._scrollMapUITranstorm.convertToWorldSpaceAR(new Vec3(localUIPos.x, localUIPos.y, 0));
