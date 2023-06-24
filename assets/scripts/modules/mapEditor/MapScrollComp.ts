@@ -154,7 +154,7 @@ export class MapScrollComp extends UIComp {
 
     private onMouseDown(e: EventMouse) {
         let self = this;
-        console.log("getLocation(): "+JSON.stringify(e.getLocation()));
+        // let mousePos = BaseUT.getMousePos(e.getLocation());
         self._preUIPos = e.getUILocation();
         self.grp_mapLayer.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
     }
@@ -202,10 +202,11 @@ export class MapScrollComp extends UIComp {
         if (scale > 2) scale = 2;
         if (scale < minScale) scale = minScale;
         let location = evt.getLocation();
-        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(location.x, location.y, 0));
+        let mousePos = BaseUT.getMousePos(location);
+        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
         self.grp_scrollMap.setScale(new Vec3(scale, scale, scale));//一定要设置z的scale，不然会影响转换成世界坐标的值
         let globalPos = self._scrollMapUITranstorm.convertToWorldSpaceAR(new Vec3(localUIPos.x, localUIPos.y, 0));
-        let moveDelta = new Vec2(location.x - globalPos.x, location.y - globalPos.y);
+        let moveDelta = new Vec2(mousePos.x - globalPos.x, mousePos.y - globalPos.y);
         let toX = self.grp_scrollMap.position.x + moveDelta.x;
         let toY = self.grp_scrollMap.position.y + moveDelta.y;
         self.grp_scrollMap.setPosition(toX, toY);

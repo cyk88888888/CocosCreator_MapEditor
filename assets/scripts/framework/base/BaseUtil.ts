@@ -21,6 +21,7 @@ export namespace BaseUT {
         size.height /= view.getScaleY();
         return size;
     }
+
     /** 获取宽度适配下，layer容器宽高 */
     export function getLayerScaleSize() {
         let windowSize = getStageSize();
@@ -35,6 +36,12 @@ export namespace BaseUT {
         let scaleSize = getLayerScaleSize();
         setSize(node, scaleSize.width, scaleSize.height);
         return scaleSize;
+    }
+
+    /**获取鼠标位置（相对于游戏左下角） */
+    export function getMousePos(origin: Vec2){
+        let view = getView();
+        return new Vec2(origin.x / view.getScaleX(), origin.y / view.getScaleY());
     }
 
     /**获取一个新的ui节点node */
