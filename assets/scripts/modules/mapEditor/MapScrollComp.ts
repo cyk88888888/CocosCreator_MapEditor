@@ -154,7 +154,9 @@ export class MapScrollComp extends UIComp {
 
     private onMouseDown(e: EventMouse) {
         let self = this;
+        // console.log('getLocation: '+JSON.stringify(e.getLocation()));
         // let mousePos = BaseUT.getMousePos(e.getLocation());
+        // console.log('mousePos: '+JSON.stringify(mousePos));
         self._preUIPos = e.getUILocation();
         self.grp_mapLayer.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
     }
