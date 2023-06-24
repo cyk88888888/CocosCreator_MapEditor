@@ -24,6 +24,8 @@ export class MapScrollComp extends UIComp {
     @property({ type: Graphics })
     public graphicsGrid: Graphics;
 
+    public scaleCb: Function;
+    public scaleCbCtx: any;
     /**编辑区域宽高 */
     private _editAreaSize: Size;
     private _pressSpace: boolean;
@@ -31,6 +33,7 @@ export class MapScrollComp extends UIComp {
     private _preUIPos: Vec2;
     private mapMgr: MapMgr;
     private _scrollMapUITranstorm: UITransform;
+    
     protected onEnter(): void {
         let self = this;
         self.mapMgr = MapMgr.inst;
@@ -66,7 +69,6 @@ export class MapScrollComp extends UIComp {
         mapMgr.mapHeight = totHeight;
         BaseUT.setSize(self.grp_scrollMap, totWidth, totHeight);
         BaseUT.setSize(self.grp_mapSlices, totWidth, totHeight);
-        self.emit(CONST.GEVT.UpdateMapInfo);
         console.log("地图宽高:", mapMgr.mapWidth, mapMgr.mapHeight);
         self.init();
         async function showFloorItor(floorInfo: any) {
@@ -138,13 +140,13 @@ export class MapScrollComp extends UIComp {
     /**初始化事件 */
     private initEvent() {
         let self = this;
-        self._editAreaSize = BaseUT.getSize(self.node);
+        self._editAreaSize = BaseUT.getSize(self.grp_mapLayer);
         // this.node.on(Node.EventType.MOUSE_MOVE, this.onShowRoadMsg, self),
-        self.node.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self);
-        self.node.on(Node.EventType.MOUSE_UP, self.onMouseUp, self);
-        self.node.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self);
-        self.node.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, self);
-        self.node.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_UP, self.onMouseUp, self);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, self);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self);
 
         input.on(Input.EventType.KEY_DOWN, self.onKeyDown, self);
         input.on(Input.EventType.KEY_UP, self.onKeyUp, self);
@@ -152,8 +154,9 @@ export class MapScrollComp extends UIComp {
 
     private onMouseDown(e: EventMouse) {
         let self = this;
+        console.log("getLocation(): "+JSON.stringify(e.getLocation()));
         self._preUIPos = e.getUILocation();
-        self.node.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
     }
 
     private onMouseMove(e: EventMouse) {
@@ -170,7 +173,7 @@ export class MapScrollComp extends UIComp {
     }
 
     private onMouseUp(e: EventMouse) {
-        this.node.hasEventListener(Node.EventType.MOUSE_MOVE) && this.node.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
+        this.grp_mapLayer.hasEventListener(Node.EventType.MOUSE_MOVE) && this.grp_mapLayer.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
     }
 
     private onMouseEnter(e: EventMouse) {
@@ -207,6 +210,7 @@ export class MapScrollComp extends UIComp {
         let toY = self.grp_scrollMap.position.y + moveDelta.y;
         self.grp_scrollMap.setPosition(toX, toY);
         self.checkLimitPos();
+        if(self.scaleCb) self.scaleCb.call(self.scaleCbCtx);
     }
 
     /**检测地图滚动容器边界 */
@@ -218,6 +222,11 @@ export class MapScrollComp extends UIComp {
         if (self.grp_scrollMap.position.x < -maxScrollX) self.grp_scrollMap.setPosition(new Vec3(-maxScrollX, self.grp_scrollMap.position.y));
         if (self.grp_scrollMap.position.y > 0) self.grp_scrollMap.setPosition(new Vec3(self.grp_scrollMap.position.x, 0));
         if (self.grp_scrollMap.position.y < -maxScrollY) self.grp_scrollMap.setPosition(new Vec3(self.grp_scrollMap.position.x, -maxScrollY));
+    }
+
+    public get mapScale(){
+        let self = this;
+        return self.grp_scrollMap.scale.x;
     }
 
     private get stageWidth() {

@@ -1,4 +1,4 @@
-import { _decorator, Button, Label, profiler, ScrollView } from 'cc';
+import { _decorator, Button, EventMouse, Label, profiler, ScrollView } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
 import { FileIOHandler } from '../../framework/mgr/FileIOHandler';
 import { MapScrollComp } from './MapScrollComp';
@@ -38,6 +38,8 @@ export class MapEditorLayer extends UILayer {
     private btn_resetScale: Button;
     @property({ type: Label })
     private lbl_mapSize: Label;
+    @property({ type: Label })
+    private lbl_mapScale: Label;
 
     @property({ type: MapScrollComp, tooltip: "编辑器地图滚动组件" })
     private mapScrollComp: MapScrollComp;
@@ -61,7 +63,15 @@ export class MapEditorLayer extends UILayer {
         self.onEmitter(CONST.GEVT.ImportMapJson, self.onImportMapJson);//导入josn地图数据成功
         self._selectIdx = 1;
         self.list_pathSize.selectedId = 0;
+        self.mapScrollComp.scaleCbCtx = self;
+        self.mapScrollComp.scaleCb = self.updateMapScale;
+        self.node.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self);
         self.showEditOperate();
+    }
+
+    private onMouseDown(e: EventMouse) {
+        let self = this;
+        console.log("!!getLocation(): "+JSON.stringify(e.getLocation()));
     }
 
     private showEditOperate() {
@@ -94,7 +104,13 @@ export class MapEditorLayer extends UILayer {
     /**导入成功后，更新显示地图数据 */
     private updateMapInfo(){
         let self = this;
-        self.lbl_mapSize.string = `地图宽高：${MapMgr.inst.mapWidth},${MapMgr.inst.mapHeight}`;
+        self.lbl_mapSize.string = `地图宽高：${MapMgr.inst.mapWidth}, ${MapMgr.inst.mapHeight}`;
+        self.updateMapScale();
+    }
+
+    private updateMapScale(){
+        let self = this;
+        self.lbl_mapScale.string = `地图缩放比例：${self.mapScrollComp.mapScale.toFixed(2)}`;
     }
 
     private _data_list_path() {
@@ -147,9 +163,11 @@ export class MapEditorLayer extends UILayer {
         self.mapScrollComp.graphicsGrid.node.active = !self.mapScrollComp.graphicsGrid.node.active;
     }
 
+    /**重置缩放比例 */
     private _tap_btn_resetScale(){
         let self = this;
         self.mapScrollComp.resetScale();
+        self.updateMapScale();
     }
 }
 
