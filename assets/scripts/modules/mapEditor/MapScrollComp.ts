@@ -110,7 +110,7 @@ export class MapScrollComp extends UIComp {
 
         let lineGraphics = self.graphicsGrid;
         lineGraphics.clear();
-        lineGraphics.lineWidth = 2;
+        lineGraphics.lineWidth = 1;
         for (let i = 0; i < numCols + 1; i++)//画竖线
         {
             lineGraphics.moveTo(i * cellSize, 0);
