@@ -5,16 +5,25 @@
  */
 import { game, Layers, Node, Scene, screen, Size, UIOpacity, UITransform, Vec2, view } from "cc";
 export namespace BaseUT {
+    export function getView(){
+        return view;
+    }
+
+    export function getScreen(){
+        return screen;
+    }
+
     /** 获取宽度适配下屏幕的视图宽高*/
     export function getStageSize() {
-        let size = screen.windowSize;
+        let size = getScreen().windowSize;
+        let view = getView();
         size.width /= view.getScaleX();
         size.height /= view.getScaleY();
         return size;
     }
     /** 获取宽度适配下，layer容器宽高 */
     export function getLayerScaleSize() {
-        let windowSize = BaseUT.getStageSize();
+        let windowSize = getStageSize();
         return new Size(windowSize.width, windowSize.height);
     }
     /**
@@ -23,8 +32,8 @@ export namespace BaseUT {
      * @returns 
      */
     export function setFitSize(node: Node) {
-        let scaleSize = BaseUT.getLayerScaleSize();
-        BaseUT.setSize(node, scaleSize.width, scaleSize.height);
+        let scaleSize = getLayerScaleSize();
+        setSize(node, scaleSize.width, scaleSize.height);
         return scaleSize;
     }
 
@@ -63,7 +72,7 @@ export namespace BaseUT {
     }
 
     export function getFitY(min: number, max: number) {
-        let windowSize = BaseUT.getLayerScaleSize();
+        let windowSize = getLayerScaleSize();
         return min + (max - min) * (windowSize.height - 1068) / (1280 - 1068);
     }
 

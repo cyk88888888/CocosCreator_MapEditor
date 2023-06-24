@@ -65,13 +65,7 @@ export class MapEditorLayer extends UILayer {
         self.list_pathSize.selectedId = 0;
         self.mapScrollComp.scaleCbCtx = self;
         self.mapScrollComp.scaleCb = self.updateMapScale;
-        self.node.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self);
         self.showEditOperate();
-    }
-
-    private onMouseDown(e: EventMouse) {
-        let self = this;
-        console.log("!!getLocation(): "+JSON.stringify(e.getLocation()));
     }
 
     private showEditOperate() {
