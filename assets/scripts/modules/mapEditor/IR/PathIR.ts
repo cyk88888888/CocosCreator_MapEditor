@@ -13,7 +13,7 @@ export class PathIR extends ListItem {
         let self = this; 
         let data = self. data;
         self.lbl_name.string = data.desc;
-        let color = MapMgr.inst.getColorByType(data.pathType);
+        let color = MapMgr.inst.getColorByType(data.gridType);
         self.graphicsSize.clear();
         self.graphicsSize.fillColor.fromHEX(color);
         self.graphicsSize.rect(-40, -40, 80, 80);

@@ -115,9 +115,9 @@ export class MapEditorLayer extends UILayer {
 
     private _data_list_path() {
         let rst = [
-            { pathType: CONST.PathType.GridType_walk, desc: "可行走点" },
-            { pathType: CONST.PathType.GridType_start, desc: "起始地点" },
-            { pathType: CONST.PathType.GridType_WaterVerts, desc: "落水点" }
+            { gridType: CONST.GridType.GridType_walk, desc: "可行走点" },
+            { gridType: CONST.GridType.GridType_start, desc: "起始地点" },
+            { gridType: CONST.GridType.GridType_WaterVerts, desc: "落水点" }
         ];
         return rst;
     }
@@ -130,6 +130,11 @@ export class MapEditorLayer extends UILayer {
     private _data_list_mapThing() {
         let rst = MapMgr.inst.mapThingArr || [];
         return rst;
+    }
+
+    private _select_list_path(data: any, selectedIdx: number, lastSelectedIdx: number) {
+        let self = this;
+        self.emit(CONST.GEVT.ChangeGridType, {gridType: data.gridType});
     }
 
     /** 打开文件选择器+读取数据 */

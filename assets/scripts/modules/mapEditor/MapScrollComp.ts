@@ -1,9 +1,11 @@
-import { _decorator, EventKeyboard, EventMouse, Graphics, input, Input, KeyCode, Layout, Node, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3, Widget } from 'cc';
+import { _decorator, EventKeyboard, EventMouse, Graphics, input, Input, instantiate, KeyCode, Layout, Node, Prefab, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3, Widget } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
+import { MessageTip } from '../common/message/MessageTip';
+import { ColorGrid } from './grid/ColorGrid';
 const { ccclass, property } = _decorator;
 
 /*
@@ -21,23 +23,34 @@ export class MapScrollComp extends UIComp {
     public grp_scrollMap: Node;
     @property({ type: Node, tooltip: "地图切片容器" })
     public grp_mapSlices: Node;
+    @property({ type: Node, tooltip: "地图格子路点容器" })
+    public grp_colorGrid: Node;
     @property({ type: Graphics })
     public graphicsGrid: Graphics;
+    @property({ type: Prefab })
+    public colorGrid: Prefab;
 
     public scaleCb: Function;
     public scaleCbCtx: any;
     /**编辑区域宽高 */
     private _editAreaSize: Size;
     private _pressSpace: boolean;
+    /**是否按下鼠标左键 */
+    private _pressMouseLeft: boolean;
+    /**是否按下鼠标右键 */
+    private _pressMouseRight: boolean;
     private _isInEditArea: boolean;
     private _preUIPos: Vec2;
     private mapMgr: MapMgr;
     private _scrollMapUITranstorm: UITransform;
-
+    /** 当前绘制的格子类型*/
+    private _gridType: CONST.GridType;
     protected onEnter(): void {
         let self = this;
         self.mapMgr = MapMgr.inst;
         self._scrollMapUITranstorm = self.grp_scrollMap.getComponent(UITransform);
+        self._gridType = CONST.GridType.GridType_none;
+        self.onEmitter(CONST.GEVT.ChangeGridType, self.onChangeGridType);
     }
 
     public async onImportMapJson() {
@@ -49,6 +62,7 @@ export class MapScrollComp extends UIComp {
     private async addMapSlices() {
         let self = this;
         self.grp_mapSlices.destroyAllChildren();
+        self.grp_colorGrid.destroyAllChildren();
         self.grp_scrollMap.setPosition(0, 0, 0);
         self.grp_scrollMap.setScale(new Vec3(1, 1, 1));
         let mapMgr = self.mapMgr;
@@ -137,34 +151,104 @@ export class MapScrollComp extends UIComp {
         self.grp_mapLayer.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, self);
         self.grp_mapLayer.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self);
 
-        input.on(Input.EventType.KEY_DOWN, self.onKeyDown, self);
-        input.on(Input.EventType.KEY_UP, self.onKeyUp, self);
+        input.on(Input.EventType.KEY_DOWN, self.onKeyDown, self); //监听键盘按键按下
+        input.on(Input.EventType.KEY_UP, self.onKeyUp, self); //监听键盘按键放开
     }
 
     private onMouseDown(e: EventMouse) {
         let self = this;
+        self._preUIPos = e.getUILocation();
+        self.grp_mapLayer.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
+
+        if (!self._pressSpace && self._gridType != CONST.GridType.GridType_none) {
+            let buttonId = e.getButton();
+            if (buttonId == EventMouse.BUTTON_LEFT) {
+                self._pressMouseLeft = true;
+            } else if (buttonId == EventMouse.BUTTON_RIGHT) {
+                self._pressMouseRight = true;
+            }
+            if (self._pressMouseRight) {
+                self.removeGrid(self._gridType, e.getLocation());
+            } else if (self._pressMouseLeft) {
+                self.addGrid(self._gridType, e.getLocation());
+            }
+        }
+
         // console.log('getLocation: '+JSON.stringify(e.getLocation()));
         // let mousePos = BaseUT.getMousePos(e.getLocation());
         // console.log('mousePos: '+JSON.stringify(mousePos));
-        self._preUIPos = e.getUILocation();
-        self.grp_mapLayer.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
     }
 
     private onMouseMove(e: EventMouse) {
         let self = this;
-        if (!self._pressSpace) return;
-        let curUILocation = e.getUILocation();
-        let deltaX = curUILocation.x - self._preUIPos.x;
-        let deltaY = curUILocation.y - self._preUIPos.y;
-        let toX = self.grp_scrollMap.position.x + deltaX;
-        let toY = self.grp_scrollMap.position.y + deltaY;
-        self.grp_scrollMap.setPosition(toX, toY);
-        self._preUIPos = curUILocation;
-        self.checkLimitPos();
+        if (self._pressSpace) {//拖动地图
+            let curUILocation = e.getUILocation();
+            let deltaX = curUILocation.x - self._preUIPos.x;
+            let deltaY = curUILocation.y - self._preUIPos.y;
+            let toX = self.grp_scrollMap.position.x + deltaX;
+            let toY = self.grp_scrollMap.position.y + deltaY;
+            self.grp_scrollMap.setPosition(toX, toY);
+            self._preUIPos = curUILocation;
+            self.checkLimitPos();
+        } else {
+            if (self._gridType != CONST.GridType.GridType_none) {
+                if (self._pressMouseRight) {
+                    self.removeGrid(self._gridType, e.getLocation());
+                } else if (self._pressMouseLeft) {
+                    self.addGrid(self._gridType, e.getLocation());
+                }
+            }
+        }
     }
 
     private onMouseUp(e: EventMouse) {
+        let self = this;
         this.grp_mapLayer.hasEventListener(Node.EventType.MOUSE_MOVE) && this.grp_mapLayer.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
+
+        let buttonId = e.getButton();
+        if (buttonId == EventMouse.BUTTON_LEFT) {
+            self._pressMouseLeft = false;
+        } else if (buttonId == EventMouse.BUTTON_RIGHT) {
+            self._pressMouseRight = false;
+        }
+    }
+
+    /**填充格子 */
+    private addGrid(gridType: CONST.GridType, location: Vec2) {
+        let self = this;
+        if (!self.mapMgr.gridTypeMap[gridType]) {
+            self.mapMgr.gridTypeMap[gridType] = {};
+        }
+        let cellSize = self.mapMgr.cellSize;
+        let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
+        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
+        let drawXY = self.mapMgr.pos2Grid(localUIPos.x, localUIPos.y);
+        let key = drawXY.x + "_" + drawXY.y;
+        if (self.mapMgr.gridTypeMap[gridType][key]) return;//已有格子
+        let colorGrid = instantiate(self.colorGrid);
+        let colorGridScript = colorGrid.getComponent(ColorGrid);
+        colorGrid.setParent(self.grp_colorGrid);
+        colorGridScript.drawRect(self.mapMgr.getColorByType(gridType), self.mapMgr.cellSize, drawXY.x * cellSize, drawXY.y * cellSize);
+        self.mapMgr.gridTypeMap[gridType][key] = colorGrid;
+    }
+
+    /** 清除格子*/
+    private removeGrid(gridType: CONST.GridType, location: Vec2) {
+        let self = this;
+        if (!self.mapMgr.gridTypeMap[gridType]) return;
+        let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
+        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
+        let drawXY = self.mapMgr.pos2Grid(localUIPos.x, localUIPos.y);
+        let key = drawXY.x + "_" + drawXY.y;
+        let colorGrid: Node = self.mapMgr.gridTypeMap[gridType][key];
+        if (!colorGrid) return;
+        delete self.mapMgr.gridTypeMap[gridType][key];
+        colorGrid.destroy();
+    }
+
+    private onChangeGridType(dt: any) {
+        let self = this;
+        self._gridType = dt.gridType;
     }
 
     private onMouseEnter(e: EventMouse) {

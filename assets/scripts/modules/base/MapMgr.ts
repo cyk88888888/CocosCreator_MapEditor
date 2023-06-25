@@ -28,6 +28,8 @@ export class MapMgr {
     public cellSize: number;
     /** 导入的地图场景物件数组*/
     public mapThingArr: any[];
+    /**当前绘制的格子数据 */
+    public gridTypeMap: any;
     /**
      * 切换地图目录
      */
@@ -105,7 +107,8 @@ export class MapMgr {
             }
         })
         console.log(mapData, thingPram);
-        self.cellSize = mapData.cellSize;
+        self.cellSize = mapData.cellSize || 20;
+        self.gridTypeMap = {};
         emmiter.emit(CONST.GEVT.ImportMapJson, { mapData: mapData, thingPram: thingPram });
     }
 
@@ -114,17 +117,23 @@ export class MapMgr {
      * @param type 格子类型
      * @returns 
      */
-    public getColorByType(type: CONST.PathType): string {
+    public getColorByType(type: CONST.GridType): string {
         switch (type) {
-            case CONST.PathType.GridType_walk:
+            case CONST.GridType.GridType_walk:
                 return '#00FF00';
-            case CONST.PathType.GridType_WaterVerts:
+            case CONST.GridType.GridType_WaterVerts:
                 return '#FF00FF';
-            case CONST.PathType.GridType_start:
+            case CONST.GridType.GridType_start:
                 return '#FFFF00';
             default:
                 return '#000000';
         }
+    }
+
+    /**地图位置坐标转为格子坐标 */
+    public pos2Grid(x: number, y: number): { x: number, y: number } {
+        let self = this;
+        return { x: Math.floor(x / self.cellSize), y: Math.floor(y / self.cellSize) };
     }
 
 

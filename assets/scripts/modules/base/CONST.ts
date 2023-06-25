@@ -7,10 +7,12 @@ export namespace CONST {
     export enum GEVT {
         ImportMapJson = "ImportMapJson",
         UpdateMapInfo = "UpdateMapInfo",
+        ChangeGridType = "ChangeGridType",
     }
 
-    /** 路径类型*/
-    export enum PathType{
+    /** 格子类型*/
+    export enum GridType{
+        GridType_none = "GridType_none",//空
         GridType_walk = "GridType_walk",//可行走
         GridType_WaterVerts = "GridType_WaterVerts",//落水点
         GridType_start = "GridType_start",//起始点
