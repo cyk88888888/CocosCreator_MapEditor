@@ -102,6 +102,7 @@ export class MapScrollComp extends UIComp {
         self.initEvent();
     }
 
+    /**初始化网格线条 */
     private initGrid() {
         let self = this;
         let cellSize = self.mapMgr.cellSize;
@@ -123,17 +124,6 @@ export class MapScrollComp extends UIComp {
             lineGraphics.lineTo(numCols * cellSize, i * cellSize);
         }
         lineGraphics.stroke();
-    }
-
-    /**重置缩放比例 */
-    public resetScale() {
-        let self = this;
-        let oldScale = self.grp_scrollMap.scale.x;
-        if (oldScale == 1) return;//已经是初始缩放比例
-        let widget = self.node.getComponent(Widget);
-        let selfSize = BaseUT.getSize(self.node);
-        let location = new Vec2(widget.left + selfSize.width / 2, widget.bottom + selfSize.height / 2);//以当前地图视角中心为圆心来重置缩放
-        self.scaleMap(1 - self.grp_scrollMap.scale.x, location);
     }
 
     /**初始化事件 */
@@ -192,6 +182,17 @@ export class MapScrollComp extends UIComp {
     private onMouseWheel(event: EventMouse) {
         let location = event.getLocation();
         event.getScrollY() > 0 ? this.scaleMap(0.1, location) : this.scaleMap(-0.1, location);
+    }
+
+    /**重置缩放比例 */
+    public resetScale() {
+        let self = this;
+        let oldScale = self.grp_scrollMap.scale.x;
+        if (oldScale == 1) return;//已经是初始缩放比例
+        let widget = self.node.getComponent(Widget);
+        let selfSize = BaseUT.getSize(self.node);
+        let location = new Vec2(widget.left + selfSize.width / 2, widget.bottom + selfSize.height / 2);//以当前地图视角中心为圆心来重置缩放
+        self.scaleMap(1 - self.grp_scrollMap.scale.x, location);
     }
 
     /**
@@ -269,10 +270,8 @@ export class MapScrollComp extends UIComp {
         let self = this;
         if (self._pressSpace && self._isInEditArea) {
             BaseUT.changeMouseCursor("move");
-            console.log('move');
         } else {
             BaseUT.changeMouseCursor("auto");
-            console.log('auto');
         }
     }
 }
