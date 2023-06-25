@@ -37,6 +37,12 @@ export class MapEditorLayer extends UILayer {
     @property({ type: Button })
     private btn_resetScale: Button;
     @property({ type: Label })
+    private lbl_grid: Label;
+    @property({ type: Label })
+    private lbl_path: Label;
+    @property({ type: Label })
+    private lbl_mapthing: Label;
+    @property({ type: Label })
     private lbl_mapSize: Label;
     @property({ type: Label })
     private lbl_mapScale: Label;
@@ -91,18 +97,18 @@ export class MapEditorLayer extends UILayer {
             self.setTimeout(() => {
                 ResMgr.inst.relaseAllLocal();
                 resolve();
-            },500);
+            }, 500);
         })
     }
 
     /**导入成功后，更新显示地图数据 */
-    private updateMapInfo(){
+    private updateMapInfo() {
         let self = this;
         self.lbl_mapSize.string = `地图宽高：${MapMgr.inst.mapWidth}, ${MapMgr.inst.mapHeight}`;
         self.updateMapScale();
     }
 
-    private updateMapScale(){
+    private updateMapScale() {
         let self = this;
         self.lbl_mapScale.string = `地图缩放比例：${self.mapScrollComp.mapScale.toFixed(2)}`;
     }
@@ -154,11 +160,24 @@ export class MapEditorLayer extends UILayer {
     /**显隐网格 */
     private _tap_btn_showGrid() {
         let self = this;
+        self.lbl_grid.string = self.lbl_grid.string == "显示网格" ? "隐藏网格" : "显示网格";
         self.mapScrollComp.graphicsGrid.node.active = !self.mapScrollComp.graphicsGrid.node.active;
     }
 
+    /**显隐路点 */
+    private _tap_btn_showPath() {
+        let self = this;
+        self.lbl_path.string = self.lbl_path.string == "显示路点" ? "隐藏路点" : "显示路点";
+    }
+
+    /**显隐物件 */
+    private _tap_btn_showMapThing() {
+        let self = this;
+        self.lbl_mapthing.string = self.lbl_mapthing.string == "显示物件" ? "隐藏路点" : "显示物件";
+    }
+
     /**重置缩放比例 */
-    private _tap_btn_resetScale(){
+    private _tap_btn_resetScale() {
         let self = this;
         self.mapScrollComp.resetScale();
         self.updateMapScale();

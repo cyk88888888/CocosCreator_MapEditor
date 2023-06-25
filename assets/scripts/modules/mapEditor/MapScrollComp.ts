@@ -1,4 +1,4 @@
-import { _decorator, EventKeyboard, EventMouse, Graphics, input, Input, KeyCode, Layout, Node, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, EventKeyboard, EventMouse, Graphics, input, Input, KeyCode, Layout, Node, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3, Widget } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
@@ -33,7 +33,7 @@ export class MapScrollComp extends UIComp {
     private _preUIPos: Vec2;
     private mapMgr: MapMgr;
     private _scrollMapUITranstorm: UITransform;
-    
+
     protected onEnter(): void {
         let self = this;
         self.mapMgr = MapMgr.inst;
@@ -130,11 +130,10 @@ export class MapScrollComp extends UIComp {
         let self = this;
         let oldScale = self.grp_scrollMap.scale.x;
         if (oldScale == 1) return;//已经是初始缩放比例
-        self.grp_scrollMap.setScale(new Vec3(1, 1, 1));
-        let toX = self.grp_scrollMap.position.x - (self.grp_scrollMap.position.x / oldScale) + self._editAreaSize.width / 2;
-        let toY = self.grp_scrollMap.position.y - (self.grp_scrollMap.position.y / oldScale) + self._editAreaSize.height / 2;
-        self.grp_scrollMap.setPosition(new Vec3(toX, toY));
-        self.checkLimitPos();
+        let widget = self.node.getComponent(Widget);
+        let selfSize = BaseUT.getSize(self.node);
+        let location = new Vec2(widget.left + selfSize.width / 2, widget.bottom + selfSize.height / 2);//以当前地图视角中心为圆心来重置缩放
+        self.scaleMap(1 - self.grp_scrollMap.scale.x, location);
     }
 
     /**初始化事件 */
@@ -191,11 +190,16 @@ export class MapScrollComp extends UIComp {
     }
 
     private onMouseWheel(event: EventMouse) {
-        event.getScrollY() > 0 ? this.scaleMap(.1, event) : this.scaleMap(-.1, event);
+        let location = event.getLocation();
+        event.getScrollY() > 0 ? this.scaleMap(0.1, location) : this.scaleMap(-0.1, location);
     }
 
-    /** 缩放地图*/
-    private scaleMap(deltaScale: number, evt: EventMouse) {
+    /**
+     * 缩放地图
+     * @param deltaScale 
+     * @param location 鼠标相对于左下角的位置
+     */
+    private scaleMap(deltaScale: number, location: Vec2) {
         let self = this;
         let scale = self.grp_scrollMap.scale.x + deltaScale;
         let editAreaWidth = self._editAreaSize.width;
@@ -203,7 +207,6 @@ export class MapScrollComp extends UIComp {
         let minScale = Math.max(editAreaWidth / self.mapMgr.mapWidth, editAreaHeight / self.mapMgr.mapHeight);
         if (scale > 2) scale = 2;
         if (scale < minScale) scale = minScale;
-        let location = evt.getLocation();
         let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
         let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
         self.grp_scrollMap.setScale(new Vec3(scale, scale, scale));//一定要设置z的scale，不然会影响转换成世界坐标的值
@@ -213,7 +216,7 @@ export class MapScrollComp extends UIComp {
         let toY = self.grp_scrollMap.position.y + moveDelta.y;
         self.grp_scrollMap.setPosition(toX, toY);
         self.checkLimitPos();
-        if(self.scaleCb) self.scaleCb.call(self.scaleCbCtx);
+        if (self.scaleCb) self.scaleCb.call(self.scaleCbCtx);
     }
 
     /**检测地图滚动容器边界 */
@@ -227,7 +230,7 @@ export class MapScrollComp extends UIComp {
         if (self.grp_scrollMap.position.y < -maxScrollY) self.grp_scrollMap.setPosition(new Vec3(self.grp_scrollMap.position.x, -maxScrollY));
     }
 
-    public get mapScale(){
+    public get mapScale() {
         let self = this;
         return self.grp_scrollMap.scale.x;
     }
@@ -264,8 +267,13 @@ export class MapScrollComp extends UIComp {
 
     private checkMousCursor() {
         let self = this;
-        if (self._pressSpace && self._isInEditArea) BaseUT.changeMouseCursor("move");
-        else BaseUT.changeMouseCursor("auto");
+        if (self._pressSpace && self._isInEditArea) {
+            BaseUT.changeMouseCursor("move");
+            console.log('move');
+        } else {
+            BaseUT.changeMouseCursor("auto");
+            console.log('auto');
+        }
     }
 }
 
