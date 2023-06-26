@@ -24,4 +24,4 @@ export class MapEditorScene extends UIScene {
         profiler.hideStats()
     }
 }
-registerModule(MapEditorScene);
+registerModule(MapEditorScene, ['ui/grid']);

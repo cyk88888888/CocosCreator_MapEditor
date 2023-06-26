@@ -8,6 +8,7 @@ export namespace CONST {
         ImportMapJson = "ImportMapJson",
         UpdateMapInfo = "UpdateMapInfo",
         ChangeGridType = "ChangeGridType",
+        ChangeGridSize = "ChangeGridSize",
     }
 
     /** 格子类型*/

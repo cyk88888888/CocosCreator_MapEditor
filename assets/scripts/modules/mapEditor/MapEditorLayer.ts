@@ -62,7 +62,6 @@ export class MapEditorLayer extends UILayer {
     @property({ type: List })
     private list_path: List = null;
 
-
     private _selectIdx: number;
     protected onEnter() {
         let self = this;
@@ -123,7 +122,7 @@ export class MapEditorLayer extends UILayer {
     }
 
     private _data_list_pathSize() {
-        let rst = [{ radius: 10, size: 0 }, { radius: 15, size: 2 }, { radius: 20, size: 4 }, { radius: 25, size: 6 }, { radius: 30, size: 8 }];
+        let rst = [{ radius: 10, size: 0 }, { radius: 15, size: 1 }, { radius: 20, size: 3 }, { radius: 25, size: 5 }, { radius: 30, size: 7 }];
         return rst;
     }
 
@@ -135,6 +134,11 @@ export class MapEditorLayer extends UILayer {
     private _select_list_path(data: any, selectedIdx: number, lastSelectedIdx: number) {
         let self = this;
         self.emit(CONST.GEVT.ChangeGridType, {gridType: data.gridType});
+    }
+
+    private _select_list_pathSize(data: any, selectedIdx: number, lastSelectedIdx: number) {
+        let self = this;
+        self.emit(CONST.GEVT.ChangeGridSize, {range: data.size});
     }
 
     /** 打开文件选择器+读取数据 */
@@ -173,6 +177,7 @@ export class MapEditorLayer extends UILayer {
     private _tap_btn_showPath() {
         let self = this;
         self.lbl_path.string = self.lbl_path.string == "显示路点" ? "隐藏路点" : "显示路点";
+        self.mapScrollComp.grp_colorGrid.active = !self.mapScrollComp.grp_colorGrid.active; 
     }
 
     /**显隐物件 */

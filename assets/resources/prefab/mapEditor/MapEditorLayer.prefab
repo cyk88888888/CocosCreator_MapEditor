@@ -1399,7 +1399,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "显示网格",
+    "_string": "隐藏网格",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -1741,7 +1741,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "显示路点",
+    "_string": "隐藏路点",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
@@ -2083,7 +2083,7 @@
       "b": 0,
       "a": 255
     },
-    "_string": "显示物件",
+    "_string": "隐藏物件",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
     "_actualFontSize": 20,
