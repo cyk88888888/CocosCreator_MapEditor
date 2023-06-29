@@ -89,7 +89,7 @@
     "fileId": "e8FQ/gs2ZBgqAgaQdsqk9y"
   },
   {
-    "__type__": "cc.Sprite",
+    "__type__": "cc.Graphics",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -109,28 +109,29 @@
       "b": 255,
       "a": 255
     },
-    "_spriteFrame": null,
-    "_type": 0,
-    "_fillType": 0,
-    "_sizeMode": 0,
-    "_fillCenter": {
-      "__type__": "cc.Vec2",
-      "x": 0,
-      "y": 0
+    "_lineWidth": 1,
+    "_strokeColor": {
+      "__type__": "cc.Color",
+      "r": 0,
+      "g": 0,
+      "b": 0,
+      "a": 255
     },
-    "_fillStart": 0,
-    "_fillRange": 0,
-    "_isTrimmedMode": true,
-    "_useGrayscale": false,
-    "_atlas": {
-      "__uuid__": "8f676bf0-d3e5-4b47-8d1e-f3243770eab8",
-      "__expectedType__": "cc.SpriteAtlas"
+    "_lineJoin": 2,
+    "_lineCap": 0,
+    "_fillColor": {
+      "__type__": "cc.Color",
+      "r": 255,
+      "g": 255,
+      "b": 255,
+      "a": 255
     },
+    "_miterLimit": 10,
     "_id": ""
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "bduyWGKIBA/ZdXE1s4a5Xp"
+    "fileId": "d82LB8hvtBOa67M1E1IsbP"
   },
   {
     "__type__": "1a62fyfbCNPZp9Tfm+mNRae",

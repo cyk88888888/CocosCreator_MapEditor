@@ -26,6 +26,8 @@ export class MapMgr {
     public mapHeight: number;
     /**格子大小 */
     public cellSize: number;
+    /**绘制格子的单个Graphic区域大小 */
+    public areaGraphicSize: number;
     /** 导入的地图场景物件数组*/
     public mapThingArr: any[];
     /**当前绘制的格子数据 */

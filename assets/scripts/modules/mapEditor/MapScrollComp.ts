@@ -4,7 +4,6 @@ import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
-import { MessageTip } from '../common/message/MessageTip';
 import { ColorGrid } from './grid/ColorGrid';
 const { ccclass, property } = _decorator;
 
@@ -129,6 +128,9 @@ export class MapScrollComp extends UIComp {
         let numCols = self._numCols = Math.floor(self.mapMgr.mapWidth / cellSize);
         let numRows = self._numRows = Math.floor(self.mapMgr.mapHeight / cellSize);
 
+        let totGrid = numRows * numCols;//总格子数
+        self.mapMgr.areaGraphicSize = totGrid < 65536 ? 16 : totGrid < 300000 ? 32 : 64
+
         let lineGraphics = self.graphicsGrid;
         lineGraphics.clear();
         lineGraphics.lineWidth = 1;
@@ -236,9 +238,9 @@ export class MapScrollComp extends UIComp {
             for (let i = startCol; i <= endCol; i++) {
                 for (let j = startRow; j <= endRow; j++) {
                     if (isAdd) {
-                        self.addGrid({x: i, y: j});
+                        self.addGrid({ x: i, y: j });
                     } else {
-                        self.removeGrid({x: i, y: j});
+                        self.removeGrid({ x: i, y: j });
                     }
                 }
             }
@@ -263,8 +265,7 @@ export class MapScrollComp extends UIComp {
         let colorGrid = instantiate(self.colorGrid);
         let colorGridScript = colorGrid.getComponent(ColorGrid);
         colorGrid.setParent(self.grp_colorGrid);
-        colorGrid.setPosition(gridPos.x * cellSize, gridPos.y * cellSize);
-        colorGridScript.drawRect(gridType, mapMgr.cellSize);
+        colorGridScript.drawRect(self.mapMgr.getColorByType(gridType), gridPos.x * cellSize, gridPos.y * cellSize, mapMgr.cellSize);
         mapMgr.gridTypeMap[gridType][key] = colorGrid;
     }
 

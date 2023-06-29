@@ -1,4 +1,4 @@
-import { _decorator, Sprite, SpriteFrame } from 'cc';
+import { _decorator, Graphics, Sprite, SpriteFrame } from 'cc';
 import { UIComp } from '../../../framework/ui/UIComp';
 import { CONST } from '../../base/CONST';
 import { ResMgr } from '../../../framework/mgr/ResMgr';
@@ -10,22 +10,23 @@ export class ColorGrid extends UIComp {
      /** 预制体路径 */
      public static prefabUrl: string = 'prefab/mapEditor/grid/ColorGrid';
 
-     private _sprite: Sprite;
+     private _graphics: Graphics;
      /**
       * 绘制矩形颜色格子
-      * @param gridType 格子类型
-      * @param size 格子大小
+      * @param color 格子颜色
       * @param x 绘制位置x
       * @param y 绘制位置y
+      * @param size 格子大小
       */
-     public drawRect(gridType: CONST.GridType, size: number) {
+     public drawRect(color: string, x: number, y: number, size: number) {
           let self = this;
-          if (!self._sprite) {
-               self._sprite = self.node.getComponent(Sprite);
+          if (!self._graphics) {
+               self._graphics = self.node.getComponent(Graphics);
           }
-          let spriteFrame = self._sprite.spriteAtlas.getSpriteFrame(gridType);
-          self._sprite.spriteFrame = <SpriteFrame>spriteFrame;
-          BaseUT.setSize(self.node, size, size);
+          self._graphics.clear();
+          self._graphics.fillColor.fromHEX(color);
+          self._graphics.rect(x, y, size, size);
+          self._graphics.fill();
      }
 }
 
