@@ -27,17 +27,17 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 40
-      },
-      {
         "__id__": 42
       },
       {
         "__id__": 44
+      },
+      {
+        "__id__": 46
       }
     ],
     "_prefab": {
-      "__id__": 46
+      "__id__": 48
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -254,9 +254,6 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 31
-      },
-      {
         "__id__": 33
       },
       {
@@ -264,10 +261,13 @@
       },
       {
         "__id__": 37
+      },
+      {
+        "__id__": 39
       }
     ],
     "_prefab": {
-      "__id__": 39
+      "__id__": 41
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -313,17 +313,17 @@
         "__id__": 18
       },
       {
-        "__id__": 22
+        "__id__": 24
       }
     ],
     "_active": true,
     "_components": [
       {
-        "__id__": 28
+        "__id__": 30
       }
     ],
     "_prefab": {
-      "__id__": 30
+      "__id__": 32
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -492,10 +492,13 @@
     "_components": [
       {
         "__id__": 19
+      },
+      {
+        "__id__": 21
       }
     ],
     "_prefab": {
-      "__id__": 21
+      "__id__": 23
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -554,6 +557,27 @@
     "fileId": "fbZOquGxpAbLyjCLcHC6Bn"
   },
   {
+    "__type__": "f32f0FYwI1Lw6oM6B1ks0rm",
+    "_name": "",
+    "_objFlags": 0,
+    "node": {
+      "__id__": 18
+    },
+    "_enabled": true,
+    "__prefab": {
+      "__id__": 22
+    },
+    "colorGrid": {
+      "__uuid__": "db48fdbb-a28c-46ed-9902-f49c339af2fe",
+      "__expectedType__": "cc.Prefab"
+    },
+    "_id": ""
+  },
+  {
+    "__type__": "cc.CompPrefabInfo",
+    "fileId": "5b5kPflqlLwIKwFswk40Bd"
+  },
+  {
     "__type__": "cc.PrefabInfo",
     "root": {
       "__id__": 1
@@ -577,14 +601,14 @@
     "_active": true,
     "_components": [
       {
-        "__id__": 23
+        "__id__": 25
       },
       {
-        "__id__": 25
+        "__id__": 27
       }
     ],
     "_prefab": {
-      "__id__": 27
+      "__id__": 29
     },
     "_lpos": {
       "__type__": "cc.Vec3",
@@ -620,11 +644,11 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 22
+      "__id__": 24
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 24
+      "__id__": 26
     },
     "_contentSize": {
       "__type__": "cc.Size",
@@ -647,11 +671,11 @@
     "_name": "",
     "_objFlags": 0,
     "node": {
-      "__id__": 22
+      "__id__": 24
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 26
+      "__id__": 28
     },
     "_customMaterial": null,
     "_srcBlendFactor": 2,
@@ -709,7 +733,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 29
+      "__id__": 31
     },
     "_contentSize": {
       "__type__": "cc.Size",
@@ -736,6 +760,8 @@
       "__id__": 0
     },
     "fileId": "30Rx/fC61IlrXxLoQ/IGGA",
+    "instance": null,
+    "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
   },
   {
@@ -747,7 +773,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 32
+      "__id__": 34
     },
     "_contentSize": {
       "__type__": "cc.Size",
@@ -774,7 +800,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 34
+      "__id__": 36
     },
     "_type": 0,
     "_inverted": false,
@@ -795,7 +821,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 36
+      "__id__": 38
     },
     "_customMaterial": null,
     "_srcBlendFactor": 2,
@@ -840,7 +866,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 38
+      "__id__": 40
     },
     "_alignFlags": 45,
     "_target": null,
@@ -888,7 +914,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 41
+      "__id__": 43
     },
     "_contentSize": {
       "__type__": "cc.Size",
@@ -915,7 +941,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 43
+      "__id__": 45
     },
     "grp_mapLayer": {
       "__id__": 10
@@ -930,11 +956,10 @@
       "__id__": 18
     },
     "graphicsGrid": {
-      "__id__": 25
+      "__id__": 27
     },
-    "colorGrid": {
-      "__uuid__": "db48fdbb-a28c-46ed-9902-f49c339af2fe",
-      "__expectedType__": "cc.Prefab"
+    "mapGridFactory": {
+      "__id__": 21
     },
     "_id": ""
   },
@@ -951,7 +976,7 @@
     },
     "_enabled": true,
     "__prefab": {
-      "__id__": 45
+      "__id__": 47
     },
     "_alignFlags": 45,
     "_target": null,

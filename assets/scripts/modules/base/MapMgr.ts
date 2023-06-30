@@ -12,6 +12,7 @@ export class MapMgr {
     public static get inst() {
         if (!this._inst) {
             this._inst = new MapMgr();
+            this._inst.init();
         }
         return this._inst;
     }
@@ -24,14 +25,29 @@ export class MapMgr {
     public mapWidth: number;
     /** 地图高*/
     public mapHeight: number;
+    /**地图格子列数 */
+    public numCols: number;
+    /**地图格子行数 */
+    public numRows: number;
     /**格子大小 */
     public cellSize: number;
+    /**绘制的格子范围大小 */
+    public gridRange: number;
+    /**当前绘制的格子类型 */
+    public gridType: CONST.GridType;
     /**绘制格子的单个Graphic区域大小 */
     public areaGraphicSize: number;
     /** 导入的地图场景物件数组*/
     public mapThingArr: any[];
     /**当前绘制的格子数据 */
     public gridTypeMap: any;
+
+    public init(){
+        let self = this;
+        self.gridRange = 0;
+        self.gridType = CONST.GridType.GridType_none;
+    }
+
     /**
      * 切换地图目录
      */

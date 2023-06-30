@@ -4,7 +4,7 @@ import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
-import { ColorGrid } from './grid/ColorGrid';
+import { MapGridFactory } from './MapGridFactory';
 const { ccclass, property } = _decorator;
 
 /*
@@ -26,9 +26,10 @@ export class MapScrollComp extends UIComp {
     public grp_colorGrid: Node;
     @property({ type: Graphics })
     public graphicsGrid: Graphics;
-    @property({ type: Prefab })
-    public colorGrid: Prefab;
+    @property({ type: MapGridFactory })
+    public mapGridFactory: MapGridFactory; 
 
+    private mapMgr: MapMgr;
     public scaleCb: Function;
     public scaleCbCtx: any;
     /**编辑区域宽高 */
@@ -40,20 +41,13 @@ export class MapScrollComp extends UIComp {
     private _pressMouseRight: boolean;
     private _isInEditArea: boolean;
     private _preUIPos: Vec2;
-    private mapMgr: MapMgr;
     private _scrollMapUITranstorm: UITransform;
-    /** 当前绘制的格子类型*/
-    private _gridType: CONST.GridType;
-    /** 当前绘制的格子范围大小*/
-    private _gridRange: number;
-    private _numCols: number;
-    private _numRows: number;
+    private onAddNodeHandler: Function;
+    private onRemoveNodeHandler: Function;
     protected onEnter(): void {
         let self = this;
         self.mapMgr = MapMgr.inst;
         self._scrollMapUITranstorm = self.grp_scrollMap.getComponent(UITransform);
-        self._gridType = CONST.GridType.GridType_none;
-        self._gridRange = 0;
         self.onEmitter(CONST.GEVT.ChangeGridType, self.onChangeGridType);
         self.onEmitter(CONST.GEVT.ChangeGridSize, self.onChangeGridRange);
     }
@@ -125,8 +119,8 @@ export class MapScrollComp extends UIComp {
     private initGrid() {
         let self = this;
         let cellSize = self.mapMgr.cellSize;
-        let numCols = self._numCols = Math.floor(self.mapMgr.mapWidth / cellSize);
-        let numRows = self._numRows = Math.floor(self.mapMgr.mapHeight / cellSize);
+        let numCols = self.mapMgr.numCols = Math.floor(self.mapMgr.mapWidth / cellSize);
+        let numRows = self.mapMgr.numRows = Math.floor(self.mapMgr.mapHeight / cellSize);
 
         let totGrid = numRows * numCols;//总格子数
         self.mapMgr.areaGraphicSize = totGrid < 65536 ? 16 : totGrid < 300000 ? 32 : 64
@@ -161,6 +155,8 @@ export class MapScrollComp extends UIComp {
 
         input.on(Input.EventType.KEY_DOWN, self.onKeyDown, self); //监听键盘按键按下
         input.on(Input.EventType.KEY_UP, self.onKeyUp, self); //监听键盘按键放开
+        self.onAddNodeHandler = self.mapGridFactory.onAddNodeHandler;
+        self.onRemoveNodeHandler = self.mapGridFactory.onRemoveNodeHandler;
     }
 
     private onMouseDown(e: EventMouse) {
@@ -168,7 +164,7 @@ export class MapScrollComp extends UIComp {
         self._preUIPos = e.getUILocation();
         self.grp_mapLayer.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
 
-        if (!self._pressSpace && self._gridType != CONST.GridType.GridType_none) {
+        if (!self._pressSpace && self.mapMgr.gridType != CONST.GridType.GridType_none) {
             let buttonId = e.getButton();
             if (buttonId == EventMouse.BUTTON_LEFT) {
                 self._pressMouseLeft = true;
@@ -176,9 +172,9 @@ export class MapScrollComp extends UIComp {
                 self._pressMouseRight = true;
             }
             if (self._pressMouseRight) {
-                self.addOrRmRangeGrid(e.getLocation(), false);
+                if(self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
             } else if (self._pressMouseLeft) {
-                self.addOrRmRangeGrid(e.getLocation());
+                if(self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
             }
         }
     }
@@ -195,11 +191,11 @@ export class MapScrollComp extends UIComp {
             self._preUIPos = curUILocation;
             self.checkLimitPos();
         } else {
-            if (self._gridType != CONST.GridType.GridType_none) {
+            if (self.mapMgr.gridType != CONST.GridType.GridType_none) {
                 if (self._pressMouseRight) {
-                    self.addOrRmRangeGrid(e.getLocation(), false);
+                    if(self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
                 } else if (self._pressMouseLeft) {
-                    self.addOrRmRangeGrid(e.getLocation());
+                    if(self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
                 }
             }
         }
@@ -217,83 +213,14 @@ export class MapScrollComp extends UIComp {
         }
     }
 
-    /**添加或者删除格子 */
-    private addOrRmRangeGrid(location: Vec2, isAdd: boolean = true) {
-        let self = this;
-        let range = self._gridRange;
-        let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
-        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
-        let gridPos = self.mapMgr.pos2Grid(localUIPos.x, localUIPos.y);
-        if (range == 0) {
-            if (isAdd) {
-                self.addGrid(gridPos);
-            } else {
-                self.removeGrid(gridPos);
-            }
-        } else {
-            let startCol = Math.max(0, gridPos.x - range);
-            let endCol = Math.min(self._numCols - 1, gridPos.x + range);
-            let startRow = Math.max(0, gridPos.y - range);
-            let endRow = Math.min(self._numRows - 1, gridPos.y + range);
-            for (let i = startCol; i <= endCol; i++) {
-                for (let j = startRow; j <= endRow; j++) {
-                    if (isAdd) {
-                        self.addGrid({ x: i, y: j });
-                    } else {
-                        self.removeGrid({ x: i, y: j });
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 填充格子
-     * @param gridPos 格子行列
-     * @returns 
-     */
-    private addGrid(gridPos: { x: number, y: number }) {
-        let self = this;
-        let mapMgr = self.mapMgr;
-        let gridType = self._gridType;
-        if (!mapMgr.gridTypeMap[gridType]) {
-            mapMgr.gridTypeMap[gridType] = {};
-        }
-        let cellSize = mapMgr.cellSize;
-        let key = gridPos.x + "_" + gridPos.y;
-        if (mapMgr.gridTypeMap[gridType][key]) return;//已有格子
-        let colorGrid = instantiate(self.colorGrid);
-        let colorGridScript = colorGrid.getComponent(ColorGrid);
-        colorGrid.setParent(self.grp_colorGrid);
-        colorGridScript.drawRect(self.mapMgr.getColorByType(gridType), gridPos.x * cellSize, gridPos.y * cellSize, mapMgr.cellSize);
-        mapMgr.gridTypeMap[gridType][key] = colorGrid;
-    }
-
-    /**
-     * 清除格子
-     * @param gridPos 格子行列
-     * @returns 
-     */
-    private removeGrid(gridPos: { x: number, y: number }) {
-        let self = this;
-        let mapMgr = self.mapMgr;
-        let gridType = self._gridType;
-        if (!mapMgr.gridTypeMap[gridType]) return;
-        let key = gridPos.x + "_" + gridPos.y;
-        let colorGrid: Node = mapMgr.gridTypeMap[gridType][key];
-        if (!colorGrid) return;
-        delete mapMgr.gridTypeMap[gridType][key];
-        colorGrid.destroy();
-    }
-
     private onChangeGridType(dt: any) {
         let self = this;
-        self._gridType = dt.gridType;
+        self.mapMgr.gridType = dt.gridType;
     }
 
     private onChangeGridRange(dt: any) {
         let self = this;
-        self._gridRange = dt.range;
+        self.mapMgr.gridRange = dt.range;
     }
 
     private onMouseEnter(e: EventMouse) {
