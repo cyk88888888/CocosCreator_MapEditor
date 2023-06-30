@@ -5,6 +5,7 @@ import { MapMgr } from '../base/MapMgr';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
 import { MapGridFactory } from './MapGridFactory';
+import { MessageTip } from '../common/message/MessageTip';
 const { ccclass, property } = _decorator;
 
 /*
@@ -113,6 +114,7 @@ export class MapScrollComp extends UIComp {
         let self = this;
         self.initGrid();
         self.initEvent();
+        self.mapGridFactory.init();
     }
 
     /**初始化网格线条 */
@@ -164,17 +166,21 @@ export class MapScrollComp extends UIComp {
         self._preUIPos = e.getUILocation();
         self.grp_mapLayer.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
 
-        if (!self._pressSpace && self.mapMgr.gridType != CONST.GridType.GridType_none) {
-            let buttonId = e.getButton();
-            if (buttonId == EventMouse.BUTTON_LEFT) {
-                self._pressMouseLeft = true;
-            } else if (buttonId == EventMouse.BUTTON_RIGHT) {
-                self._pressMouseRight = true;
-            }
-            if (self._pressMouseRight) {
-                if(self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
-            } else if (self._pressMouseLeft) {
-                if(self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+        if (!self._pressSpace) {
+            if(self.mapMgr.gridType != CONST.GridType.GridType_none){
+                let buttonId = e.getButton();
+                if (buttonId == EventMouse.BUTTON_LEFT) {
+                    self._pressMouseLeft = true;
+                } else if (buttonId == EventMouse.BUTTON_RIGHT) {
+                    self._pressMouseRight = true;
+                }
+                if (self._pressMouseRight) {
+                    if(self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
+                } else if (self._pressMouseLeft) {
+                    if(self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+                }
+            }else{
+                MessageTip.show({msg:"请选择操作功能！"});
             }
         }
     }

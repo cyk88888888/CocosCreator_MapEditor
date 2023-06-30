@@ -135,7 +135,7 @@ export class MapMgr {
      * @param type 格子类型
      * @returns 
      */
-    public getColorByType(type: CONST.GridType): string {
+    public getColorByType(type: string): string {
         switch (type) {
             case CONST.GridType.GridType_walk:
                 return '#00FF00';
