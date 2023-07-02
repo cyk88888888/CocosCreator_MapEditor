@@ -121,6 +121,7 @@ export class MapGridFactory extends UIComp {
         }
     }
 
+    /**移除格子删除数据后，重新绘制感兴趣区域的所有格子 */
     private drawGraphic() {
         let self = this;
         let gridDataMap = self.mapMgr.gridDataMap;
