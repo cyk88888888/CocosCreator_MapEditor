@@ -15,6 +15,7 @@ export class ColorGrid extends UIComp {
       * @param x 绘制位置x
       * @param y 绘制位置y
       * @param size 格子大小
+      * @param alpha 格子颜色透明度
       */
      public drawRect(color: string, x: number, y: number, width: number, heigth: number, alpha: number = 0.5) {
           let self = this;
