@@ -6,6 +6,7 @@
 import { emmiter } from "../../framework/base/Emmiter";
 import { FileIOHandler } from "../../framework/mgr/FileIOHandler";
 import { CONST } from "./CONST";
+import { G } from "./Interface";
 
 export class MapMgr {
     private static _inst: MapMgr;
@@ -26,9 +27,9 @@ export class MapMgr {
     /** 地图高*/
     public mapHeight: number;
     /**地图格子列数 */
-    public numCols: number;
+    public totCol: number;
     /**地图格子行数 */
-    public numRows: number;
+    public totRow: number;
     /**格子大小 */
     public cellSize: number;
     /**绘制的格子范围大小 */
@@ -39,10 +40,9 @@ export class MapMgr {
     public areaGraphicSize: number;
     /** 导入的地图场景物件数组*/
     public mapThingArr: any[];
-    /**当前绘制的格子数据 */
-    public gridTypeMap: any;
-
-    public init(){
+    /** 当前绘制的格子数据*/
+    public gridDataMap: { [gridType: string]: { [areaKey: string]: { [gridKey: string]: string } } };
+    public init() {
         let self = this;
         self.gridRange = 0;
         self.gridType = CONST.GridType.GridType_none;
@@ -61,7 +61,7 @@ export class MapMgr {
         self.mapThingArr = [];
         self.mapslice = 0;
         let firstRow: number;
-        let mapData: CONST.MapJsonInfo, thingPram: CONST.thingPramInfo;
+        let mapData: G.MapJsonInfo, thingPram: G.thingPramInfo;
         await getFilesRecursively(root);
         async function getFilesRecursively(parent: FileSystemDirectoryHandle | FileSystemFileHandle) {
             if (parent.kind === 'directory') {
@@ -126,7 +126,7 @@ export class MapMgr {
         })
         console.log(mapData, thingPram);
         self.cellSize = mapData.cellSize || 20;
-        self.gridTypeMap = {};
+        self.gridDataMap = {};
         emmiter.emit(CONST.GEVT.ImportMapJson, { mapData: mapData, thingPram: thingPram });
     }
 
@@ -154,5 +154,30 @@ export class MapMgr {
         return { x: Math.floor(x / self.cellSize), y: Math.floor(y / self.cellSize) };
     }
 
+    /**导出json文件到本地 */
+    public exportJson(){
+        let self = this;
+        let gridDataMap = self.gridDataMap;
+        let mapJsonInfo = <G.MapJsonInfo>{};
+        mapJsonInfo.mapWidth = self.mapWidth;
+        mapJsonInfo.mapHeight = self.mapHeight;
+        mapJsonInfo.cellSize = self.cellSize;
+        mapJsonInfo.totRow = self.totRow;
+        mapJsonInfo.totCol = self.totCol;
+        mapJsonInfo.walkList = [];
+        let walkData = gridDataMap[CONST.GridType.GridType_walk];
+        for(let gridType in gridDataMap){
+            let gridTypeData = gridDataMap[gridType];
+            for(let areaKey in gridTypeData){
+                let areaGridDataMap = gridDataMap[areaKey]; 
+                for (let gridKey in areaGridDataMap) {
+                    let spltGridPosKey = gridKey.split("_");
+
+                }
+            }
+        }
+        console.log(gridDataMap);
+        FileIOHandler.inst.saveTextToLocal(JSON.stringify(mapJsonInfo));
+    }
 
 }

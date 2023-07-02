@@ -1,4 +1,4 @@
-import { _decorator, EventKeyboard, EventMouse, Graphics, input, Input, instantiate, KeyCode, Layout, Node, Prefab, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3, Widget } from 'cc';
+import { _decorator, EventKeyboard, EventMouse, Graphics, input, Input, KeyCode, Layout, Node, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3, Widget } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
@@ -28,7 +28,7 @@ export class MapScrollComp extends UIComp {
     @property({ type: Graphics })
     public graphicsGrid: Graphics;
     @property({ type: MapGridFactory })
-    public mapGridFactory: MapGridFactory; 
+    public mapGridFactory: MapGridFactory;
 
     private mapMgr: MapMgr;
     public scaleCb: Function;
@@ -121,8 +121,8 @@ export class MapScrollComp extends UIComp {
     private initGrid() {
         let self = this;
         let cellSize = self.mapMgr.cellSize;
-        let numCols = self.mapMgr.numCols = Math.floor(self.mapMgr.mapWidth / cellSize);
-        let numRows = self.mapMgr.numRows = Math.floor(self.mapMgr.mapHeight / cellSize);
+        let numCols = self.mapMgr.totCol = Math.floor(self.mapMgr.mapWidth / cellSize);
+        let numRows = self.mapMgr.totRow = Math.floor(self.mapMgr.mapHeight / cellSize);
 
         let totGrid = numRows * numCols;//总格子数
         self.mapMgr.areaGraphicSize = totGrid < 65536 ? 16 : totGrid < 300000 ? 32 : 64
@@ -165,9 +165,8 @@ export class MapScrollComp extends UIComp {
         let self = this;
         self._preUIPos = e.getUILocation();
         self.grp_mapLayer.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
-
         if (!self._pressSpace) {
-            if(self.mapMgr.gridType != CONST.GridType.GridType_none){
+            if (self.mapMgr.gridType != CONST.GridType.GridType_none) {
                 let buttonId = e.getButton();
                 if (buttonId == EventMouse.BUTTON_LEFT) {
                     self._pressMouseLeft = true;
@@ -175,12 +174,12 @@ export class MapScrollComp extends UIComp {
                     self._pressMouseRight = true;
                 }
                 if (self._pressMouseRight) {
-                    if(self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
+                    if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
                 } else if (self._pressMouseLeft) {
-                    if(self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+                    if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
                 }
-            }else{
-                MessageTip.show({msg:"请选择操作功能！"});
+            } else {
+                MessageTip.show({ msg: "请选择操作功能！" });
             }
         }
     }
@@ -199,9 +198,9 @@ export class MapScrollComp extends UIComp {
         } else {
             if (self.mapMgr.gridType != CONST.GridType.GridType_none) {
                 if (self._pressMouseRight) {
-                    if(self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
+                    if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
                 } else if (self._pressMouseLeft) {
-                    if(self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+                    if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
                 }
             }
         }
@@ -210,7 +209,6 @@ export class MapScrollComp extends UIComp {
     private onMouseUp(e: EventMouse) {
         let self = this;
         this.grp_mapLayer.hasEventListener(Node.EventType.MOUSE_MOVE) && this.grp_mapLayer.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
-
         let buttonId = e.getButton();
         if (buttonId == EventMouse.BUTTON_LEFT) {
             self._pressMouseLeft = false;

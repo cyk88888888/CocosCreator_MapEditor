@@ -1,4 +1,4 @@
-import { _decorator, Component, EventMouse, Graphics, instantiate, Node, Prefab, UI, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, EventMouse, instantiate, Prefab, UITransform, Vec2, Vec3 } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { MapMgr } from '../base/MapMgr';
 import { ColorGrid } from './grid/ColorGrid';
@@ -17,16 +17,20 @@ export class MapGridFactory extends UIComp {
     private mapMgr: MapMgr;
     private _scrollMapUITranstorm: UITransform;
     /**区域格子Graphic缓存map */
-    private _graphicsDic: { [key: string]: Graphics };
+    private _graphicsDic: { [areaKey: string]: ColorGrid };
+    private _colorDic: { [gridType: string]: string };
+    /**删除格子时涉及到的区域临时map */
+    private _redrawTempMap: { [graphicKey: string]: string };
     protected onEnter(): void {
         let self = this;
         self.mapMgr = MapMgr.inst;
         self._scrollMapUITranstorm = self.node.parent.getComponent(UITransform);
     }
 
-    public init(){
+    public init() {
         let self = this;
         self._graphicsDic = {};
+        self._colorDic = {};
     }
 
     public onAddNodeHandler(e: EventMouse) {
@@ -46,6 +50,7 @@ export class MapGridFactory extends UIComp {
         let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
         let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
         let gridPos = self.mapMgr.pos2Grid(localUIPos.x, localUIPos.y);
+        self._redrawTempMap = {};
         if (range == 0) {
             if (isAdd) {
                 self.addGrid(gridPos);
@@ -53,8 +58,8 @@ export class MapGridFactory extends UIComp {
                 self.removeGrid(gridPos);
             }
         } else {
-            let numCols = self.mapMgr.numCols;
-            let numRows = self.mapMgr.numRows;
+            let numCols = self.mapMgr.totCol;
+            let numRows = self.mapMgr.totRow;
             let startCol = Math.max(0, gridPos.x - range);
             let endCol = Math.min(numCols - 1, gridPos.x + range);
             let startRow = Math.max(0, gridPos.y - range);
@@ -69,10 +74,11 @@ export class MapGridFactory extends UIComp {
                 }
             }
         }
+        if (!isAdd) self.drawGraphic();//移除格子时，删除数据后，重新绘制感兴趣区域的所有格子
     }
 
     /**
-     * 填充格子
+     * 添加指定行列的格子
      * @param gridPos 格子行列
      * @returns 
      */
@@ -80,37 +86,23 @@ export class MapGridFactory extends UIComp {
         let self = this;
         let mapMgr = self.mapMgr;
         let gridType = self.mapMgr.gridType;
-        if (!mapMgr.gridTypeMap[gridType]) {
-            mapMgr.gridTypeMap[gridType] = {};
-        }
-        let key = gridPos.x + "_" + gridPos.y;
-        if (mapMgr.gridTypeMap[gridType][key]) return;//已有格子
-        mapMgr.gridTypeMap[gridType][key] = key;
-        let cellSize = mapMgr.cellSize;
+        let gridKey = gridPos.x + "_" + gridPos.y;
         let graphicsPos = { x: Math.floor(gridPos.x / mapMgr.areaGraphicSize), y: Math.floor(gridPos.y / mapMgr.areaGraphicSize) };
-        let graphicsKey = graphicsPos.x + "_" + graphicsPos.y;
+        let gridDataMap = mapMgr.gridDataMap;
+        let areaKey = graphicsPos.x + '_' + graphicsPos.y;
+        if (!gridDataMap[gridType]) gridDataMap[gridType] = {};
+        if (!gridDataMap[gridType][areaKey]) gridDataMap[gridType][areaKey] = {};
+        if (gridDataMap[gridType][areaKey][gridKey]) return; //已有格子
+        gridDataMap[gridType][areaKey][gridKey] = gridKey;
+        let color = self._colorDic[gridType] = mapMgr.getColorByType(gridType);
+        let cellSize = mapMgr.cellSize;
+        let graphicsKey = gridType + '_' + areaKey;
         let graphics = self.getGraphic(graphicsKey);
-        graphics.clear();
-        let start1 = graphicsPos.x * mapMgr.areaGraphicSize;
-        let end1 = start1 + mapMgr.areaGraphicSize;
-        let start2 = graphicsPos.y * mapMgr.areaGraphicSize;
-        let end2 = start2 + mapMgr.areaGraphicSize;
-        for (let i = start1; i < end1; i++) {
-            for (let j = start2; j < end2; j++) {
-                for (let type in mapMgr.gridTypeMap) {
-                    let gridDataMap = mapMgr.gridTypeMap[type];
-                    let color = mapMgr.getColorByType(type);
-                    let gridData = gridDataMap[i + "_" + j];
-                    if (gridData) {
-                        self.drawRect(graphics, color, i * cellSize, j * cellSize, mapMgr.cellSize);
-                    }
-                }
-            }
-        }
+        graphics.drawRect(color, gridPos.x * cellSize, gridPos.y * cellSize, cellSize, cellSize);
     }
 
     /**
-     * 清除格子
+     * 清除指定行列的格子
      * @param gridPos 格子行列
      * @returns 
      */
@@ -118,57 +110,49 @@ export class MapGridFactory extends UIComp {
         let self = this;
         let mapMgr = self.mapMgr;
         let gridType = self.mapMgr.gridType;
-        if (!mapMgr.gridTypeMap[gridType]) return;
-        let key = gridPos.x + "_" + gridPos.y;
-        if (!mapMgr.gridTypeMap[gridType][key]) return;
-        delete mapMgr.gridTypeMap[gridType][key];
-        let cellSize = mapMgr.cellSize;
+        let gridKey = gridPos.x + "_" + gridPos.y;
+        let gridDataMap = mapMgr.gridDataMap;
         let graphicsPos = { x: Math.floor(gridPos.x / mapMgr.areaGraphicSize), y: Math.floor(gridPos.y / mapMgr.areaGraphicSize) };
-        let graphicsKey = graphicsPos.x + "_" + graphicsPos.y;
-        let graphics = self.getGraphic(graphicsKey);
-        graphics.clear();
-        let start1 = graphicsPos.x * mapMgr.areaGraphicSize;
-        let end1 = start1 + mapMgr.areaGraphicSize;
-        let start2 = graphicsPos.y * mapMgr.areaGraphicSize;
-        let end2 = start2 + mapMgr.areaGraphicSize;
-        for (let i = start1; i < end1; i++) {
-            for (let j = start2; j < end2; j++) {
-                for (let type in mapMgr.gridTypeMap) {
-                    let gridDataMap = mapMgr.gridTypeMap[type];
-                    let color = mapMgr.getColorByType(type);
-                    let gridData = gridDataMap[i + "_" + j];
-                    if (gridData) {
-                        self.drawRect(graphics, color, i * cellSize, j * cellSize, mapMgr.cellSize);
-                    }
+        let areaKey = graphicsPos.x + '_' + graphicsPos.y;
+
+        if (gridDataMap[gridType] && gridDataMap[gridType][areaKey] && gridDataMap[gridType][areaKey][gridKey]) {
+            delete gridDataMap[gridType][areaKey][gridKey];
+            self._redrawTempMap[gridType + '|' + areaKey] = gridType + '_' + areaKey;
+        }
+    }
+
+    private drawGraphic() {
+        let self = this;
+        let gridDataMap = self.mapMgr.gridDataMap;
+        let cellSize = self.mapMgr.cellSize;
+        for (let key in self._redrawTempMap) {
+            let splitKey = key.split('|');
+            let gridType = splitKey[0];
+            let areaKey = splitKey[1];
+            let graphicsKey = self._redrawTempMap[key];
+            let graphics = self.getGraphic(graphicsKey);
+            graphics.clear();
+            let color = self._colorDic[gridType];
+            let areaGridDataMap = gridDataMap[gridType][areaKey];
+            if (areaGridDataMap) {
+                for (let gridKey in areaGridDataMap) {
+                    let spltGridPosKey = gridKey.split("_");
+                    graphics.drawRect(color, Number(spltGridPosKey[0]) * cellSize, Number(spltGridPosKey[1]) * cellSize, cellSize, cellSize);
                 }
             }
         }
     }
 
-    private getGraphic(key: string): Graphics {
+    private getGraphic(key: string): ColorGrid {
         let self = this;
         if (!self._graphicsDic[key]) {
             let colorGrid = instantiate(self.colorGrid);
             colorGrid.setParent(self.node);
-            let graphics = colorGrid.getComponent(Graphics);
+            let graphics = colorGrid.getComponent(ColorGrid);
             self._graphicsDic[key] = graphics;
         }
         return self._graphicsDic[key];
     }
-
-    /**
-      * 绘制矩形颜色格子
-      * @param color 格子颜色
-      * @param x 绘制位置x
-      * @param y 绘制位置y
-      * @param size 格子大小
-      */
-    private drawRect(graphics: Graphics, color: string, x: number, y: number, size: number) {
-        graphics.fillColor.fromHEX(color);
-        graphics.rect(x, y, size, size);
-        graphics.fill();
-    }
-
 }
 
 

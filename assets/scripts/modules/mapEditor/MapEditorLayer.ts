@@ -1,4 +1,4 @@
-import { _decorator, Button, EventMouse, Label, profiler, ScrollView } from 'cc';
+import { _decorator, Button, Label, profiler, ScrollView } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
 import { FileIOHandler } from '../../framework/mgr/FileIOHandler';
 import { MapScrollComp } from './MapScrollComp';
@@ -122,7 +122,7 @@ export class MapEditorLayer extends UILayer {
     }
 
     private _data_list_pathSize() {
-        let rst = [{ radius: 10, size: 0 }, { radius: 15, size: 1 }, { radius: 20, size: 3 }, { radius: 25, size: 5 }, { radius: 30, size: 7 }];
+        let rst = [{ radius: 10, size: 0 }, { radius: 15, size: 1 }, { radius: 20, size: 3 }, { radius: 25, size: 5 }, { radius: 30, size: 7 }, { radius: 35, size: 9 }];
         return rst;
     }
 
@@ -146,10 +146,9 @@ export class MapEditorLayer extends UILayer {
         MapMgr.inst.changeMap();
     }
 
-    /** 保存数据到文件 */
+    /** 导出地图json数据 */
     private _tap_btn_exportJson() {
-        let list = [{ type: 1, aa: 5 }, { type: 3, bb: 66 }, { desc: "我终于搞定web文件存储到本地了!!!" }];
-        FileIOHandler.inst.saveTextToLocal(JSON.stringify(list));
+        MapMgr.inst.exportJson();
     }
 
     /** 显隐fps*/
