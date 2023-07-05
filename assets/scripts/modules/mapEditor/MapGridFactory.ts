@@ -3,6 +3,8 @@ import { UIComp } from '../../framework/ui/UIComp';
 import { MapMgr } from '../base/MapMgr';
 import { ColorGrid } from './grid/ColorGrid';
 import { BaseUT } from '../../framework/base/BaseUtil';
+import { G } from '../base/Interface';
+import { CONST } from '../base/CONST';
 const { ccclass, property } = _decorator;
 /*
  * @Descripttion: 网格绘制工厂
@@ -27,10 +29,24 @@ export class MapGridFactory extends UIComp {
         self._scrollMapUITranstorm = self.node.parent.getComponent(UITransform);
     }
 
-    public init() {
+    public init(data: any) {
         let self = this;
         self._graphicsDic = {};
         self._colorDic = {};
+        let mapData: G.MapJsonInfo = data.mapData;
+        /** 设置可行走节点**/
+        for (let i = 0; i < mapData.walkList.length; i++) {
+            let lineList = mapData.walkList[i];
+            for (let j = 0; j < lineList.length; j++) {
+                if (lineList[j] != 0) {
+                    let gridType: string;
+                    if (lineList[j] == 1) {//可行走
+                        gridType = CONST.GridType.GridType_walk;
+                    }
+                    self.addGrid(gridType, { x: j, y: i });
+                }
+            }
+        }
     }
 
     public onAddNodeHandler(e: EventMouse) {
@@ -53,9 +69,9 @@ export class MapGridFactory extends UIComp {
         self._redrawTempMap = {};
         if (range == 0) {
             if (isAdd) {
-                self.addGrid(gridPos);
+                self.addGrid(self.mapMgr.gridType, gridPos);
             } else {
-                self.removeGrid(gridPos);
+                self.removeGrid(self.mapMgr.gridType, gridPos);
             }
         } else {
             let numCols = self.mapMgr.totCol;
@@ -67,9 +83,9 @@ export class MapGridFactory extends UIComp {
             for (let i = startCol; i <= endCol; i++) {
                 for (let j = startRow; j <= endRow; j++) {
                     if (isAdd) {
-                        self.addGrid({ x: i, y: j });
+                        self.addGrid(self.mapMgr.gridType, { x: i, y: j });
                     } else {
-                        self.removeGrid({ x: i, y: j });
+                        self.removeGrid(self.mapMgr.gridType, { x: i, y: j });
                     }
                 }
             }
@@ -82,10 +98,9 @@ export class MapGridFactory extends UIComp {
      * @param gridPos 格子行列
      * @returns 
      */
-    private addGrid(gridPos: { x: number, y: number }) {
+    private addGrid(gridType: string, gridPos: { x: number, y: number }) {
         let self = this;
         let mapMgr = self.mapMgr;
-        let gridType = self.mapMgr.gridType;
         let gridKey = gridPos.x + "_" + gridPos.y;
         let graphicsPos = { x: Math.floor(gridPos.x / mapMgr.areaGraphicSize), y: Math.floor(gridPos.y / mapMgr.areaGraphicSize) };
         let gridDataMap = mapMgr.gridDataMap;
@@ -106,10 +121,9 @@ export class MapGridFactory extends UIComp {
      * @param gridPos 格子行列
      * @returns 
      */
-    private removeGrid(gridPos: { x: number, y: number }) {
+    private removeGrid(gridType: string, gridPos: { x: number, y: number }) {
         let self = this;
         let mapMgr = self.mapMgr;
-        let gridType = self.mapMgr.gridType;
         let gridKey = gridPos.x + "_" + gridPos.y;
         let gridDataMap = mapMgr.gridDataMap;
         let graphicsPos = { x: Math.floor(gridPos.x / mapMgr.areaGraphicSize), y: Math.floor(gridPos.y / mapMgr.areaGraphicSize) };

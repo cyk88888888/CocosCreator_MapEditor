@@ -53,27 +53,27 @@ export class MapScrollComp extends UIComp {
         self.onEmitter(CONST.GEVT.ChangeGridSize, self.onChangeGridRange);
     }
 
-    public async onImportMapJson() {
+    public async onImportMapJson(data: any) {
         let self = this;
-        await self.addMapSlices();
+        await self.addMapSlices(data);
     }
 
     /**导入地图切片 */
-    private async addMapSlices() {
+    private async addMapSlices(data: any) {
         let self = this;
         self.grp_mapSlices.destroyAllChildren();
         self.grp_colorGrid.destroyAllChildren();
         self.grp_scrollMap.setPosition(0, 0, 0);
         self.grp_scrollMap.setScale(new Vec3(1, 1, 1));
         let mapMgr = self.mapMgr;
-        var mapFloorArr = mapMgr.mapFloorArr;
-        var mapslice = mapMgr.mapslice;
-        var tempX: number = 0;
-        var tempY: number = 0;
-        var index: number = 0;
-        var totWidth: number = 0;
-        var totHeight: number = 0;
-        var hasFinishOneLine: boolean;
+        let mapFloorArr = mapMgr.mapFloorArr;
+        let mapslice = mapMgr.mapslice;
+        let tempX: number = 0;
+        let tempY: number = 0;
+        let index: number = 0;
+        let totWidth: number = 0;
+        let totHeight: number = 0;
+        let hasFinishOneLine: boolean;
         let mapSliceLayout = self.grp_mapSlices.getComponent(Layout);
         mapSliceLayout.constraintNum = mapslice;
         for (let i = 0; i < mapFloorArr.length; i++) {
@@ -84,7 +84,7 @@ export class MapScrollComp extends UIComp {
         BaseUT.setSize(self.grp_scrollMap, totWidth, totHeight);
         BaseUT.setSize(self.grp_mapSlices, totWidth, totHeight);
         console.log("地图宽高:", mapMgr.mapWidth, mapMgr.mapHeight);
-        self.init();
+        self.init(data);
         async function showFloorItor(floorInfo: any) {
             let url: string = floorInfo.nativePath;
             return new Promise<void>((resolve, reject) => {
@@ -110,11 +110,11 @@ export class MapScrollComp extends UIComp {
         }
     }
 
-    private init() {
+    private init(data: any) {
         let self = this;
         self.initGrid();
         self.initEvent();
-        self.mapGridFactory.init();
+        self.mapGridFactory.init(data);
     }
 
     /**初始化网格线条 */

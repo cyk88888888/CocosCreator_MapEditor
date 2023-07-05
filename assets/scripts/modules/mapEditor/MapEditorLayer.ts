@@ -80,7 +80,7 @@ export class MapEditorLayer extends UILayer {
         self.grp_editMathing.active = self._selectIdx == 2;
     }
 
-    private async onImportMapJson() {
+    private async onImportMapJson(data: any) {
         let self = this;
         let juhuaDlg = await JuHuaDlg.show();
         let scrollView = self.list_mapThing.getComponent(ScrollView);
@@ -88,7 +88,7 @@ export class MapEditorLayer extends UILayer {
         scrollView.scrollToTop();
         ResMgr.inst.decRefLocalImg();
         self.refreshList("list_mapThing");
-        await self.mapScrollComp.onImportMapJson();
+        await self.mapScrollComp.onImportMapJson(data);
         juhuaDlg.close();
         self.updateMapInfo();
         //清除上一次导入的地图资源

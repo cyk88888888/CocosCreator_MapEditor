@@ -99,7 +99,7 @@ export class MapMgr {
                         self.mapThingArr.push({ sourceName: parent.name.split(".")[0], nativePath: fileIOHandler.createObjectURL(file) });
                     }
                 }
-                if (parent.name == "map.json") {
+                if (parent.name == "mapData.json") {
                     let file: File = await parent.getFile();
                     let content = await fileIOHandler.readLocalText(file);
                     mapData = JSON.parse(content);
@@ -155,7 +155,7 @@ export class MapMgr {
     }
 
     /**导出json文件到本地 */
-    public exportJson(){
+    public exportJson() {
         let self = this;
         let gridDataMap = self.gridDataMap;
         let mapJsonInfo = <G.MapJsonInfo>{};
@@ -166,10 +166,27 @@ export class MapMgr {
         mapJsonInfo.totCol = self.totCol;
         mapJsonInfo.walkList = [];
         let walkData = gridDataMap[CONST.GridType.GridType_walk];
-        for(let gridType in gridDataMap){
+        for (let i = 0; i < self.totRow; i++) {
+            let linewalkList = [];//每一行
+            mapJsonInfo.walkList.push(linewalkList);
+            for (let j = 0; j < self.totCol; j++) {
+                let graphicsPos = { x: Math.floor(j / self.areaGraphicSize), y: Math.floor(i / self.areaGraphicSize) };
+                let areaKey = graphicsPos.x + '_' + graphicsPos.y;
+                let areaGridDataMap = gridDataMap[CONST.GridType.GridType_walk][areaKey];
+                if (!walkData || !areaGridDataMap) {
+                    linewalkList.push(0);
+                } else {
+                    let gridKey = j + "_" + i;
+                    let gridDataItem = areaGridDataMap ? areaGridDataMap[gridKey] : null;
+                    linewalkList.push(gridDataItem != null ? 1 : 0);
+                }
+            }
+        }
+
+        for (let gridType in gridDataMap) {
             let gridTypeData = gridDataMap[gridType];
-            for(let areaKey in gridTypeData){
-                let areaGridDataMap = gridDataMap[areaKey]; 
+            for (let areaKey in gridTypeData) {
+                let areaGridDataMap = gridDataMap[areaKey];
                 for (let gridKey in areaGridDataMap) {
                     let spltGridPosKey = gridKey.split("_");
 

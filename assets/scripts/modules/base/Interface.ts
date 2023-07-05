@@ -8,7 +8,7 @@ export namespace G {
         totRow: number;
         totCol: number;
         cellSize: number;
-        walkList: number[];
+        walkList: number[][];
         blockList: number[];
         blockVertList: number[];
         waterList: number[];
