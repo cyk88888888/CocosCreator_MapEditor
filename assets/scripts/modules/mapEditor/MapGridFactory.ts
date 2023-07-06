@@ -34,9 +34,10 @@ export class MapGridFactory extends UIComp {
         self._graphicsDic = {};
         self._colorDic = {};
         let mapData: G.MapJsonInfo = data.mapData;
+        let walkList = mapData.walkList || [];
         /** 设置可行走节点**/
-        for (let i = 0; i < mapData.walkList.length; i++) {
-            let lineList = mapData.walkList[i];
+        for (let i = 0; i < walkList.length; i++) {
+            let lineList = walkList[i];
             for (let j = 0; j < lineList.length; j++) {
                 if (lineList[j] != 0) {
                     let gridType: string;
