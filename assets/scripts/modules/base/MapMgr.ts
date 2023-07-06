@@ -172,7 +172,7 @@ export class MapMgr {
             for (let j = 0; j < self.totCol; j++) {
                 let graphicsPos = { x: Math.floor(j / self.areaGraphicSize), y: Math.floor(i / self.areaGraphicSize) };
                 let areaKey = graphicsPos.x + '_' + graphicsPos.y;
-                let areaGridDataMap = gridDataMap[CONST.GridType.GridType_walk][areaKey];
+                let areaGridDataMap = walkData[areaKey];
                 if (!walkData || !areaGridDataMap) {
                     linewalkList.push(0);
                 } else {
