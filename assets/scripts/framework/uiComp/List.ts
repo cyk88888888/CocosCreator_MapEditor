@@ -179,54 +179,53 @@ export class List extends Component {
     private _lastSelectedId: number;
     private multSelected: number[];
     set selectedId(val: number) {
-        let t: any = this;
+        let self = this;
         let item: any;
-        switch (t.selectedMode) {
+        switch (self.selectedMode) {
             case SelectedType_List.SINGLE: {
-                if (!t.repeatEventSingle && val == t._selectedId)
+                if (!self.repeatEventSingle && val == self._selectedId)
                     return;
-                item = t.getItemByListId(val);
+                item = self.getItemByListId(val);
                 // if (!item && val >= 0)
                 //     return;
                 let listItem: ListItem;
-                if (t._selectedId >= 0)
-                    t._lastSelectedId = t._selectedId;
+                if (self._selectedId >= 0)
+                    self._lastSelectedId = self._selectedId;
                 else //如果＜0则取消选择，把_lastSelectedId也置空吧，如果以后有特殊需求再改吧。
-                    t._lastSelectedId = null;
-                t._selectedId = val;
+                    self._lastSelectedId = null;
+                self._selectedId = val;
                 if (item) {
                     listItem = item.getComponent(ListItem);
                     listItem.selected = true;
                 }
-                if (t._lastSelectedId >= 0 && t._lastSelectedId != t._selectedId) {
-                    let lastItem: any = t.getItemByListId(t._lastSelectedId);
+                if (self._lastSelectedId >= 0 && self._lastSelectedId != self._selectedId) {
+                    let lastItem: any = self.getItemByListId(self._lastSelectedId);
                     if (lastItem) {
                         lastItem.getComponent(ListItem).selected = false;
                     }
                 }
-                if (t.selectedEvent) {
-                    EventHandler.emitEvents([t.selectedEvent], item, val % this._actualNumItems, t._lastSelectedId == null ? null : (t._lastSelectedId % this._actualNumItems));
+                if (self.selectedEvent) {
+                    EventHandler.emitEvents([self.selectedEvent], item, val % this._actualNumItems, self._lastSelectedId == null ? null : (self._lastSelectedId % this._actualNumItems));
                 }
                 break;
             }
             case SelectedType_List.MULT: {
-                item = t.getItemByListId(val);
+                item = self.getItemByListId(val);
                 if (!item)
                     return;
                 let listItem = item.getComponent(ListItem);
-                if (t._selectedId >= 0)
-                    t._lastSelectedId = t._selectedId;
-                t._selectedId = val;
+                if (self._selectedId >= 0)self._lastSelectedId = self._selectedId;
+                self._selectedId = val;
                 let bool: boolean = !listItem.selected;
                 listItem.selected = bool;
-                let sub: number = t.multSelected.indexOf(val);
+                let sub: number = self.multSelected.indexOf(val);
                 if (bool && sub < 0) {
-                    t.multSelected.push(val);
+                    self.multSelected.push(val);
                 } else if (!bool && sub >= 0) {
-                    t.multSelected.splice(sub, 1);
+                    self.multSelected.splice(sub, 1);
                 }
-                if (t.selectedEvent) {
-                    EventHandler.emitEvents([t.selectedEvent], item, val % this._actualNumItems, t._lastSelectedId == null ? null : (t._lastSelectedId % this._actualNumItems), bool);
+                if (self.selectedEvent) {
+                    EventHandler.emitEvents([self.selectedEvent], item, val % this._actualNumItems, self._lastSelectedId == null ? null : (self._lastSelectedId % this._actualNumItems), bool);
                 }
                 break;
             }

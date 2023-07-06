@@ -9,6 +9,7 @@ export namespace CONST {
         UpdateMapInfo = "UpdateMapInfo",
         ChangeGridType = "ChangeGridType",
         ChangeGridSize = "ChangeGridSize",
+        DragMapThingDown = "DragMapThingDown",
     }
 
     /** 格子类型*/
@@ -17,6 +18,7 @@ export namespace CONST {
         GridType_walk = "GridType_walk",//可行走
         GridType_WaterVerts = "GridType_WaterVerts",//落水点
         GridType_start = "GridType_start",//起始点
+        GridType_mapThing = "GridType_mapThing",//场景物件
     }
 
     /**场景物件类型 */

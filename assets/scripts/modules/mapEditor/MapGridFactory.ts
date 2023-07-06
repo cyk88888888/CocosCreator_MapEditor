@@ -1,10 +1,10 @@
 import { _decorator, EventMouse, instantiate, Prefab, UITransform, Vec2, Vec3 } from 'cc';
 import { UIComp } from '../../framework/ui/UIComp';
 import { MapMgr } from '../base/MapMgr';
-import { ColorGrid } from './grid/ColorGrid';
 import { BaseUT } from '../../framework/base/BaseUtil';
 import { G } from '../base/Interface';
 import { CONST } from '../base/CONST';
+import { ColorGrid } from './comp/ColorGrid';
 const { ccclass, property } = _decorator;
 /*
  * @Descripttion: 网格绘制工厂

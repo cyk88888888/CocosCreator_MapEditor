@@ -1,4 +1,4 @@
-import { _decorator, Color, Graphics } from 'cc';
+import { _decorator, Graphics } from 'cc';
 import { UIComp } from '../../../framework/ui/UIComp';
 const { ccclass, property } = _decorator;
 

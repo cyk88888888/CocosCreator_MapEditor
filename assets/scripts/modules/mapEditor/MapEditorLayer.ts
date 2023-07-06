@@ -1,4 +1,4 @@
-import { _decorator, Button, Label, profiler, ScrollView } from 'cc';
+import { _decorator, Button, EventMouse, instantiate, Label, Prefab, profiler, ScrollView, Vec2, Vec3 } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
 import { FileIOHandler } from '../../framework/mgr/FileIOHandler';
 import { MapScrollComp } from './MapScrollComp';
@@ -9,6 +9,7 @@ import { List } from '../../framework/uiComp/List';
 import { CONST } from '../base/CONST';
 import { JuHuaDlg } from '../../framework/ui/JuHuaDlg';
 import { ResMgr } from '../../framework/mgr/ResMgr';
+import { BaseUT } from '../../framework/base/BaseUtil';
 const { ccclass, property } = _decorator;
 
 /*
@@ -46,7 +47,6 @@ export class MapEditorLayer extends UILayer {
     private lbl_mapSize: Label;
     @property({ type: Label })
     private lbl_mapScale: Label;
-
     @property({ type: MapScrollComp, tooltip: "编辑器地图滚动组件" })
     private mapScrollComp: MapScrollComp;
     @property({ type: Node })
@@ -61,8 +61,17 @@ export class MapEditorLayer extends UILayer {
     private list_pathSize: List = null;
     @property({ type: List })
     private list_path: List = null;
+    @property({ type: Node })
+    private grp_dragMapthing: Node = null;
+    @property({ type: Prefab })
+    private mapThingComp: Prefab = null;
 
     private _selectIdx: number;
+    /**当前拖拽的场景物件 */
+    private _mapThingComp: Node;
+    private _drawMapThingData: any;
+    /**当前鼠标位置 */
+    private _curLocation: Vec2;
     protected onEnter() {
         let self = this;
         self.onEmitter(CONST.GEVT.ImportMapJson, self.onImportMapJson);//导入josn地图数据成功
@@ -91,6 +100,7 @@ export class MapEditorLayer extends UILayer {
         await self.mapScrollComp.onImportMapJson(data);
         juhuaDlg.close();
         self.updateMapInfo();
+        self.initEvent();
         //清除上一次导入的地图资源
         await new Promise<void>((resolve, reject) => {
             self.setTimeout(() => {
@@ -109,7 +119,15 @@ export class MapEditorLayer extends UILayer {
 
     private updateMapScale() {
         let self = this;
-        self.lbl_mapScale.string = `地图缩放比例：${self.mapScrollComp.mapScale.toFixed(2)}`;
+        let scale = self.mapScrollComp.mapScale;
+        self.lbl_mapScale.string = `地图缩放比例：${scale.toFixed(2)}`;
+        if(self._mapThingComp) self._mapThingComp.setScale(new Vec3(scale, scale, scale));
+    }
+
+    private initEvent() {
+        let self = this;
+        self.node.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self);
+        self.node.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
     }
 
     private _data_list_path() {
@@ -133,12 +151,67 @@ export class MapEditorLayer extends UILayer {
 
     private _select_list_path(data: any, selectedIdx: number, lastSelectedIdx: number) {
         let self = this;
-        self.emit(CONST.GEVT.ChangeGridType, {gridType: data.gridType});
+        self.emit(CONST.GEVT.ChangeGridType, { gridType: data.gridType });
     }
 
     private _select_list_pathSize(data: any, selectedIdx: number, lastSelectedIdx: number) {
         let self = this;
-        self.emit(CONST.GEVT.ChangeGridSize, {range: data.size});
+        self.emit(CONST.GEVT.ChangeGridSize, { range: data.size });
+    }
+
+    private _select_list_mapThing(data: any, selectedIdx: number, lastSelectedIdx: number) {
+        let self = this;
+        self.newDragMapThing(data.nativePath);
+    }
+
+    private newDragMapThing(url: string) {
+        let self = this;
+        self.disposeDragMapThing();
+        self._drawMapThingData = { url: url };
+        self.emit(CONST.GEVT.ChangeGridType, { gridType: CONST.GridType.GridType_mapThing });
+        let mapthingComp = self._mapThingComp = MapMgr.inst.getMapThingComp(self.mapThingComp, url);
+        let scale = self.mapScrollComp.mapScale;
+        let mousePos = BaseUT.getMousePos(self._curLocation);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标）
+        mapthingComp.setPosition(mousePos.x, mousePos.y);
+        mapthingComp.setParent(self.grp_dragMapthing);
+        mapthingComp.setScale(new Vec3(scale, scale, scale));
+    }
+
+    private disposeDragMapThing() {
+        let self = this;
+        if (self._mapThingComp) {
+            self._mapThingComp.destroy();
+            self._mapThingComp = null;
+        }
+        self._drawMapThingData = null;
+    }
+
+    private onMouseDown(e: EventMouse) {
+        let self = this;
+        self._curLocation = e.getLocation();
+        if (self._mapThingComp) {
+            let mousePos = BaseUT.getMousePos(self._curLocation);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标）
+            let limitPos = self.mapScrollComp.node.position;
+            let size = BaseUT.getSize(self.mapScrollComp.node);
+            if (mousePos.x > limitPos.x && mousePos.y > limitPos.y && mousePos.x < limitPos.x + size.width && mousePos.y < limitPos.y + size.height) {
+                self.emit(CONST.GEVT.DragMapThingDown, {
+                    url: self._drawMapThingData ? self._drawMapThingData.url : '',
+                    taskId: self._drawMapThingData ? self._drawMapThingData.taskId : 0,
+                    groupId: self._drawMapThingData ? self._drawMapThingData.groupId : 0,
+                    type: self._drawMapThingData ? self._drawMapThingData.type : 0,
+                    isByDrag: true
+                });
+            }
+            self.disposeDragMapThing();
+        }
+    }
+
+    private onMouseMove(e: EventMouse) {
+        let self = this;
+        if (self._mapThingComp) {
+            let mousePos = BaseUT.getMousePos(e.getLocation());//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
+            self._mapThingComp.setPosition(mousePos.x, mousePos.y);
+        }
     }
 
     /** 打开文件选择器+读取数据 */
@@ -176,7 +249,7 @@ export class MapEditorLayer extends UILayer {
     private _tap_btn_showPath() {
         let self = this;
         self.lbl_path.string = self.lbl_path.string == "显示路点" ? "隐藏路点" : "显示路点";
-        self.mapScrollComp.grp_colorGrid.active = !self.mapScrollComp.grp_colorGrid.active; 
+        self.mapScrollComp.grp_colorGrid.active = !self.mapScrollComp.grp_colorGrid.active;
     }
 
     /**显隐物件 */

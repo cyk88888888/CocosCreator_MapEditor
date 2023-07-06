@@ -3,10 +3,13 @@
  * @Author: CYK
  * @Date: 2023-06-01 09:05:10
  */
+import { Node, Prefab, SpriteFrame, instantiate } from "cc";
 import { emmiter } from "../../framework/base/Emmiter";
 import { FileIOHandler } from "../../framework/mgr/FileIOHandler";
 import { CONST } from "./CONST";
 import { G } from "./Interface";
+import { BaseUT } from "../../framework/base/BaseUtil";
+import { ImgLoader } from "../../framework/uiComp/ImgLoader";
 
 export class MapMgr {
     private static _inst: MapMgr;
@@ -152,6 +155,20 @@ export class MapMgr {
     public pos2Grid(x: number, y: number): { x: number, y: number } {
         let self = this;
         return { x: Math.floor(x / self.cellSize), y: Math.floor(y / self.cellSize) };
+    }
+
+    /**获取场景物件 */
+    public getMapThingComp(prefab: Prefab, url: string, anchorX: number = 0.5, anchorY: number = 0.5, completeCb?: () => void, ctx?: any): Node {
+        let node = instantiate(prefab);
+        BaseUT.setPivot(node, anchorX, anchorY);
+        let loader = node.getComponent(ImgLoader);
+        loader.ctx = ctx; 
+        loader.loadComplete = function(spriteFrame: SpriteFrame) {
+            BaseUT.setSize(node, spriteFrame.width, spriteFrame.height);
+            if(completeCb) completeCb.call(ctx);
+        }
+        loader.url = url;
+        return node;
     }
 
     /**导出json文件到本地 */
