@@ -190,10 +190,8 @@ export class MapEditorLayer extends UILayer {
         let self = this;
         self._curLocation = e.getLocation();
         if (self._mapThingComp) {
-            let mousePos = BaseUT.getMousePos(self._curLocation);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标）
-            let limitPos = self.mapScrollComp.node.position;
-            let size = BaseUT.getSize(self.mapScrollComp.node);
-            if (mousePos.x > limitPos.x && mousePos.y > limitPos.y && mousePos.x < limitPos.x + size.width && mousePos.y < limitPos.y + size.height) {
+            if (self.mapScrollComp.isInEditArea) {
+                console.log('拖拽场景物件放下');
                 self.emit(CONST.GEVT.DragMapThingDown, {
                     url: self._drawMapThingData ? self._drawMapThingData.url : '',
                     taskId: self._drawMapThingData ? self._drawMapThingData.taskId : 0,

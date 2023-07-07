@@ -40,7 +40,7 @@ export class MapScrollComp extends UIComp {
     private _pressMouseLeft: boolean;
     /**是否按下鼠标右键 */
     private _pressMouseRight: boolean;
-    private _isInEditArea: boolean;
+    public isInEditArea: boolean;
     private _preUIPos: Vec2;
     private _scrollMapUITranstorm: UITransform;
     private onAddNodeHandler: Function;
@@ -229,13 +229,13 @@ export class MapScrollComp extends UIComp {
 
     private onMouseEnter(e: EventMouse) {
         let self = this;
-        self._isInEditArea = true;
+        self.isInEditArea = true;
         self.checkMousCursor();
     }
 
     private onMouseLeave(e: EventMouse) {
         let self = this;
-        self._isInEditArea = false;
+        self.isInEditArea = false;
         self.checkMousCursor();
     }
 
@@ -328,7 +328,7 @@ export class MapScrollComp extends UIComp {
 
     private checkMousCursor() {
         let self = this;
-        if (self._pressSpace && self._isInEditArea) {
+        if (self._pressSpace && self.isInEditArea) {
             BaseUT.changeMouseCursor("move");
         } else {
             BaseUT.changeMouseCursor("auto");
