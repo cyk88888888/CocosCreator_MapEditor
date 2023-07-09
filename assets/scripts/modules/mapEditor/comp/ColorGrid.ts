@@ -5,10 +5,6 @@ const { ccclass, property } = _decorator;
 @ccclass('ColorGrid')
 export class ColorGrid extends UIComp {
      private _graphics: Graphics;
-     protected onFirstEnter(): void {
-          let self = this;
-          self._graphics = self.node.getComponent(Graphics);
-     }
      /**
       * 绘制矩形颜色格子
       * @param color 格子颜色
@@ -19,6 +15,7 @@ export class ColorGrid extends UIComp {
       */
      public drawRect(color: string, x: number, y: number, width: number, heigth: number, alpha: number = 0.5) {
           let self = this;
+          if(!self._graphics) self._graphics = self.node.getComponent(Graphics);
           let fillColor = self._graphics.fillColor;
           fillColor.fromHEX(color);
           self._graphics.fillColor.set(fillColor.r, fillColor.g, fillColor.b, alpha * 255);
