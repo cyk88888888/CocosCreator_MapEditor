@@ -251,7 +251,8 @@ export class MapScrollComp extends UIComp {
         if (oldScale == 1) return;//已经是初始缩放比例
         let widget = self.node.getComponent(Widget);
         let selfSize = BaseUT.getSize(self.node);
-        let location = new Vec2(widget.left + selfSize.width / 2, widget.bottom + selfSize.height / 2);//以当前地图视角中心为圆心来重置缩放
+        let view = BaseUT.getView();
+        let location = new Vec2((widget.left + selfSize.width / 2) * view.getScaleX(), (widget.bottom + selfSize.height / 2) * view.getScaleY());//以当前地图视角中心为圆心来重置缩放
         self.scaleMap(1 - self.grp_scrollMap.scale.x, location);
     }
 
