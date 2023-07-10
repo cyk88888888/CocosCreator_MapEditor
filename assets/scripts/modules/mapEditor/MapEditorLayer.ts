@@ -1,6 +1,5 @@
-import { _decorator, Button, EventMouse, instantiate, Label, Prefab, profiler, ScrollView, Vec2, Vec3 } from 'cc';
+import { _decorator, Button, EventMouse, Label, Prefab, profiler, ScrollView, Vec2, Vec3 } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
-import { FileIOHandler } from '../../framework/mgr/FileIOHandler';
 import { MapScrollComp } from './MapScrollComp';
 import { MapMgr } from '../base/MapMgr';
 import { EventTouch } from 'cc';
@@ -10,6 +9,7 @@ import { CONST } from '../base/CONST';
 import { JuHuaDlg } from '../../framework/ui/JuHuaDlg';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
+import { G } from '../base/Interface';
 const { ccclass, property } = _decorator;
 
 /*
@@ -121,7 +121,7 @@ export class MapEditorLayer extends UILayer {
         let self = this;
         let scale = self.mapScrollComp.mapScale;
         self.lbl_mapScale.string = `地图缩放比例：${scale.toFixed(2)}`;
-        if(self._mapThingComp) self._mapThingComp.setScale(new Vec3(scale, scale, scale));
+        if (self._mapThingComp) self._mapThingComp.setScale(new Vec3(scale, scale, scale));
     }
 
     private initEvent() {
@@ -191,11 +191,12 @@ export class MapEditorLayer extends UILayer {
         self._curLocation = e.getLocation();
         if (self._mapThingComp) {
             if (self.mapScrollComp.isInEditArea) {
-                console.log('拖拽场景物件放下');
-                self.emit(CONST.GEVT.DragMapThingDown, {
+                self.emit(CONST.GEVT.DragMapThingDown, <G.DragMapthingInfo>{
+                    location: self._curLocation,
                     url: self._drawMapThingData ? self._drawMapThingData.url : '',
                     taskId: self._drawMapThingData ? self._drawMapThingData.taskId : 0,
                     groupId: self._drawMapThingData ? self._drawMapThingData.groupId : 0,
+                    groupIdStr: self._drawMapThingData ? self._drawMapThingData.groupIdStr : 0,
                     type: self._drawMapThingData ? self._drawMapThingData.type : 0,
                     isByDrag: true
                 });

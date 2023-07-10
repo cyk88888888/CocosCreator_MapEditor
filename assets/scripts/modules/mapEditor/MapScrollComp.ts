@@ -4,8 +4,9 @@ import { CONST } from '../base/CONST';
 import { MapMgr } from '../base/MapMgr';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
-import { MapGridFactory } from './MapGridFactory';
+import { MapGridFactory } from './factory/MapGridFactory';
 import { MessageTip } from '../common/message/MessageTip';
+import { MapThingFactory } from './factory/MapThingFactory';
 const { ccclass, property } = _decorator;
 
 /*
@@ -29,6 +30,8 @@ export class MapScrollComp extends UIComp {
     public graphicsGrid: Graphics;
     @property({ type: MapGridFactory })
     public mapGridFactory: MapGridFactory;
+    @property({ type: MapThingFactory })
+    public mapThingFactory: MapThingFactory;
 
     private mapMgr: MapMgr;
     public scaleCb: Function;
@@ -40,6 +43,8 @@ export class MapScrollComp extends UIComp {
     private _pressMouseLeft: boolean;
     /**是否按下鼠标右键 */
     private _pressMouseRight: boolean;
+    /**ctrl键是否处于按下状态 */
+    private _isCtrlDown: Boolean;
     public isInEditArea: boolean;
     private _preUIPos: Vec2;
     private _scrollMapUITranstorm: UITransform;
@@ -112,13 +117,15 @@ export class MapScrollComp extends UIComp {
 
     private init(data: any) {
         let self = this;
-        self.initGrid();
+        data.scrollMapUITranstorm = self._scrollMapUITranstorm;
+        self.initGridLine();
         self.initEvent();
         self.mapGridFactory.init(data);
+        self.mapThingFactory.init(data);
     }
 
     /**初始化网格线条 */
-    private initGrid() {
+    private initGridLine() {
         let self = this;
         let cellSize = self.mapMgr.cellSize;
         let numCols = self.mapMgr.totCol = Math.floor(self.mapMgr.mapWidth / cellSize);
@@ -151,9 +158,9 @@ export class MapScrollComp extends UIComp {
         // this.node.on(Node.EventType.MOUSE_MOVE, this.onShowRoadMsg, self),
         self.grp_mapLayer.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self);
         self.grp_mapLayer.on(Node.EventType.MOUSE_UP, self.onMouseUp, self);
-        self.grp_mapLayer.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self, true);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self, true);
         self.grp_mapLayer.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, self);
-        self.grp_mapLayer.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self);
 
         input.on(Input.EventType.KEY_DOWN, self.onKeyDown, self); //监听键盘按键按下
         input.on(Input.EventType.KEY_UP, self.onKeyUp, self); //监听键盘按键放开
@@ -173,10 +180,12 @@ export class MapScrollComp extends UIComp {
                 } else if (buttonId == EventMouse.BUTTON_RIGHT) {
                     self._pressMouseRight = true;
                 }
-                if (self._pressMouseRight) {
-                    if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
-                } else if (self._pressMouseLeft) {
-                    if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+                if (self._pressMouseLeft) {
+                    if (self._isCtrlDown) {
+                        if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
+                    } else {
+                        if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+                    }
                 }
             } else {
                 MessageTip.show({ msg: "请选择操作功能！" });
@@ -197,10 +206,12 @@ export class MapScrollComp extends UIComp {
             self.checkLimitPos();
         } else {
             if (self.mapMgr.gridType != CONST.GridType.GridType_none) {
-                if (self._pressMouseRight) {
-                    if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
-                } else if (self._pressMouseLeft) {
-                    if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+                if (self._pressMouseLeft) {
+                    if (self._isCtrlDown) {
+                        if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
+                    } else {
+                        if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+                    }
                 }
             }
         }
@@ -314,6 +325,10 @@ export class MapScrollComp extends UIComp {
                 self._pressSpace = true;
                 self.checkMousCursor();
                 break;
+            case KeyCode.CTRL_LEFT:
+            case KeyCode.CTRL_RIGHT:
+                self._isCtrlDown = true;
+                break;
         }
     }
 
@@ -323,6 +338,10 @@ export class MapScrollComp extends UIComp {
             case KeyCode.SPACE:
                 self._pressSpace = false;
                 self.checkMousCursor();
+                break;
+            case KeyCode.CTRL_LEFT:
+            case KeyCode.CTRL_RIGHT:
+                self._isCtrlDown = false;
                 break;
         }
     }

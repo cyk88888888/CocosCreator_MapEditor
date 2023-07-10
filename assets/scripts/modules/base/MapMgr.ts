@@ -64,7 +64,7 @@ export class MapMgr {
         self.mapThingArr = [];
         self.mapslice = 0;
         let firstRow: number;
-        let mapData: G.MapJsonInfo, thingPram: G.thingPramInfo;
+        let mapData: G.MapJsonInfo, thingPram: G.ThingPramInfo;
         await getFilesRecursively(root);
         async function getFilesRecursively(parent: FileSystemDirectoryHandle | FileSystemFileHandle) {
             if (parent.kind === 'directory') {
@@ -157,15 +157,26 @@ export class MapMgr {
         return { x: Math.floor(x / self.cellSize), y: Math.floor(y / self.cellSize) };
     }
 
-    /**获取场景物件 */
-    public getMapThingComp(prefab: Prefab, url: string, anchorX: number = 0.5, anchorY: number = 0.5, completeCb?: () => void, ctx?: any): Node {
+    /**
+     * 
+     * @param prefab 预制体
+     * @param url 场景物件图片路径
+     * @param anchorX 
+     * @param anchorY 
+     * @param completeCb 场景物件图片加载完毕回调
+     * @param ctx 
+     * @returns 
+     */
+    public getMapThingComp(prefab: Prefab, url: string, anchorX: number = 0.5, anchorY: number = 0.5, completeCb?: (imgWidth:number, imgHeight:number) => void, ctx?: any): Node {
         let node = instantiate(prefab);
         BaseUT.setPivot(node, anchorX, anchorY);
+        BaseUT.setAlpha(node, 0.6);
         let loader = node.getComponent(ImgLoader);
         loader.ctx = ctx; 
         loader.loadComplete = function(spriteFrame: SpriteFrame) {
-            BaseUT.setSize(node, spriteFrame.width, spriteFrame.height);
-            if(completeCb) completeCb.call(ctx);
+            let imgWidth = spriteFrame.width, imgHeight = spriteFrame.height;
+            BaseUT.setSize(node, imgWidth, imgHeight);
+            if(completeCb) completeCb.call(ctx, imgWidth, imgHeight);
         }
         loader.url = url;
         return node;

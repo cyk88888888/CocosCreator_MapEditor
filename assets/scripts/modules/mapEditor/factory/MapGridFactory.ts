@@ -1,10 +1,10 @@
 import { _decorator, EventMouse, instantiate, Prefab, UITransform, Vec2, Vec3 } from 'cc';
-import { UIComp } from '../../framework/ui/UIComp';
-import { MapMgr } from '../base/MapMgr';
-import { BaseUT } from '../../framework/base/BaseUtil';
-import { G } from '../base/Interface';
-import { CONST } from '../base/CONST';
-import { ColorGrid } from './comp/ColorGrid';
+import { UIComp } from '../../../framework/ui/UIComp';
+import { MapMgr } from '../../base/MapMgr';
+import { ColorGrid } from '../comp/ColorGrid';
+import { CONST } from '../../base/CONST';
+import { G } from '../../base/Interface';
+import { BaseUT } from '../../../framework/base/BaseUtil';
 const { ccclass, property } = _decorator;
 /*
  * @Descripttion: 网格绘制工厂
@@ -14,7 +14,7 @@ const { ccclass, property } = _decorator;
 @ccclass('MapGridFactory')
 export class MapGridFactory extends UIComp {
     @property({ type: Prefab })
-    public colorGrid: Prefab;
+    public colorGridPrefab: Prefab;
 
     private mapMgr: MapMgr;
     private _scrollMapUITranstorm: UITransform;
@@ -26,13 +26,13 @@ export class MapGridFactory extends UIComp {
     protected onEnter(): void {
         let self = this;
         self.mapMgr = MapMgr.inst;
-        self._scrollMapUITranstorm = self.node.parent.getComponent(UITransform);
     }
 
     public init(data: any) {
         let self = this;
         self._graphicsDic = {};
         self._colorDic = {};
+        self._scrollMapUITranstorm  = data.scrollMapUITranstorm;
         let mapData: G.MapJsonInfo = data.mapData;
         let walkList = mapData.walkList || [];
         /** 设置可行走节点**/
@@ -162,7 +162,7 @@ export class MapGridFactory extends UIComp {
     private getGraphic(key: string): ColorGrid {
         let self = this;
         if (!self._graphicsDic[key]) {
-            let colorGrid = instantiate(self.colorGrid);
+            let colorGrid = instantiate(self.colorGridPrefab);
             colorGrid.setParent(self.node);
             let graphics = colorGrid.getComponent(ColorGrid);
             self._graphicsDic[key] = graphics;
