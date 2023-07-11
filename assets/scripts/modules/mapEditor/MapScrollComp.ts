@@ -33,9 +33,9 @@ export class MapScrollComp extends UIComp {
     @property({ type: MapThingFactory })
     public mapThingFactory: MapThingFactory;
 
+    public isInEditArea: boolean;
+
     private mapMgr: MapMgr;
-    public scaleCb: Function;
-    public scaleCbCtx: any;
     /**编辑区域宽高 */
     private _editAreaSize: Size;
     private _pressSpace: boolean;
@@ -45,7 +45,6 @@ export class MapScrollComp extends UIComp {
     private _pressMouseRight: boolean;
     /**ctrl键是否处于按下状态 */
     private _isCtrlDown: Boolean;
-    public isInEditArea: boolean;
     private _preUIPos: Vec2;
     private _scrollMapUITranstorm: UITransform;
     private onAddNodeHandler: Function;
@@ -158,8 +157,8 @@ export class MapScrollComp extends UIComp {
         // this.node.on(Node.EventType.MOUSE_MOVE, this.onShowRoadMsg, self),
         self.grp_mapLayer.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self);
         self.grp_mapLayer.on(Node.EventType.MOUSE_UP, self.onMouseUp, self);
-        self.grp_mapLayer.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self, true);
-        self.grp_mapLayer.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self, true);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self, true);//移入必须注册在捕获阶段，不然移到场景物件时会触发MOUSE_LEAVE
+        self.grp_mapLayer.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self);
         self.grp_mapLayer.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, self);
 
         input.on(Input.EventType.KEY_DOWN, self.onKeyDown, self); //监听键盘按键按下
@@ -219,7 +218,7 @@ export class MapScrollComp extends UIComp {
 
     private onMouseUp(e: EventMouse) {
         let self = this;
-        this.grp_mapLayer.hasEventListener(Node.EventType.MOUSE_MOVE) && this.grp_mapLayer.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
+        this.grp_mapLayer.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
         let buttonId = e.getButton();
         if (buttonId == EventMouse.BUTTON_LEFT) {
             self._pressMouseLeft = false;
@@ -280,6 +279,7 @@ export class MapScrollComp extends UIComp {
         let minScale = Math.max(editAreaWidth / self.mapMgr.mapWidth, editAreaHeight / self.mapMgr.mapHeight);
         if (scale > 2) scale = 2;
         if (scale < minScale) scale = minScale;
+        if(self.mapScale == scale) return;
         let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
         let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
         self.grp_scrollMap.setScale(new Vec3(scale, scale, scale));//一定要设置z的scale，不然会影响转换成世界坐标的值
@@ -289,7 +289,7 @@ export class MapScrollComp extends UIComp {
         let toY = self.grp_scrollMap.position.y + moveDelta.y;
         self.grp_scrollMap.setPosition(toX, toY);
         self.checkLimitPos();
-        if (self.scaleCb) self.scaleCb.call(self.scaleCbCtx);
+        self.emit(CONST.GEVT.UpdateMapScale);
     }
 
     /**检测地图滚动容器边界 */
@@ -322,12 +322,12 @@ export class MapScrollComp extends UIComp {
         let self = this;
         switch (event.keyCode) {
             case KeyCode.SPACE:
-                self._pressSpace = true;
+                self.mapMgr.isPressSpace = self._pressSpace = true;
                 self.checkMousCursor();
                 break;
             case KeyCode.CTRL_LEFT:
             case KeyCode.CTRL_RIGHT:
-                self._isCtrlDown = true;
+                self.mapMgr.isPressCtrl = self._isCtrlDown = true;
                 break;
         }
     }
@@ -336,12 +336,12 @@ export class MapScrollComp extends UIComp {
         let self = this;
         switch (event.keyCode) {
             case KeyCode.SPACE:
-                self._pressSpace = false;
+                self.mapMgr.isPressSpace = self._pressSpace = false;
                 self.checkMousCursor();
                 break;
             case KeyCode.CTRL_LEFT:
             case KeyCode.CTRL_RIGHT:
-                self._isCtrlDown = false;
+                self.mapMgr.isPressCtrl = self._isCtrlDown = false;
                 break;
         }
     }

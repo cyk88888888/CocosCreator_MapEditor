@@ -42,9 +42,18 @@ export class MapMgr {
     /**绘制格子的单个Graphic区域大小 */
     public areaGraphicSize: number;
     /** 导入的地图场景物件数组*/
-    public mapThingArr: any[];
+    public mapThingUrlMap: {[name: string]: string};
     /** 当前绘制的格子数据*/
     public gridDataMap: { [gridType: string]: { [areaKey: string]: { [gridKey: string]: string } } };
+    /**场景物件信息数据 */
+    public mapThingMap: {[name: string]: any[]};
+    public curMapThingInfo: G.MapThingInfo;//当前正在编辑的场景物件
+    /**是否按下space键 */
+    public isPressSpace: boolean;
+    /**是否按下ctrl键 */
+    public isPressCtrl: boolean;
+    /**顶点物件名称 */
+    public bavelResStr:string = "black.png";
     public init() {
         let self = this;
         self.gridRange = 0;
@@ -61,7 +70,7 @@ export class MapMgr {
         console.log(root);
         if (!root) return;
         self.mapFloorArr = [];
-        self.mapThingArr = [];
+        self.mapThingUrlMap = {};
         self.mapslice = 0;
         let firstRow: number;
         let mapData: G.MapJsonInfo, thingPram: G.ThingPramInfo;
@@ -99,7 +108,7 @@ export class MapMgr {
                 } else if (parent["rootName"] == "thing") {
                     if (parent.name.indexOf("_") == -1) {
                         let file: File = await parent.getFile();
-                        self.mapThingArr.push({ sourceName: parent.name.split(".")[0], nativePath: fileIOHandler.createObjectURL(file) });
+                        self.mapThingUrlMap[parent.name] = fileIOHandler.createObjectURL(file);
                     }
                 }
                 if (parent.name == "mapData.json") {
@@ -130,6 +139,7 @@ export class MapMgr {
         console.log(mapData, thingPram);
         self.cellSize = mapData.cellSize || 20;
         self.gridDataMap = {};
+        self.mapThingMap = {};
         emmiter.emit(CONST.GEVT.ImportMapJson, { mapData: mapData, thingPram: thingPram });
     }
 

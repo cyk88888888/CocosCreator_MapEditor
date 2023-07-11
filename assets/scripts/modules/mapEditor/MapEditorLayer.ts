@@ -66,19 +66,21 @@ export class MapEditorLayer extends UILayer {
     @property({ type: Prefab })
     private mapThingComp: Prefab = null;
 
+    private mapMgr: MapMgr;
     private _selectIdx: number;
     /**当前拖拽的场景物件 */
     private _mapThingComp: Node;
-    private _drawMapThingData: any;
+    private _drawMapThingData: G.DragMapthingInfo;
     /**当前鼠标位置 */
     private _curLocation: Vec2;
     protected onEnter() {
         let self = this;
+        self.mapMgr = MapMgr.inst;
         self.onEmitter(CONST.GEVT.ImportMapJson, self.onImportMapJson);//导入josn地图数据成功
+        self.onEmitter(CONST.GEVT.UpdateMapScale, self.updateMapScale);//地图缩放变更
+        self.onEmitter(CONST.GEVT.DragMapThingStart, self.onDragMapThingStart);
         self._selectIdx = 1;
         self.list_pathSize.selectedId = 0;
-        self.mapScrollComp.scaleCbCtx = self;
-        self.mapScrollComp.scaleCb = self.updateMapScale;
         self.showEditOperate();
     }
 
@@ -113,7 +115,7 @@ export class MapEditorLayer extends UILayer {
     /**导入成功后，更新显示地图数据 */
     private updateMapInfo() {
         let self = this;
-        self.lbl_mapSize.string = `地图宽高：${MapMgr.inst.mapWidth}, ${MapMgr.inst.mapHeight}`;
+        self.lbl_mapSize.string = `地图宽高：${self.mapMgr.mapWidth}, ${self.mapMgr.mapHeight}`;
         self.updateMapScale();
     }
 
@@ -145,7 +147,12 @@ export class MapEditorLayer extends UILayer {
     }
 
     private _data_list_mapThing() {
-        let rst = MapMgr.inst.mapThingArr || [];
+        let self = this;
+        let rst = [];
+        let mapThingUrlMap = self.mapMgr.mapThingUrlMap;
+        for (let key in mapThingUrlMap) {
+            rst.push({ thingName: key, nativePath: mapThingUrlMap[key] });
+        }
         return rst;
     }
 
@@ -162,14 +169,28 @@ export class MapEditorLayer extends UILayer {
     private _select_list_mapThing(data: any, selectedIdx: number, lastSelectedIdx: number) {
         let self = this;
         self.newDragMapThing(data.nativePath);
+        self._drawMapThingData = { url: data.nativePath, thingName: data.thingName};
+    }
+
+    /**开始拖拽场景已有的物件**/
+    private onDragMapThingStart(data: G.DragMapthingInfo) {
+        let self = this;
+        self.newDragMapThing(data.url);
+        self._drawMapThingData = {
+            url: data.url,
+            thingName: data.thingName,
+            taskId: data.taskId,
+            groupId: data.groupId,
+            type: data.type,
+            groupIdStr: data.groupIdStr
+        };
     }
 
     private newDragMapThing(url: string) {
         let self = this;
         self.disposeDragMapThing();
-        self._drawMapThingData = { url: url };
         self.emit(CONST.GEVT.ChangeGridType, { gridType: CONST.GridType.GridType_mapThing });
-        let mapthingComp = self._mapThingComp = MapMgr.inst.getMapThingComp(self.mapThingComp, url);
+        let mapthingComp = self._mapThingComp = self.mapMgr.getMapThingComp(self.mapThingComp, url);
         let scale = self.mapScrollComp.mapScale;
         let mousePos = BaseUT.getMousePos(self._curLocation);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标）
         mapthingComp.setPosition(mousePos.x, mousePos.y);
@@ -189,38 +210,45 @@ export class MapEditorLayer extends UILayer {
     private onMouseDown(e: EventMouse) {
         let self = this;
         self._curLocation = e.getLocation();
-        if (self._mapThingComp) {
-            if (self.mapScrollComp.isInEditArea) {
-                self.emit(CONST.GEVT.DragMapThingDown, <G.DragMapthingInfo>{
-                    location: self._curLocation,
-                    url: self._drawMapThingData ? self._drawMapThingData.url : '',
-                    taskId: self._drawMapThingData ? self._drawMapThingData.taskId : 0,
-                    groupId: self._drawMapThingData ? self._drawMapThingData.groupId : 0,
-                    groupIdStr: self._drawMapThingData ? self._drawMapThingData.groupIdStr : 0,
-                    type: self._drawMapThingData ? self._drawMapThingData.type : 0,
-                    isByDrag: true
-                });
+        let buttonId = e.getButton();
+        if (buttonId == EventMouse.BUTTON_LEFT) {
+            if(!self.mapMgr.isPressSpace){
+                if (self._mapThingComp && self.mapScrollComp.isInEditArea) {
+                    self.emit(CONST.GEVT.DragMapThingDown, <G.DragMapthingInfo>{
+                        location: self._curLocation,
+                        url: self._drawMapThingData.url,
+                        thingName: self._drawMapThingData.thingName,
+                        taskId: self._drawMapThingData.taskId || 0,
+                        groupId: self._drawMapThingData.groupId || 0,
+                        groupIdStr: self._drawMapThingData.groupIdStr || 0,
+                        type: self._drawMapThingData.type || 0,
+                        isByDrag: true
+                    });
+                }
+                self.disposeDragMapThing();
             }
-            self.disposeDragMapThing();
         }
     }
 
     private onMouseMove(e: EventMouse) {
         let self = this;
+        self._curLocation = e.getLocation();
         if (self._mapThingComp) {
-            let mousePos = BaseUT.getMousePos(e.getLocation());//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
+            let mousePos = BaseUT.getMousePos(self._curLocation);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
             self._mapThingComp.setPosition(mousePos.x, mousePos.y);
         }
     }
 
     /** 打开文件选择器+读取数据 */
     private async _tap_btn_changeMap() {
-        MapMgr.inst.changeMap();
+        let self = this;
+        self.mapMgr.changeMap();
     }
 
     /** 导出地图json数据 */
     private _tap_btn_exportJson() {
-        MapMgr.inst.exportJson();
+        let self = this;
+        self.mapMgr.exportJson();
     }
 
     /** 显隐fps*/

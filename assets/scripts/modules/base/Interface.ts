@@ -51,8 +51,10 @@ export namespace G {
 
     /**场景物件拖拽数据结构 */
     export interface DragMapthingInfo {
-        location: Vec2;
+        location?: Vec2;
         url: string;
+        /**物件名称 */
+        thingName?:string;
         /**物件绑定的任务id */
         taskId?: number;
         /**物件归属的组id */

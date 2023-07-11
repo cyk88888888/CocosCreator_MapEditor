@@ -10,6 +10,8 @@ export namespace CONST {
         ChangeGridType = "ChangeGridType",
         ChangeGridSize = "ChangeGridSize",
         DragMapThingDown = "DragMapThingDown",
+        UpdateMapScale = "UpdateMapScale",
+        DragMapThingStart = "DragMapThingStart",
     }
 
     /** 格子类型*/
@@ -30,5 +32,6 @@ export namespace CONST {
         grass = 5,//草丛
         tree = 6,//树
         bee = 7,//蜂窝
+        bevel = 999,//斜角顶点
     }
 }
