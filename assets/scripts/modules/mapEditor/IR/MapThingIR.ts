@@ -13,7 +13,7 @@ export class MapThingIR extends ListItem {
     protected dchg(): void {
         let self = this; 
         let data = self. data;
-        self.lbl_name.string = data.thingName;
+        self.lbl_name.string = data.thingName.split(".")[0];
         let loader = self.img_mapthing.getComponent(ImgLoader);
         loader.loadComplete = function(spriteFrame: SpriteFrame) {
             let normalSize = 112;
