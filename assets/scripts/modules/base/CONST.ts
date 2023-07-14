@@ -12,6 +12,8 @@ export namespace CONST {
         DragMapThingDown = "DragMapThingDown",
         UpdateMapScale = "UpdateMapScale",
         DragMapThingStart = "DragMapThingStart",
+        ClickMapTing = "ClickMapTing",
+        ReDarwGraphic = "ReDarwGraphic",
     }
 
     /** 格子类型*/
@@ -33,5 +35,13 @@ export namespace CONST {
         tree = 6,//树
         bee = 7,//蜂窝
         bevel = 999,//斜角顶点
+    }
+
+    /**场景物件触发类型 */
+    export enum MapThingTriggerType{
+        MapThingTrigger_light = 1,//发亮
+        MapThingTrigger_unWalk = 2,//不可行走范围点列表
+        MapThingTrigger_keyManStand = 3,//关键人物站立范围点列表(引导模式下，传送机器人用)
+        MapThingTrigger_grass = 4,//草丛范围点列表
     }
 }

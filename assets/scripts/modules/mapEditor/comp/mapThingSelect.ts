@@ -5,6 +5,7 @@ const { ccclass, property } = _decorator;
 @ccclass('mapThingSelect')
 export class mapThingSelect extends UIComp {
      private _graphics: Graphics;
+     private _isShow:boolean;
      /**
       * 绘制矩形
       * @param x 绘制位置x
@@ -23,18 +24,18 @@ export class mapThingSelect extends UIComp {
           self._graphics.lineTo(x, y + height);
           self._graphics.lineTo(x, y);
           self._graphics.stroke();
-
-
-          // let fillColor = self._graphics.fillColor;
-          // fillColor.fromHEX("#FFFF00");
-          // self._graphics.fillColor.set(fillColor.r, fillColor.g, fillColor.b, alpha * 255);
-          // self._graphics.rect(x, y, width, heigth);
-          // self._graphics.fill();
+          self._isShow = true;
      }
 
      public clear() {
           let self = this;
           self._graphics.clear();
+          self._isShow = false;
+     }
+
+     public get isShow():boolean{
+          let self = this;
+          return self._isShow;
      }
 }
 

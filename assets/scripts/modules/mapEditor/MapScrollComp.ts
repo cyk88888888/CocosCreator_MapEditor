@@ -179,7 +179,7 @@ export class MapScrollComp extends UIComp {
                 } else if (buttonId == EventMouse.BUTTON_RIGHT) {
                     self._pressMouseRight = true;
                 }
-                if (self._pressMouseLeft) {
+                if (self._pressMouseLeft && !self.mapMgr.isForbidDrawGrid) {
                     if (self._isCtrlDown) {
                         if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
                     } else {
@@ -205,7 +205,7 @@ export class MapScrollComp extends UIComp {
             self.checkLimitPos();
         } else {
             if (self.mapMgr.gridType != CONST.GridType.GridType_none) {
-                if (self._pressMouseLeft) {
+                if (self._pressMouseLeft && !self.mapMgr.isForbidDrawGrid) {
                     if (self._isCtrlDown) {
                         if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
                     } else {

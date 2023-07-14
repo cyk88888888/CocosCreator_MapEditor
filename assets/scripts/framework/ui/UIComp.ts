@@ -237,7 +237,7 @@ export class UIComp extends Component {
     }
 
     private timeoutIdArr: number[];
-    protected setTimeout(cb: () => void, timeout: number) {
+    protected setTimeout(cb: () => void, timeout: number): number {
         if (!this.timeoutIdArr) this.timeoutIdArr = [];
         let timeoutId = setTimeout(() => {
             cb.call(this);
@@ -246,14 +246,36 @@ export class UIComp extends Component {
         return timeoutId;
     }
 
+    protected clearTimeout(timeId: number){
+        let self = this;
+        if(self.timeoutIdArr){
+            let searchIdx = self.timeoutIdArr.indexOf(timeId);
+            if(searchIdx > -1){
+                clearTimeout(timeId);
+                self.timeoutIdArr.splice(searchIdx, 1);
+            } 
+        }
+    }
+
     private intervalIdArr: number[];
-    protected setInterval(cb: () => void, timeout: number) {
+    protected setInterval(cb: () => void, timeout: number): number {
         if (!this.intervalIdArr) this.intervalIdArr = [];
         let intervalId = setInterval(() => {
             cb.call(this);
         }, timeout);
         this.intervalIdArr.push(intervalId);
         return intervalId;
+    }
+
+    protected clearInterval(timeId: number){
+        let self = this;
+        if(self.intervalIdArr){
+            let searchIdx = self.intervalIdArr.indexOf(timeId);
+            if(searchIdx > -1){
+                clearInterval(timeId);
+                self.intervalIdArr.splice(searchIdx, 1);
+            } 
+        }
     }
 
     /**

@@ -26,13 +26,14 @@ export class MapGridFactory extends UIComp {
     protected onEnter(): void {
         let self = this;
         self.mapMgr = MapMgr.inst;
+        self.onEmitter(CONST.GEVT.ReDarwGraphic, self.onReDarwGraphic);
     }
 
     public init(data: any) {
         let self = this;
         self._graphicsDic = {};
         self._colorDic = {};
-        self._scrollMapUITranstorm  = data.scrollMapUITranstorm;
+        self._scrollMapUITranstorm = data.scrollMapUITranstorm;
         let mapData: G.MapJsonInfo = data.mapData;
         let walkList = mapData.walkList || [];
         /** 设置可行走节点**/
@@ -106,6 +107,12 @@ export class MapGridFactory extends UIComp {
         let graphicsPos = { x: Math.floor(gridPos.x / mapMgr.areaGraphicSize), y: Math.floor(gridPos.y / mapMgr.areaGraphicSize) };
         let gridDataMap = mapMgr.gridDataMap;
         let areaKey = graphicsPos.x + '_' + graphicsPos.y;
+        if (gridType.indexOf(CONST.GridType.GridType_mapThing) > -1) {//场景物件格子有归属关系，这里特殊处理，方便物件删除时，把格子一起删除
+            var mapThingInfo: G.MapThingInfo = mapMgr.curMapThingInfo;
+            if (!mapThingInfo || mapThingInfo.type == CONST.MapThingType.bevel) return;//顶点格子不需要绘制颜色格子
+            var mapThingKey: string = Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y);
+            gridType = gridType == CONST.GridType.GridType_mapThing ? gridType + mapMgr.curMapThingTriggerType + "_" + mapThingKey : gridType + "_" + mapThingKey;
+        }
         if (!gridDataMap[gridType]) gridDataMap[gridType] = {};
         if (!gridDataMap[gridType][areaKey]) gridDataMap[gridType][areaKey] = {};
         if (gridDataMap[gridType][areaKey][gridKey]) return; //已有格子
@@ -126,6 +133,12 @@ export class MapGridFactory extends UIComp {
         let self = this;
         let mapMgr = self.mapMgr;
         let gridKey = gridPos.x + "_" + gridPos.y;
+        if (gridType.indexOf(CONST.GridType.GridType_mapThing) > -1) {//场景物件格子有归属关系，这里特殊处理，方便物件删除时，把格子一起删除
+            var mapThingInfo: G.MapThingInfo = mapMgr.curMapThingInfo;
+            if(!!mapThingInfo) return;
+            var mapThingKey: string = Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y);
+            gridType = gridType + mapMgr.curMapThingTriggerType + "_" + mapThingKey;
+        }
         let gridDataMap = mapMgr.gridDataMap;
         let graphicsPos = { x: Math.floor(gridPos.x / mapMgr.areaGraphicSize), y: Math.floor(gridPos.y / mapMgr.areaGraphicSize) };
         let areaKey = graphicsPos.x + '_' + graphicsPos.y;
@@ -134,6 +147,12 @@ export class MapGridFactory extends UIComp {
             delete gridDataMap[gridType][areaKey][gridKey];
             self._redrawTempMap[gridType + '|' + areaKey] = gridType + '_' + areaKey;
         }
+    }
+
+    private onReDarwGraphic(dt: any) {
+        let self = this;
+        self._redrawTempMap = dt.redrawDic;
+        self.drawGraphic();
     }
 
     /**移除格子删除数据后，重新绘制感兴趣区域的所有格子 */

@@ -42,22 +42,34 @@ export class MapMgr {
     /**绘制格子的单个Graphic区域大小 */
     public areaGraphicSize: number;
     /** 导入的地图场景物件数组*/
-    public mapThingUrlMap: {[name: string]: string};
+    public mapThingUrlMap: { [name: string]: string };
     /** 当前绘制的格子数据*/
     public gridDataMap: { [gridType: string]: { [areaKey: string]: { [gridKey: string]: string } } };
     /**场景物件信息数据 */
-    public mapThingMap: {[name: string]: any[]};
+    public mapThingMap: { [name: string]: any[] };
     public curMapThingInfo: G.MapThingInfo;//当前正在编辑的场景物件
     /**是否按下space键 */
     public isPressSpace: boolean;
     /**是否按下ctrl键 */
     public isPressCtrl: boolean;
+    /**是否禁用绘制颜色格子 */
+    public isForbidDrawGrid: boolean;
     /**顶点物件名称 */
-    public bavelResStr:string = "black.png";
+    public bavelResStr: string = "black.png";
+    /**当前场景物件的触发类型 */
+    public curMapThingTriggerType:CONST.MapThingTriggerType;
+    public triggerTypes: { type: number, desc: string }[];
     public init() {
         let self = this;
         self.gridRange = 0;
         self.gridType = CONST.GridType.GridType_none;
+        self.curMapThingTriggerType = CONST.MapThingTriggerType.MapThingTrigger_light;
+        self.triggerTypes = [
+            { type: CONST.MapThingTriggerType.MapThingTrigger_light, desc: '触发发亮' },
+            { type: CONST.MapThingTriggerType.MapThingTrigger_unWalk, desc: '不可行走' },
+            { type: CONST.MapThingTriggerType.MapThingTrigger_keyManStand, desc: '犯人周围站立点' },
+            { type: CONST.MapThingTriggerType.MapThingTrigger_grass, desc: '草丛范围点' },
+        ];
     }
 
     /**
@@ -177,19 +189,42 @@ export class MapMgr {
      * @param ctx 
      * @returns 
      */
-    public getMapThingComp(prefab: Prefab, url: string, anchorX: number = 0.5, anchorY: number = 0.5, completeCb?: (imgWidth:number, imgHeight:number) => void, ctx?: any): Node {
+    public getMapThingComp(prefab: Prefab, url: string, anchorX: number = 0.5, anchorY: number = 0.5, completeCb?: (imgWidth: number, imgHeight: number) => void, ctx?: any): Node {
         let node = instantiate(prefab);
         BaseUT.setPivot(node, anchorX, anchorY);
         BaseUT.setAlpha(node, 0.6);
         let loader = node.getComponent(ImgLoader);
-        loader.ctx = ctx; 
-        loader.loadComplete = function(spriteFrame: SpriteFrame) {
+        loader.ctx = ctx;
+        loader.loadComplete = function (spriteFrame: SpriteFrame) {
             let imgWidth = spriteFrame.width, imgHeight = spriteFrame.height;
             BaseUT.setSize(node, imgWidth, imgHeight);
-            if(completeCb) completeCb.call(ctx, imgWidth, imgHeight);
+            if (completeCb) completeCb.call(ctx, imgWidth, imgHeight);
         }
         loader.url = url;
         return node;
+    }
+
+    /**移除对应场景物件的全部触发区域格子**/
+    public rmMapThingGrid(mapThingKey: String) {
+        let self = this;
+        let existGrid: Boolean;
+        let redrawDic: { [key: string]: string } = {};
+        for (let i = 0; i < self.triggerTypes.length; i++) {
+            let type = self.triggerTypes[i].type;
+            let typeKey: string = CONST.GridType.GridType_mapThing + type + "_" + mapThingKey;
+            let gridTypeDataMap = self.gridDataMap[typeKey];
+            if (gridTypeDataMap) {
+                for (const areaKey in gridTypeDataMap) {
+                    let areaGridMap = gridTypeDataMap[areaKey];
+                    for (const gridKey in areaGridMap) {
+                        delete self.gridDataMap[typeKey][areaKey][gridKey];
+                        redrawDic[typeKey + "|" + areaKey] = typeKey + "_" + areaKey;
+                        existGrid = true;
+                    }
+                }
+            }
+        }
+        if (existGrid) emmiter.emit(CONST.GEVT.ReDarwGraphic, {redrawDic: redrawDic});
     }
 
     /**导出json文件到本地 */

@@ -23,10 +23,13 @@ export class MapThingFactory extends UIComp {
     private mapMgr: MapMgr;
     private _scrollMapUITranstorm: UITransform;
     private _mapThingSelect: mapThingSelect;
+    private _lastSelectMapThingComp: Node;
+    private _tid: number;
     protected onEnter(): void {
         let self = this;
         self.mapMgr = MapMgr.inst;
         self.onEmitter(CONST.GEVT.DragMapThingDown, self.onDragMapThingDown);
+        self.onEmitter(CONST.GEVT.ChangeGridType, self.onChangeGridType);
         let prefab = instantiate(self.mapThingSelectPrefab);
         prefab.setParent(self.grp_mapThingSelect);
         self._mapThingSelect = prefab.getComponent(mapThingSelect);
@@ -37,6 +40,15 @@ export class MapThingFactory extends UIComp {
         let mapData: G.MapJsonInfo = data.mapData;
         self._scrollMapUITranstorm = data.scrollMapUITranstorm;
 
+    }
+
+    private onChangeGridType(dt: any){
+        let self = this;
+        if(dt.gridType == CONST.GridType.GridType_mapThing){
+            self.mapMgr.isForbidDrawGrid = !self._mapThingSelect.isShow;
+        }else{
+            self._mapThingSelect.clear();
+        }
     }
 
     private onDragMapThingDown(data: G.DragMapthingInfo) {
@@ -69,7 +81,7 @@ export class MapThingFactory extends UIComp {
         }
         self.mapMgr.mapThingMap[mapThingComp.name] = [mapThingInfo, mapThingComp];
         if (!isImportJson) {
-            // _lastSelectMapThingComp = mapThingComp;
+            self._lastSelectMapThingComp = mapThingComp;
             self.mapMgr.curMapThingInfo = mapThingInfo;
         }
         function imgLoaded(width: number, height: number) {
@@ -85,19 +97,32 @@ export class MapThingFactory extends UIComp {
 
     private onMouseDown(e: EventMouse) {
         let self = this;
+        let mapMgr = self.mapMgr;
         let buttonId = e.getButton();
-        let target = e.currentTarget as Node;
-        var mapThingInfo: G.MapThingInfo = self.mapMgr.mapThingMap[target.name][0];
-        if (buttonId == EventMouse.BUTTON_LEFT) {
+        let btn = e.currentTarget as Node;
+        var mapThingInfo: G.MapThingInfo = mapMgr.mapThingMap[btn.name][0];
+        if (buttonId == EventMouse.BUTTON_LEFT) {//左键选中场景物件
             console.log('左键点击场景物件');
+            if (mapMgr.gridType != CONST.GridType.GridType_mapThing || mapMgr.isPressCtrl || mapMgr.isPressSpace) return;
+            if(self._lastSelectMapThingComp != btn){
+                self._lastSelectMapThingComp = btn;
+                mapMgr.isForbidDrawGrid = true;
+            }
+            self.clearTimeout(self._tid);
+            self._tid = self.setTimeout(() => {//延迟0.1秒，这样做是为了在切换选中不同场景物件时，不会选中后就马上绘制触发区域格子
+                mapMgr.isForbidDrawGrid = false;
+            },100);
             self._mapThingSelect.drawRect(mapThingInfo.x - mapThingInfo.width / 2, mapThingInfo.y - mapThingInfo.height / 2, mapThingInfo.width, mapThingInfo.height);
+            mapMgr.curMapThingInfo = mapThingInfo;
+            self.emit(CONST.GEVT.ClickMapTing);
         } else if (buttonId == EventMouse.BUTTON_RIGHT) {
-            if (self.mapMgr.isPressCtrl) {//删除场景物件
+            if (mapMgr.gridType != CONST.GridType.GridType_mapThing || mapMgr.isPressSpace) return;
+            if (mapMgr.isPressCtrl) {//删除场景物件
 
             } else {//重新拖拽场景物件
                 self.emit(CONST.GEVT.DragMapThingStart, {
                     thingName: mapThingInfo.thingName,
-                    url: self.mapMgr.mapThingUrlMap[mapThingInfo.thingName],
+                    url: mapMgr.mapThingUrlMap[mapThingInfo.thingName],
                     taskId: mapThingInfo.taskId,
                     groupId: mapThingInfo.groupId,
                     type: mapThingInfo.type,
@@ -105,7 +130,10 @@ export class MapThingFactory extends UIComp {
                 });
             }
             self._mapThingSelect.clear();
-            target.destroy();
+            btn.destroy();
+            mapMgr.rmMapThingGrid(Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y));
+            mapMgr.curMapThingInfo = null;
+            delete mapMgr.mapThingMap[btn.name];
             console.log('右键点击场景物件');
         }
     }

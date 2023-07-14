@@ -73,6 +73,7 @@ export class MapEditorLayer extends UILayer {
     private _drawMapThingData: G.DragMapthingInfo;
     /**当前鼠标位置 */
     private _curLocation: Vec2;
+    private _listPathDataList: { gridType: CONST.GridType, desc: string }[];
     protected onEnter() {
         let self = this;
         self.mapMgr = MapMgr.inst;
@@ -89,6 +90,11 @@ export class MapEditorLayer extends UILayer {
         self.grp_editPathSize.active = self._selectIdx == 0;
         self.grp_editPath.active = self._selectIdx == 1;
         self.grp_editMathing.active = self._selectIdx == 2;
+        if (self._selectIdx == 1) {
+            self.emit(CONST.GEVT.ChangeGridType, { gridType: self.list_path.selectedId != -1 ? self._listPathDataList[self.list_path.selectedId].gridType : CONST.GridType.GridType_none});
+        } else if(self._selectIdx == 2){
+            self.emit(CONST.GEVT.ChangeGridType, { gridType: CONST.GridType.GridType_mapThing});
+        }
     }
 
     private async onImportMapJson(data: any) {
@@ -133,11 +139,13 @@ export class MapEditorLayer extends UILayer {
     }
 
     private _data_list_path() {
+        let self = this;
         let rst = [
             { gridType: CONST.GridType.GridType_walk, desc: "可行走点" },
             { gridType: CONST.GridType.GridType_start, desc: "起始地点" },
             { gridType: CONST.GridType.GridType_WaterVerts, desc: "落水点" }
         ];
+        self._listPathDataList = rst;
         return rst;
     }
 
@@ -169,7 +177,7 @@ export class MapEditorLayer extends UILayer {
     private _select_list_mapThing(data: any, selectedIdx: number, lastSelectedIdx: number) {
         let self = this;
         self.newDragMapThing(data.nativePath);
-        self._drawMapThingData = { url: data.nativePath, thingName: data.thingName};
+        self._drawMapThingData = { url: data.nativePath, thingName: data.thingName };
     }
 
     /**开始拖拽场景已有的物件**/
@@ -188,8 +196,8 @@ export class MapEditorLayer extends UILayer {
 
     private newDragMapThing(url: string) {
         let self = this;
+        self.mapMgr.isForbidDrawGrid = true;
         self.disposeDragMapThing();
-        self.emit(CONST.GEVT.ChangeGridType, { gridType: CONST.GridType.GridType_mapThing });
         let mapthingComp = self._mapThingComp = self.mapMgr.getMapThingComp(self.mapThingComp, url);
         let scale = self.mapScrollComp.mapScale;
         let mousePos = BaseUT.getMousePos(self._curLocation);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标）
@@ -212,7 +220,7 @@ export class MapEditorLayer extends UILayer {
         self._curLocation = e.getLocation();
         let buttonId = e.getButton();
         if (buttonId == EventMouse.BUTTON_LEFT) {
-            if(!self.mapMgr.isPressSpace){
+            if (!self.mapMgr.isPressSpace) {
                 if (self._mapThingComp && self.mapScrollComp.isInEditArea) {
                     self.emit(CONST.GEVT.DragMapThingDown, <G.DragMapthingInfo>{
                         location: self._curLocation,
@@ -226,6 +234,7 @@ export class MapEditorLayer extends UILayer {
                     });
                 }
                 self.disposeDragMapThing();
+                self.mapMgr.isForbidDrawGrid = false;
             }
         }
     }
