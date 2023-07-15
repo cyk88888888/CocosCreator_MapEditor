@@ -135,7 +135,7 @@ export class MapGridFactory extends UIComp {
         let gridKey = gridPos.x + "_" + gridPos.y;
         if (gridType.indexOf(CONST.GridType.GridType_mapThing) > -1) {//场景物件格子有归属关系，这里特殊处理，方便物件删除时，把格子一起删除
             var mapThingInfo: G.MapThingInfo = mapMgr.curMapThingInfo;
-            if(!!mapThingInfo) return;
+            if(!mapThingInfo) return;
             var mapThingKey: string = Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y);
             gridType = gridType + mapMgr.curMapThingTriggerType + "_" + mapThingKey;
         }
