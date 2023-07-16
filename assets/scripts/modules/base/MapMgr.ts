@@ -163,11 +163,19 @@ export class MapMgr {
     public getColorByType(type: string): string {
         switch (type) {
             case CONST.GridType.GridType_walk:
-                return '#00FF00';
+                return '#00FF00';//绿
             case CONST.GridType.GridType_WaterVerts:
-                return '#FF00FF';
+                return '#FF00FF';//紫色
             case CONST.GridType.GridType_start:
-                return '#FFFF00';
+                return '#FFFF00';//黄
+                case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_light:
+                return '#0000FF';//深蓝
+                case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_unWalk:
+                return '#330000';//褐色
+                case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_keyManStand:
+                return '#CB00FF';//深紫
+                case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_grass:
+                return '#00FFFF';//浅蓝
             default:
                 return '#000000';
         }

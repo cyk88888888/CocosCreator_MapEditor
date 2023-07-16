@@ -48,6 +48,7 @@ export class MapThingFactory extends UIComp {
             self.mapMgr.isForbidDrawGrid = !self._mapThingSelect.isShow;
         }else{
             self._mapThingSelect.clear();
+            self.mapMgr.curMapThingInfo = null;
         }
     }
 
@@ -88,6 +89,7 @@ export class MapThingFactory extends UIComp {
             mapThingInfo.width = width;
             mapThingInfo.height = height;
             if (!isImportJson) {
+                self.emit(CONST.GEVT.ClickMapTing);
                 self._mapThingSelect.drawRect(mapThingX - width / 2, mapThingY - height / 2, width, height);
             }
         }
@@ -111,7 +113,7 @@ export class MapThingFactory extends UIComp {
             self.clearTimeout(self._tid);
             self._tid = self.setTimeout(() => {//延迟0.1秒，这样做是为了在切换选中不同场景物件时，不会选中后就马上绘制触发区域格子
                 mapMgr.isForbidDrawGrid = false;
-            },100);
+            }, 200);
             self._mapThingSelect.drawRect(mapThingInfo.x - mapThingInfo.width / 2, mapThingInfo.y - mapThingInfo.height / 2, mapThingInfo.width, mapThingInfo.height);
             mapMgr.curMapThingInfo = mapThingInfo;
             self.emit(CONST.GEVT.ClickMapTing);

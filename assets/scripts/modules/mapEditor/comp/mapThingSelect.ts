@@ -29,7 +29,7 @@ export class mapThingSelect extends UIComp {
 
      public clear() {
           let self = this;
-          self._graphics.clear();
+          if(self._graphics) self._graphics.clear();
           self._isShow = false;
      }
 

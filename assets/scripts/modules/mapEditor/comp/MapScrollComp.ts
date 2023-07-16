@@ -1,12 +1,12 @@
 import { _decorator, EventKeyboard, EventMouse, Graphics, input, Input, KeyCode, Layout, Node, Size, Sprite, SpriteFrame, UITransform, Vec2, Vec3, Widget } from 'cc';
-import { UIComp } from '../../framework/ui/UIComp';
-import { CONST } from '../base/CONST';
-import { MapMgr } from '../base/MapMgr';
-import { ResMgr } from '../../framework/mgr/ResMgr';
-import { BaseUT } from '../../framework/base/BaseUtil';
-import { MapGridFactory } from './factory/MapGridFactory';
-import { MessageTip } from '../common/message/MessageTip';
-import { MapThingFactory } from './factory/MapThingFactory';
+import { UIComp } from '../../../framework/ui/UIComp';
+import { CONST } from '../../base/CONST';
+import { MapMgr } from '../../base/MapMgr';
+import { ResMgr } from '../../../framework/mgr/ResMgr';
+import { BaseUT } from '../../../framework/base/BaseUtil';
+import { MapGridFactory } from '../factory/MapGridFactory';
+import { MessageTip } from '../../common/message/MessageTip';
+import { MapThingFactory } from '../factory/MapThingFactory';
 const { ccclass, property } = _decorator;
 
 /*

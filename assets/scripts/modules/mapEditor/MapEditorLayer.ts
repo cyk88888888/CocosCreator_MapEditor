@@ -1,6 +1,6 @@
 import { _decorator, Button, EventMouse, Label, Prefab, profiler, ScrollView, Vec2, Vec3 } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
-import { MapScrollComp } from './MapScrollComp';
+import { MapScrollComp } from './comp/MapScrollComp';
 import { MapMgr } from '../base/MapMgr';
 import { EventTouch } from 'cc';
 import { Node } from 'cc';
@@ -74,6 +74,7 @@ export class MapEditorLayer extends UILayer {
     /**当前鼠标位置 */
     private _curLocation: Vec2;
     private _listPathDataList: { gridType: CONST.GridType, desc: string }[];
+    private _tid: number;
     protected onEnter() {
         let self = this;
         self.mapMgr = MapMgr.inst;
@@ -91,9 +92,9 @@ export class MapEditorLayer extends UILayer {
         self.grp_editPath.active = self._selectIdx == 1;
         self.grp_editMathing.active = self._selectIdx == 2;
         if (self._selectIdx == 1) {
-            self.emit(CONST.GEVT.ChangeGridType, { gridType: self.list_path.selectedId != -1 ? self._listPathDataList[self.list_path.selectedId].gridType : CONST.GridType.GridType_none});
-        } else if(self._selectIdx == 2){
-            self.emit(CONST.GEVT.ChangeGridType, { gridType: CONST.GridType.GridType_mapThing});
+            self.emit(CONST.GEVT.ChangeGridType, { gridType: self.list_path.selectedId != -1 ? self._listPathDataList[self.list_path.selectedId].gridType : CONST.GridType.GridType_none });
+        } else if (self._selectIdx == 2) {
+            self.emit(CONST.GEVT.ChangeGridType, { gridType: CONST.GridType.GridType_mapThing });
         }
     }
 
@@ -221,20 +222,25 @@ export class MapEditorLayer extends UILayer {
         let buttonId = e.getButton();
         if (buttonId == EventMouse.BUTTON_LEFT) {
             if (!self.mapMgr.isPressSpace) {
-                if (self._mapThingComp && self.mapScrollComp.isInEditArea) {
-                    self.emit(CONST.GEVT.DragMapThingDown, <G.DragMapthingInfo>{
-                        location: self._curLocation,
-                        url: self._drawMapThingData.url,
-                        thingName: self._drawMapThingData.thingName,
-                        taskId: self._drawMapThingData.taskId || 0,
-                        groupId: self._drawMapThingData.groupId || 0,
-                        groupIdStr: self._drawMapThingData.groupIdStr || 0,
-                        type: self._drawMapThingData.type || 0,
-                        isByDrag: true
-                    });
+                if (self._mapThingComp) {
+                    if (self.mapScrollComp.isInEditArea) {
+                        self.emit(CONST.GEVT.DragMapThingDown, <G.DragMapthingInfo>{
+                            location: self._curLocation,
+                            url: self._drawMapThingData.url,
+                            thingName: self._drawMapThingData.thingName,
+                            taskId: self._drawMapThingData.taskId || 0,
+                            groupId: self._drawMapThingData.groupId || 0,
+                            groupIdStr: self._drawMapThingData.groupIdStr || 0,
+                            type: self._drawMapThingData.type || 0,
+                            isByDrag: true
+                        });
+                    }
+                    self.disposeDragMapThing();
+                    self.clearTimeout(self._tid);
+                    self._tid = self.setTimeout(() => {//延迟0.1秒，这样做是为了在切换选中不同场景物件时，不会选中后就马上绘制触发区域格子
+                        self.mapMgr.isForbidDrawGrid = false;
+                    }, 200);
                 }
-                self.disposeDragMapThing();
-                self.mapMgr.isForbidDrawGrid = false;
             }
         }
     }

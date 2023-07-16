@@ -107,17 +107,19 @@ export class MapGridFactory extends UIComp {
         let graphicsPos = { x: Math.floor(gridPos.x / mapMgr.areaGraphicSize), y: Math.floor(gridPos.y / mapMgr.areaGraphicSize) };
         let gridDataMap = mapMgr.gridDataMap;
         let areaKey = graphicsPos.x + '_' + graphicsPos.y;
+        let colorType = gridType;
         if (gridType.indexOf(CONST.GridType.GridType_mapThing) > -1) {//场景物件格子有归属关系，这里特殊处理，方便物件删除时，把格子一起删除
             var mapThingInfo: G.MapThingInfo = mapMgr.curMapThingInfo;
             if (!mapThingInfo || mapThingInfo.type == CONST.MapThingType.bevel) return;//顶点格子不需要绘制颜色格子
             var mapThingKey: string = Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y);
+            colorType = gridType == CONST.GridType.GridType_mapThing ? gridType + mapMgr.curMapThingTriggerType : gridType;
             gridType = gridType == CONST.GridType.GridType_mapThing ? gridType + mapMgr.curMapThingTriggerType + "_" + mapThingKey : gridType + "_" + mapThingKey;
         }
         if (!gridDataMap[gridType]) gridDataMap[gridType] = {};
         if (!gridDataMap[gridType][areaKey]) gridDataMap[gridType][areaKey] = {};
         if (gridDataMap[gridType][areaKey][gridKey]) return; //已有格子
         gridDataMap[gridType][areaKey][gridKey] = gridKey;
-        let color = self._colorDic[gridType] = mapMgr.getColorByType(gridType);
+        let color = self._colorDic[gridType] = mapMgr.getColorByType(colorType);
         let cellSize = mapMgr.cellSize;
         let graphicsKey = gridType + '_' + areaKey;
         let graphics = self.getGraphic(graphicsKey);
