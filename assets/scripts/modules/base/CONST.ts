@@ -14,6 +14,8 @@ export namespace CONST {
         DragMapThingStart = "DragMapThingStart",
         ClickMapTing = "ClickMapTing",
         ReDarwGraphic = "ReDarwGraphic",
+        ChangeMapThingXY = "ChangeMapThingXY",
+        ClearCurMapThingInfo = "ClearCurMapThingInfo",
     }
 
     /** 格子类型*/

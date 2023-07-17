@@ -57,7 +57,7 @@ export class MapMgr {
     /**顶点物件名称 */
     public bavelResStr: string = "black.png";
     /**当前场景物件的触发类型 */
-    public curMapThingTriggerType:CONST.MapThingTriggerType;
+    public curMapThingTriggerType: CONST.MapThingTriggerType;
     public triggerTypes: { type: number, desc: string }[];
     public init() {
         let self = this;
@@ -168,17 +168,49 @@ export class MapMgr {
                 return '#FF00FF';//紫色
             case CONST.GridType.GridType_start:
                 return '#FFFF00';//黄
-                case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_light:
+            case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_light:
                 return '#0000FF';//深蓝
-                case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_unWalk:
+            case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_unWalk:
                 return '#330000';//褐色
-                case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_keyManStand:
+            case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_keyManStand:
                 return '#CB00FF';//深紫
-                case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_grass:
+            case CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_grass:
                 return '#00FFFF';//浅蓝
             default:
                 return '#000000';
         }
+    }
+
+    /**
+     * 根据格子idx获取格子所在的行列 
+     * @param idx
+     * @return 
+     * 
+     */
+    public getGridXYByIdx(idx: number) {
+        let self = this;
+        var size: number = self.cellSize;
+        var totLine: number = Math.ceil(self.mapHeight / size);//总行数
+        var totCol: number = Math.ceil(self.mapWidth / size);//总列数
+        var line: number = Math.floor(idx / totCol);
+        var col: number = idx - line * totCol;
+        return [col, line];
+    }
+
+    /**
+     * 根据格子列行获取格子所在的idx 
+     * @param x 列
+     * @param y 行
+     * @return 
+     * 
+     */
+    public getGridIdxByXY(x: number, y: number) {
+        let self = this;
+        var size: number = self.cellSize;
+        var totLine: number = Math.ceil(self.mapHeight / size);//总行数
+        var totCol: number = Math.ceil(self.mapWidth / size);//总列数
+        var idx: number = y * totCol + x;
+        return idx;
     }
 
     /**地图位置坐标转为格子坐标 */
@@ -212,6 +244,14 @@ export class MapMgr {
         return node;
     }
 
+    //通过xy获取场景已有的物件
+    public getMapThingCompByXY(x: number, y: number): Node {
+        let self = this;
+        var mapThingInfo = self.mapThingMap[Math.floor(x) + "_" + Math.floor(y)];
+        var mapThingComp = mapThingInfo[1];
+        return mapThingComp;
+    }
+
     /**移除对应场景物件的全部触发区域格子**/
     public rmMapThingGrid(mapThingKey: String) {
         let self = this;
@@ -232,7 +272,7 @@ export class MapMgr {
                 }
             }
         }
-        if (existGrid) emmiter.emit(CONST.GEVT.ReDarwGraphic, {redrawDic: redrawDic});
+        if (existGrid) emmiter.emit(CONST.GEVT.ReDarwGraphic, { redrawDic: redrawDic });
     }
 
     /**导出json文件到本地 */
@@ -246,6 +286,9 @@ export class MapMgr {
         mapJsonInfo.totRow = self.totRow;
         mapJsonInfo.totCol = self.totCol;
         mapJsonInfo.walkList = [];
+        mapJsonInfo.waterVertList = [];
+        mapJsonInfo.startList = [];
+        mapJsonInfo.mapThingList = [];
         let walkData = gridDataMap[CONST.GridType.GridType_walk];
         for (let i = 0; i < self.totRow; i++) {
             let linewalkList = [];//每一行
@@ -264,16 +307,63 @@ export class MapMgr {
             }
         }
 
-        for (let gridType in gridDataMap) {
-            let gridTypeData = gridDataMap[gridType];
-            for (let areaKey in gridTypeData) {
-                let areaGridDataMap = gridDataMap[areaKey];
-                for (let gridKey in areaGridDataMap) {
-                    let spltGridPosKey = gridKey.split("_");
-
+        addGridDataByType(CONST.GridType.GridType_start);
+        addGridDataByType(CONST.GridType.GridType_WaterVerts);
+        function addGridDataByType(gridType: string) {
+            let gridTypeDataMap = gridDataMap[gridType];
+            if (gridTypeDataMap) {
+                for (const areaKey in gridTypeDataMap) {
+                    let areaGridMap = gridTypeDataMap[areaKey];
+                    for (const gridKey in areaGridMap) {
+                        let newList = [];
+                        if (gridType == CONST.GridType.GridType_start) newList = mapJsonInfo.waterVertList;
+                        else if (gridType == CONST.GridType.GridType_WaterVerts) newList = mapJsonInfo.startList;
+                        let splitArr = gridKey.split("_");
+                        newList.push(self.getGridIdxByXY(Number(splitArr[0]), Number(splitArr[1])));
+                    }
                 }
             }
         }
+
+        if (self.mapThingMap) {
+            let triggerTypes = self.triggerTypes;
+            for (const name in self.mapThingMap) {
+                let mapThingInfo: G.MapThingInfo = self.mapThingMap[name][0];
+                mapThingInfo.area = [];
+                mapThingInfo.unWalkArea = [];
+                mapThingInfo.keyManStandArea = [];
+                mapThingInfo.grassArea = [];
+                for (let i = 0; i < triggerTypes.length; i++) {
+                    let type = triggerTypes[i].type;
+                    let gridTypeDataMap = gridDataMap[CONST.GridType.GridType_mapThing + type + "_" + Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y)];
+                    if (gridTypeDataMap) {
+                        for (const areaKey in gridTypeDataMap) {
+                            let areaGridMap = gridTypeDataMap[areaKey];
+                            for (const gridKey in areaGridMap) {
+                                var splitArr = gridKey.split("_");
+                                var idx = self.getGridIdxByXY(Number(splitArr[0]), Number(splitArr[1]));
+                                if (type == CONST.MapThingTriggerType.MapThingTrigger_light) mapThingInfo.area.push(idx);
+                                if (type == CONST.MapThingTriggerType.MapThingTrigger_unWalk) mapThingInfo.unWalkArea.push(idx);
+                                if (type == CONST.MapThingTriggerType.MapThingTrigger_keyManStand) mapThingInfo.keyManStandArea.push(idx);
+                                if (type == CONST.MapThingTriggerType.MapThingTrigger_grass) mapThingInfo.grassArea.push(idx);
+                            }
+                        }
+                    }
+                }
+
+                if (mapThingInfo.type == CONST.MapThingType.bevel) {
+                    var splitGroupStr = mapThingInfo.groupIdStr.split(",") || [];
+                    var groupIdList = [];
+                    for (var i = 0; i < splitGroupStr.length; i++) {
+                        groupIdList.push(Number(splitGroupStr[i]));
+                    }
+                    mapJsonInfo.borderList.push({ x: mapThingInfo.x, y: mapThingInfo.y, groupIdList: groupIdList });
+                } else {
+                    mapJsonInfo.mapThingList.push(mapThingInfo);
+                }
+            }
+        }
+
         console.log(gridDataMap);
         FileIOHandler.inst.saveTextToLocal(JSON.stringify(mapJsonInfo));
     }

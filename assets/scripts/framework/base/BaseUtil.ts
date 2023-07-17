@@ -58,7 +58,7 @@ export namespace BaseUT {
         let Opacity = node.getComponent(UIOpacity);
         Opacity.opacity = 255 * alpha;
     }
-
+    
     /**设置node锚点 */
     export function setPivot(node: Node, xv: number, yv: number) {
         let tranform = node.getComponent(UITransform);

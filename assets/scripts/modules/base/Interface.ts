@@ -16,7 +16,7 @@ export namespace G {
         waterVertList: number[];
         startList: number[];
         mapThingList: MapThingInfo[];
-        borderList: number[];
+        borderList: { x: number, y: number, groupIdList: number[] }[];
     }
 
     /**场景物件数据结构 */
@@ -54,7 +54,7 @@ export namespace G {
         location?: Vec2;
         url: string;
         /**物件名称 */
-        thingName?:string;
+        thingName?: string;
         /**物件绑定的任务id */
         taskId?: number;
         /**物件归属的组id */

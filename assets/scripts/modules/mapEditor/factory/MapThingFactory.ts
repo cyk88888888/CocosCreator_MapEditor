@@ -30,6 +30,7 @@ export class MapThingFactory extends UIComp {
         self.mapMgr = MapMgr.inst;
         self.onEmitter(CONST.GEVT.DragMapThingDown, self.onDragMapThingDown);
         self.onEmitter(CONST.GEVT.ChangeGridType, self.onChangeGridType);
+        self.onEmitter(CONST.GEVT.ChangeMapThingXY, self.onChangeMapThingXY);
         let prefab = instantiate(self.mapThingSelectPrefab);
         prefab.setParent(self.grp_mapThingSelect);
         self._mapThingSelect = prefab.getComponent(mapThingSelect);
@@ -42,13 +43,21 @@ export class MapThingFactory extends UIComp {
 
     }
 
-    private onChangeGridType(dt: any){
+    private onChangeGridType(dt: any) {
         let self = this;
-        if(dt.gridType == CONST.GridType.GridType_mapThing){
+        if (dt.gridType == CONST.GridType.GridType_mapThing) {
             self.mapMgr.isForbidDrawGrid = !self._mapThingSelect.isShow;
-        }else{
+        } else {
             self._mapThingSelect.clear();
             self.mapMgr.curMapThingInfo = null;
+            self.emit(CONST.GEVT.ClearCurMapThingInfo);
+        }
+    }
+
+    private onChangeMapThingXY(dt: any) {
+        let self = this;
+        if (self._mapThingSelect.isShow) {
+            self._mapThingSelect.drawRect(dt.x - dt.width / 2, dt.y - dt.height / 2, dt.width, dt.height);
         }
     }
 
@@ -106,7 +115,7 @@ export class MapThingFactory extends UIComp {
         if (buttonId == EventMouse.BUTTON_LEFT) {//左键选中场景物件
             console.log('左键点击场景物件');
             if (mapMgr.gridType != CONST.GridType.GridType_mapThing || mapMgr.isPressCtrl || mapMgr.isPressSpace) return;
-            if(self._lastSelectMapThingComp != btn){
+            if (self._lastSelectMapThingComp != btn) {
                 self._lastSelectMapThingComp = btn;
                 mapMgr.isForbidDrawGrid = true;
             }
@@ -136,6 +145,7 @@ export class MapThingFactory extends UIComp {
             mapMgr.rmMapThingGrid(Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y));
             mapMgr.curMapThingInfo = null;
             delete mapMgr.mapThingMap[btn.name];
+            self.emit(CONST.GEVT.ClearCurMapThingInfo);
             console.log('右键点击场景物件');
         }
     }
