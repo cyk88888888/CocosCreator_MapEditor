@@ -94,7 +94,7 @@ export class MapThingPropertyComp extends UIComp {
           let self = this;
           let curMapThingInfo = self.mapMgr.curMapThingInfo;
           if(curMapThingInfo){
-               let reg = /^(\d+,?)+$/;
+               let reg = /^(\d+,?)+$/;//是否只包含数字和英文逗号
                let inputStr = editBox.string;
                let isLegal = reg.test(inputStr);
                curMapThingInfo.groupIdStr = isLegal ? editBox.string : curMapThingInfo.groupIdStr;
