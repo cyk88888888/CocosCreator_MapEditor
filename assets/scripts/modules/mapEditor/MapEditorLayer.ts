@@ -224,8 +224,11 @@ export class MapEditorLayer extends UILayer {
             if (!self.mapMgr.isPressSpace) {
                 if (self._mapThingComp) {
                     if (self.mapScrollComp.isInEditArea) {
+                        let mousePos = BaseUT.getMousePos(self._curLocation);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
+                        let localUIPos = self.mapScrollComp.scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
                         self.emit(CONST.GEVT.DragMapThingDown, <G.DragMapthingInfo>{
-                            location: self._curLocation,
+                            x: localUIPos.x,
+                            y: localUIPos.y,
                             url: self._drawMapThingData.url,
                             thingName: self._drawMapThingData.thingName,
                             taskId: self._drawMapThingData.taskId || 0,

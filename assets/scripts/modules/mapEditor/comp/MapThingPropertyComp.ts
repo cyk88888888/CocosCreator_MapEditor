@@ -4,6 +4,7 @@ import { CONST } from '../../base/CONST';
 import { G } from '../../base/Interface';
 import { MapMgr } from '../../base/MapMgr';
 import { BaseUT } from '../../../framework/base/BaseUtil';
+import { MessageTip } from '../../common/message/MessageTip';
 const { ccclass, property } = _decorator;
 
 @ccclass('MapThingPropertyComp')
@@ -74,9 +75,9 @@ export class MapThingPropertyComp extends UIComp {
           self.grp_bevel.active = isBelve;
      }
 
-     private onClearCurMapThingInfo(){
+     private onClearCurMapThingInfo() {
           let self = this;
-          self.grp_mapThingInfo.active =  self.grp_bevel.active = false;
+          self.grp_mapThingInfo.active = self.grp_bevel.active = false;
      }
 
      private onFocusOutTaskId(editBox: EditBox) {
@@ -91,7 +92,17 @@ export class MapThingPropertyComp extends UIComp {
 
      private onFocusOutGroupId2(editBox: EditBox) {
           let self = this;
-          if (self.mapMgr.curMapThingInfo) self.mapMgr.curMapThingInfo.groupIdStr = editBox.string;
+          let curMapThingInfo = self.mapMgr.curMapThingInfo;
+          if(curMapThingInfo){
+               let reg = /^(\d+,?)+$/;
+               let inputStr = editBox.string;
+               let isLegal = reg.test(inputStr);
+               curMapThingInfo.groupIdStr = isLegal ? editBox.string : curMapThingInfo.groupIdStr;
+               if (!isLegal) {
+                    editBox.string = curMapThingInfo.groupIdStr;
+                    MessageTip.show({ msg: "输入内容不合法" });
+               }
+          }
      }
 
      private onFocusOutX(editBox: EditBox) {
@@ -128,33 +139,39 @@ export class MapThingPropertyComp extends UIComp {
 
      private onFocusOutAnchorX(editBox: EditBox) {
           let self = this;
-          var mapMgr = self.mapMgr;
+          let mapMgr = self.mapMgr;
           let curMapThingInfo = mapMgr.curMapThingInfo;
           if (curMapThingInfo) {
-               var mapThingComp = mapMgr.getMapThingCompByXY(curMapThingInfo.x, curMapThingInfo.y);
+               let mapThingComp = mapMgr.getMapThingCompByXY(curMapThingInfo.x, curMapThingInfo.y);
                let reg = /^[\.\d]*$/;//是否只包含数字和小数点
                let inputStr = editBox.string;
                let isLegal = reg.test(inputStr);
-               curMapThingInfo.anchorX = isLegal ? Number(inputStr) : 0;
-               var anchorX: number = curMapThingInfo.anchorX, anchorY: number = curMapThingInfo.anchorY;
+               curMapThingInfo.anchorX = isLegal ? Number(inputStr) : curMapThingInfo.anchorX;
+               let anchorX: number = curMapThingInfo.anchorX, anchorY: number = curMapThingInfo.anchorY;
                BaseUT.setPivot(mapThingComp, anchorX, anchorY);
-               if(!isLegal) self.lbl_anchorX.string = anchorX + "";
+               if (!isLegal){
+                    editBox.string = anchorX + "";
+                    MessageTip.show({ msg: "输入内容不合法" });
+               } 
           }
      }
 
      private onFocusOutAnchorY(editBox: EditBox) {
           let self = this;
-          var mapMgr = self.mapMgr;
+          let mapMgr = self.mapMgr;
           let curMapThingInfo = mapMgr.curMapThingInfo;
           if (curMapThingInfo) {
-               var mapThingComp = mapMgr.getMapThingCompByXY(curMapThingInfo.x, curMapThingInfo.y);
+               let mapThingComp = mapMgr.getMapThingCompByXY(curMapThingInfo.x, curMapThingInfo.y);
                let reg = /^[\.\d]*$/;//是否只包含数字和小数点
                let inputStr = editBox.string;
                let isLegal = reg.test(inputStr);
-               curMapThingInfo.anchorY = isLegal ? Number(inputStr) : 0;
-               var anchorX: number = curMapThingInfo.anchorX, anchorY: number = curMapThingInfo.anchorY;
+               curMapThingInfo.anchorY = isLegal ? Number(inputStr) : curMapThingInfo.anchorY;
+               let anchorX: number = curMapThingInfo.anchorX, anchorY: number = curMapThingInfo.anchorY;
                BaseUT.setPivot(mapThingComp, anchorX, anchorY);
-               if(!isLegal) self.lbl_anchorY.string = anchorX + "";
+               if (!isLegal) {
+                    editBox.string = anchorY + "";
+                    MessageTip.show({ msg: "输入内容不合法" });
+               }
           }
      }
 }

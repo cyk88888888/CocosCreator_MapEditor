@@ -116,7 +116,6 @@ export class MapScrollComp extends UIComp {
 
     private init(data: any) {
         let self = this;
-        data.scrollMapUITranstorm = self._scrollMapUITranstorm;
         self.initGridLine();
         self.initEvent();
         self.mapGridFactory.init(data);
@@ -180,10 +179,12 @@ export class MapScrollComp extends UIComp {
                     self._pressMouseRight = true;
                 }
                 if (self._pressMouseLeft && !self.mapMgr.isForbidDrawGrid) {
+                    let mousePos = BaseUT.getMousePos(e.getLocation());//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
+                    let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
                     if (self._isCtrlDown) {
-                        if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
+                        if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, localUIPos);
                     } else {
-                        if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+                        if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, localUIPos);
                     }
                 }
             } else {
@@ -206,10 +207,12 @@ export class MapScrollComp extends UIComp {
         } else {
             if (self.mapMgr.gridType != CONST.GridType.GridType_none) {
                 if (self._pressMouseLeft && !self.mapMgr.isForbidDrawGrid) {
+                    let mousePos = BaseUT.getMousePos(e.getLocation());//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
+                    let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
                     if (self._isCtrlDown) {
-                        if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, e);
+                        if (self.onRemoveNodeHandler) self.onRemoveNodeHandler.call(self.mapGridFactory, localUIPos);
                     } else {
-                        if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, e);
+                        if (self.onAddNodeHandler) self.onAddNodeHandler.call(self.mapGridFactory, localUIPos);
                     }
                 }
             }
@@ -277,9 +280,9 @@ export class MapScrollComp extends UIComp {
         let editAreaWidth = self._editAreaSize.width;
         let editAreaHeight = self._editAreaSize.height;
         let minScale = Math.max(editAreaWidth / self.mapMgr.mapWidth, editAreaHeight / self.mapMgr.mapHeight);
-        if (scale > 2) scale = 2;
+        if (scale > 3) scale = 3;
         if (scale < minScale) scale = minScale;
-        if(self.mapScale == scale) return;
+        if (self.mapScale == scale) return;
         let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
         let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
         self.grp_scrollMap.setScale(new Vec3(scale, scale, scale));//一定要设置z的scale，不然会影响转换成世界坐标的值
@@ -301,6 +304,11 @@ export class MapScrollComp extends UIComp {
         if (self.grp_scrollMap.position.x < -maxScrollX) self.grp_scrollMap.setPosition(new Vec3(-maxScrollX, self.grp_scrollMap.position.y));
         if (self.grp_scrollMap.position.y > 0) self.grp_scrollMap.setPosition(new Vec3(self.grp_scrollMap.position.x, 0));
         if (self.grp_scrollMap.position.y < -maxScrollY) self.grp_scrollMap.setPosition(new Vec3(self.grp_scrollMap.position.x, -maxScrollY));
+    }
+
+    public get scrollMapUITranstorm() {
+        let self = this;
+        return self._scrollMapUITranstorm;
     }
 
     public get mapScale() {

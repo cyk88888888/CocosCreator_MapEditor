@@ -182,41 +182,45 @@ export class MapMgr {
     }
 
     /**
-     * 根据格子idx获取格子所在的行列 
-     * @param idx
-     * @return 
-     * 
-     */
-    public getGridXYByIdx(idx: number) {
-        let self = this;
-        var size: number = self.cellSize;
-        var totLine: number = Math.ceil(self.mapHeight / size);//总行数
-        var totCol: number = Math.ceil(self.mapWidth / size);//总列数
-        var line: number = Math.floor(idx / totCol);
-        var col: number = idx - line * totCol;
-        return [col, line];
-    }
-
-    /**
      * 根据格子列行获取格子所在的idx 
      * @param x 列
      * @param y 行
      * @return 
      * 
      */
-    public getGridIdxByXY(x: number, y: number) {
+    public pos2Idx(x: number, y: number) {
         let self = this;
-        var size: number = self.cellSize;
-        var totLine: number = Math.ceil(self.mapHeight / size);//总行数
-        var totCol: number = Math.ceil(self.mapWidth / size);//总列数
-        var idx: number = y * totCol + x;
+        let size: number = self.cellSize;
+        let totLine: number = Math.ceil(self.mapHeight / size);//总行数
+        let totCol: number = Math.ceil(self.mapWidth / size);//总列数
+        let idx: number = y * totCol + x;
         return idx;
     }
 
-    /**地图位置坐标转为格子坐标 */
-    public pos2Grid(x: number, y: number): { x: number, y: number } {
+    /**
+     * 地图位置坐标转为格子行列
+     * @param x 
+     * @param y 
+     * @returns 
+     */
+    public pos2Grid(x: number, y: number) { 
         let self = this;
         return { x: Math.floor(x / self.cellSize), y: Math.floor(y / self.cellSize) };
+    }
+
+     /**
+     * 格子idx转为格子所在的行列 
+     * @param idx
+     * @return 
+     */
+     public idx2Grid(idx: number) {
+        let self = this;
+        let size: number = self.cellSize;
+        let totLine: number = Math.ceil(self.mapHeight / size);//总行数
+        let totCol: number = Math.ceil(self.mapWidth / size);//总列数
+        let line: number = Math.floor(idx / totCol);
+        let col: number = idx - line * totCol;
+        return { x: col, y: line };
     }
 
     /**
@@ -247,8 +251,8 @@ export class MapMgr {
     //通过xy获取场景已有的物件
     public getMapThingCompByXY(x: number, y: number): Node {
         let self = this;
-        var mapThingInfo = self.mapThingMap[Math.floor(x) + "_" + Math.floor(y)];
-        var mapThingComp = mapThingInfo[1];
+        let mapThingInfo = self.mapThingMap[Math.floor(x) + "_" + Math.floor(y)];
+        let mapThingComp = mapThingInfo[1];
         return mapThingComp;
     }
 
@@ -289,6 +293,7 @@ export class MapMgr {
         mapJsonInfo.waterVertList = [];
         mapJsonInfo.startList = [];
         mapJsonInfo.mapThingList = [];
+        mapJsonInfo.borderList = [];
         let walkData = gridDataMap[CONST.GridType.GridType_walk];
         for (let i = 0; i < self.totRow; i++) {
             let linewalkList = [];//每一行
@@ -319,7 +324,7 @@ export class MapMgr {
                         if (gridType == CONST.GridType.GridType_start) newList = mapJsonInfo.waterVertList;
                         else if (gridType == CONST.GridType.GridType_WaterVerts) newList = mapJsonInfo.startList;
                         let splitArr = gridKey.split("_");
-                        newList.push(self.getGridIdxByXY(Number(splitArr[0]), Number(splitArr[1])));
+                        newList.push(self.pos2Idx(Number(splitArr[0]), Number(splitArr[1])));
                     }
                 }
             }
@@ -340,8 +345,8 @@ export class MapMgr {
                         for (const areaKey in gridTypeDataMap) {
                             let areaGridMap = gridTypeDataMap[areaKey];
                             for (const gridKey in areaGridMap) {
-                                var splitArr = gridKey.split("_");
-                                var idx = self.getGridIdxByXY(Number(splitArr[0]), Number(splitArr[1]));
+                                let splitArr = gridKey.split("_");
+                                let idx = self.pos2Idx(Number(splitArr[0]), Number(splitArr[1]));
                                 if (type == CONST.MapThingTriggerType.MapThingTrigger_light) mapThingInfo.area.push(idx);
                                 if (type == CONST.MapThingTriggerType.MapThingTrigger_unWalk) mapThingInfo.unWalkArea.push(idx);
                                 if (type == CONST.MapThingTriggerType.MapThingTrigger_keyManStand) mapThingInfo.keyManStandArea.push(idx);
@@ -352,9 +357,9 @@ export class MapMgr {
                 }
 
                 if (mapThingInfo.type == CONST.MapThingType.bevel) {
-                    var splitGroupStr = mapThingInfo.groupIdStr.split(",") || [];
-                    var groupIdList = [];
-                    for (var i = 0; i < splitGroupStr.length; i++) {
+                    let splitGroupStr = mapThingInfo.groupIdStr?.split(",") ?? [];
+                    let groupIdList = [];
+                    for (let i = 0; i < splitGroupStr.length; i++) {
                         groupIdList.push(Number(splitGroupStr[i]));
                     }
                     mapJsonInfo.borderList.push({ x: mapThingInfo.x, y: mapThingInfo.y, groupIdList: groupIdList });
@@ -363,8 +368,6 @@ export class MapMgr {
                 }
             }
         }
-
-        console.log(gridDataMap);
         FileIOHandler.inst.saveTextToLocal(JSON.stringify(mapJsonInfo));
     }
 

@@ -17,7 +17,6 @@ export class MapGridFactory extends UIComp {
     public colorGridPrefab: Prefab;
 
     private mapMgr: MapMgr;
-    private _scrollMapUITranstorm: UITransform;
     /**区域格子Graphic缓存map */
     private _graphicsDic: { [areaKey: string]: ColorGrid };
     private _colorDic: { [gridType: string]: string };
@@ -33,7 +32,6 @@ export class MapGridFactory extends UIComp {
         let self = this;
         self._graphicsDic = {};
         self._colorDic = {};
-        self._scrollMapUITranstorm = data.scrollMapUITranstorm;
         let mapData: G.MapJsonInfo = data.mapData;
         let walkList = mapData.walkList || [];
         /** 设置可行走节点**/
@@ -49,24 +47,46 @@ export class MapGridFactory extends UIComp {
                 }
             }
         }
+
+        addGridDataByType(CONST.GridType.GridType_start, mapData.startList || []);
+        addGridDataByType(CONST.GridType.GridType_WaterVerts, mapData.waterVertList || []);
+
+        if (mapData.mapThingList) {
+            mapData.mapThingList.forEach(mapThingData=> {
+                let tempMapThingInfo = <G.MapThingInfo>{};
+                tempMapThingInfo.x = mapThingData.x;
+                tempMapThingInfo.y = mapThingData.y;
+                self.mapMgr.curMapThingInfo = tempMapThingInfo;//这里创建的临时mapthingInfo是为了导入地图数据时往gridDataDic里塞格子数据用
+                if (mapThingData.area) addGridDataByType(CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_light, mapThingData.area);
+                if (mapThingData.unWalkArea) addGridDataByType(CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_unWalk, mapThingData.unWalkArea);
+                if (mapThingData.keyManStandArea) addGridDataByType(CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_keyManStand, mapThingData.keyManStandArea);
+                if (mapThingData.grassArea) addGridDataByType(CONST.GridType.GridType_mapThing + CONST.MapThingTriggerType.MapThingTrigger_grass, mapThingData.grassArea);
+            });
+        }
+
+        function addGridDataByType(gridType: string, gridList: number[]) {
+            for (let i = 0; i < gridList.length; i++) {
+                let xy = self.mapMgr.idx2Grid(gridList[i]);
+                self.addGrid(gridType, { x: xy.x, y: xy.y });
+            }
+        }
+
     }
 
-    public onAddNodeHandler(e: EventMouse) {
+    public onAddNodeHandler(localUIPos: Vec3) {
         let self = this;
-        self.addOrRmRangeGrid(e.getLocation(), true);
+        self.addOrRmRangeGrid(localUIPos, true);
     }
 
-    public onRemoveNodeHandler(e: EventMouse) {
+    public onRemoveNodeHandler(localUIPos: Vec3) {
         let self = this;
-        self.addOrRmRangeGrid(e.getLocation(), false);
+        self.addOrRmRangeGrid(localUIPos, false);
     }
 
     /**添加或者删除格子 */
-    private addOrRmRangeGrid(location: Vec2, isAdd: boolean) {
+    private addOrRmRangeGrid(localUIPos: Vec3, isAdd: boolean) {
         let self = this;
         let range = self.mapMgr.gridRange;
-        let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
-        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
         let gridPos = self.mapMgr.pos2Grid(localUIPos.x, localUIPos.y);
         self._redrawTempMap = {};
         if (range == 0) {
@@ -109,9 +129,9 @@ export class MapGridFactory extends UIComp {
         let areaKey = graphicsPos.x + '_' + graphicsPos.y;
         let colorType = gridType;
         if (gridType.indexOf(CONST.GridType.GridType_mapThing) > -1) {//场景物件格子有归属关系，这里特殊处理，方便物件删除时，把格子一起删除
-            var mapThingInfo: G.MapThingInfo = mapMgr.curMapThingInfo;
+            let mapThingInfo: G.MapThingInfo = mapMgr.curMapThingInfo;
             if (!mapThingInfo || mapThingInfo.type == CONST.MapThingType.bevel) return;//顶点格子不需要绘制颜色格子
-            var mapThingKey: string = Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y);
+            let mapThingKey: string = Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y);
             colorType = gridType == CONST.GridType.GridType_mapThing ? gridType + mapMgr.curMapThingTriggerType : gridType;
             gridType = gridType == CONST.GridType.GridType_mapThing ? gridType + mapMgr.curMapThingTriggerType + "_" + mapThingKey : gridType + "_" + mapThingKey;
         }
@@ -136,9 +156,9 @@ export class MapGridFactory extends UIComp {
         let mapMgr = self.mapMgr;
         let gridKey = gridPos.x + "_" + gridPos.y;
         if (gridType.indexOf(CONST.GridType.GridType_mapThing) > -1) {//场景物件格子有归属关系，这里特殊处理，方便物件删除时，把格子一起删除
-            var mapThingInfo: G.MapThingInfo = mapMgr.curMapThingInfo;
+            let mapThingInfo: G.MapThingInfo = mapMgr.curMapThingInfo;
             if (!mapThingInfo) return;
-            var mapThingKey: string = Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y);
+            let mapThingKey: string = Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y);
             gridType = gridType + mapMgr.curMapThingTriggerType + "_" + mapThingKey;
         }
         let gridDataMap = mapMgr.gridDataMap;

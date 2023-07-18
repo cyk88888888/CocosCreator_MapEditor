@@ -1,4 +1,4 @@
-import { _decorator, EventMouse, instantiate, Node, Prefab, UITransform, Vec3 } from 'cc';
+import { _decorator, EventMouse, instantiate, Node, Prefab, Vec2 } from 'cc';
 import { UIComp } from '../../../framework/ui/UIComp';
 import { MapMgr } from '../../base/MapMgr';
 import { G } from '../../base/Interface';
@@ -21,7 +21,6 @@ export class MapThingFactory extends UIComp {
     @property({ type: Node })
     public grp_mapThingSelect: Node;
     private mapMgr: MapMgr;
-    private _scrollMapUITranstorm: UITransform;
     private _mapThingSelect: mapThingSelect;
     private _lastSelectMapThingComp: Node;
     private _tid: number;
@@ -38,9 +37,50 @@ export class MapThingFactory extends UIComp {
 
     public init(data: any) {
         let self = this;
+        self.node.destroyAllChildren();
         let mapData: G.MapJsonInfo = data.mapData;
-        self._scrollMapUITranstorm = data.scrollMapUITranstorm;
+        if (mapData.mapThingList) {
+            mapData.mapThingList.forEach(mapThingData => {
+                self.onDragMapThingDown({
+                    isImportJson: true,
+                    url: self.mapMgr.mapThingUrlMap[mapThingData.thingName],
+                    thingName: mapThingData.thingName,
+                    x: mapThingData.x,
+                    y: mapThingData.y,
+                    anchorX: mapThingData.anchorX,
+                    anchorY: mapThingData.anchorY,
+                    taskId: mapThingData.taskId,
+                    groupId: mapThingData.groupId,
+                    type: mapThingData.type,
+                    isByDrag: false
+                });
+            });
+        }
 
+        if (mapData.borderList) {
+            mapData.borderList.forEach(mapThingData => {
+                let groupIdList = mapThingData.groupIdList || [];
+                let groupIdStr: string = "";
+                for (let ii = 0; ii < groupIdList.length; ii++) {
+                    groupIdStr += groupIdList[ii] + (ii == groupIdList.length - 1 ? "" : ",");
+                }
+                self.onDragMapThingDown({
+                    isImportJson: true,
+                    url: self.mapMgr.mapThingUrlMap[self.mapMgr.bavelResStr],
+                    thingName: self.mapMgr.bavelResStr,
+                    x: mapThingData.x,
+                    y: mapThingData.y,
+                    anchorX: 0.5,
+                    anchorY: 0.5,
+                    groupIdStr: groupIdStr,
+                    isByDrag: true
+                });
+            })
+        }
+
+        self._mapThingSelect.clear();
+        self.mapMgr.curMapThingInfo = null;
+        self.emit(CONST.GEVT.ClearCurMapThingInfo);
     }
 
     private onChangeGridType(dt: any) {
@@ -63,18 +103,40 @@ export class MapThingFactory extends UIComp {
 
     private onDragMapThingDown(data: G.DragMapthingInfo) {
         let self = this;
-        let mousePos = BaseUT.getMousePos(data.location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
-        let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
-        let isImportJson: boolean = data.isImportJson;//是否为导入json进来
-        let mapThingX: number = isImportJson ? data.x : localUIPos.x;//场景物件坐标X
-        let mapThingY: number = isImportJson ? data.y : localUIPos.y;//场景物件坐标Y
-        let anchorX: number = data.anchorX == undefined ? 0.5 : data.anchorX;
-        let anchorY: number = data.anchorY == undefined ? 0.5 : data.anchorY;
+        let isImportJson = data.isImportJson;//是否为导入json进来
+        let mapThingX = data.x;//场景物件坐标X
+        let mapThingY = data.y;//场景物件坐标Y
+        let anchorX = data.anchorX == undefined ? 0.5 : data.anchorX;
+        let anchorY = data.anchorY == undefined ? 0.5 : data.anchorY;
         let mapThingInfo = <G.MapThingInfo>{};
         let mapThingComp = self.mapMgr.getMapThingComp(self.mapThingPrefab, data.url, anchorX, anchorY, imgLoaded, self);
-        let elementName: string = data.thingName;
-        let isBelve: boolean = elementName.indexOf(self.mapMgr.bavelResStr) > -1;//是否为斜角顶点
+        let elementName = data.thingName;
+        let isBelve = elementName.indexOf(self.mapMgr.bavelResStr) > -1;//是否为斜角顶点
+        if (isBelve && !isImportJson) {
+            let xy = self.mapMgr.pos2Grid(mapThingX, mapThingY);
+            let cellSize = self.mapMgr.cellSize;
+            let pointArr = [
+                [xy.x * cellSize, xy.y * cellSize],
+                [xy.x * cellSize + cellSize, xy.y * cellSize],
+                [xy.x * cellSize + cellSize, xy.y * cellSize + cellSize],
+                [xy.x * cellSize, xy.y * cellSize + cellSize],
+            ];
+            let minDist: number;//最小距离
+            let distArr = [];
+            distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[0][0], y: pointArr[0][1] }));
+            distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[1][0], y: pointArr[1][1] }));
+            distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[2][0], y: pointArr[2][1] }));
+            distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[3][0], y: pointArr[3][1] }));
+            for (let i = 0; i < distArr.length; i++) {
+                if (!minDist) minDist = distArr[i];
+                else if (distArr[i] < minDist) minDist = distArr[i];
+            }
+            let minIndex = distArr.indexOf(minDist);
+            mapThingX = pointArr[minIndex][0];
+            mapThingY = pointArr[minIndex][1];
+        }
         mapThingComp.setPosition(mapThingX, mapThingY);
+        BaseUT.setPivot(mapThingComp, anchorX, anchorY);
         mapThingComp.setParent(self.node);
         mapThingComp.name = Math.floor(mapThingX) + "_" + Math.floor(mapThingY);
         mapThingInfo.thingName = elementName;
@@ -88,6 +150,9 @@ export class MapThingFactory extends UIComp {
         if (data.type) mapThingInfo.type = data.type;
         if (data.isByDrag) {
             if (isBelve) mapThingInfo.type = CONST.MapThingType.bevel;
+        }
+        if(self.mapMgr.mapThingMap[mapThingComp.name]){
+            self.mapMgr.mapThingMap[mapThingComp.name][1].destroy();
         }
         self.mapMgr.mapThingMap[mapThingComp.name] = [mapThingInfo, mapThingComp];
         if (!isImportJson) {
@@ -111,7 +176,7 @@ export class MapThingFactory extends UIComp {
         let mapMgr = self.mapMgr;
         let buttonId = e.getButton();
         let btn = e.currentTarget as Node;
-        var mapThingInfo: G.MapThingInfo = mapMgr.mapThingMap[btn.name][0];
+        let mapThingInfo: G.MapThingInfo = mapMgr.mapThingMap[btn.name][0];
         if (buttonId == EventMouse.BUTTON_LEFT) {//左键选中场景物件
             console.log('左键点击场景物件');
             if (mapMgr.gridType != CONST.GridType.GridType_mapThing || mapMgr.isPressCtrl || mapMgr.isPressSpace) return;
