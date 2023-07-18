@@ -300,7 +300,8 @@ export class MapEditorLayer extends UILayer {
     /**显隐物件 */
     private _tap_btn_showMapThing() {
         let self = this;
-        self.lbl_mapthing.string = self.lbl_mapthing.string == "显示物件" ? "隐藏路点" : "显示物件";
+        self.lbl_mapthing.string = self.lbl_mapthing.string == "显示物件" ? "隐藏物件" : "显示物件";
+        self.mapScrollComp.mapThingFactory.refSelfVsb();
     }
 
     /**重置缩放比例 */

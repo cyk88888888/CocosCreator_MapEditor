@@ -83,6 +83,12 @@ export class MapThingFactory extends UIComp {
         self.emit(CONST.GEVT.ClearCurMapThingInfo);
     }
 
+    public refSelfVsb(){
+        let self = this;
+        self.grp_mapThingSelect.active = !self.grp_mapThingSelect.active;
+        self.node.active = !self.node.active;
+    }
+
     private onChangeGridType(dt: any) {
         let self = this;
         if (dt.gridType == CONST.GridType.GridType_mapThing) {
