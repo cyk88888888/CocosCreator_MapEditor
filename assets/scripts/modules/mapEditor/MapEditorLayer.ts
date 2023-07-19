@@ -10,6 +10,7 @@ import { JuHuaDlg } from '../../framework/ui/JuHuaDlg';
 import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
 import { G } from '../base/Interface';
+import { MapThingPropertyComp } from './comp/MapThingPropertyComp';
 const { ccclass, property } = _decorator;
 
 /*
@@ -49,6 +50,8 @@ export class MapEditorLayer extends UILayer {
     private lbl_mapScale: Label;
     @property({ type: MapScrollComp, tooltip: "编辑器地图滚动组件" })
     private mapScrollComp: MapScrollComp;
+    @property({ type: MapThingPropertyComp })
+    private mapThingPropertyComp: MapThingPropertyComp;
     @property({ type: Node })
     private grp_editPathSize: Node;
     @property({ type: Node })
@@ -65,7 +68,7 @@ export class MapEditorLayer extends UILayer {
     private grp_dragMapthing: Node = null;
     @property({ type: Prefab })
     private mapThingComp: Prefab = null;
-
+    
     private mapMgr: MapMgr;
     private _selectIdx: number;
     /**当前拖拽的场景物件 */
@@ -107,6 +110,7 @@ export class MapEditorLayer extends UILayer {
         ResMgr.inst.decRefLocalImg();
         self.refreshList("list_mapThing");
         await self.mapScrollComp.onImportMapJson(data);
+        self.mapThingPropertyComp.init(data);
         juhuaDlg.close();
         self.updateMapInfo();
         self.initEvent();
@@ -246,6 +250,7 @@ export class MapEditorLayer extends UILayer {
                 }
             }
         }
+        self.emit(CONST.GEVT.ClickStage);
     }
 
     private onMouseMove(e: EventMouse) {

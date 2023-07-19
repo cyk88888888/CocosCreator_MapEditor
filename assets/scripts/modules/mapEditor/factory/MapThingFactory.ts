@@ -150,10 +150,10 @@ export class MapThingFactory extends UIComp {
         mapThingInfo.anchorY = anchorY;
         mapThingInfo.x = mapThingX;
         mapThingInfo.y = mapThingY;
+        mapThingInfo.type = data.type || CONST.MapThingType.task;
         if (data.taskId) mapThingInfo.taskId = data.taskId;
         if (data.groupId) mapThingInfo.groupId = data.groupId;
         if (data.groupIdStr) mapThingInfo.groupIdStr = data.groupIdStr;
-        if (data.type) mapThingInfo.type = data.type;
         if (data.isByDrag) {
             if (isBelve) mapThingInfo.type = CONST.MapThingType.bevel;
         }

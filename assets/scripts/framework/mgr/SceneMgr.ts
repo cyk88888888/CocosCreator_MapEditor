@@ -40,9 +40,9 @@ export class SceneMgr {
     }
 
     /**
- * 获取UI的Camera
- * @returns 
- */
+     * 获取UI的Camera
+     * @returns 
+     */
     public getUCamera(): Node {
         if (!this._canvas) {
             this._canvas = director.getScene().getChildByName('Canvas');

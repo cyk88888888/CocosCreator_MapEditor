@@ -16,6 +16,8 @@ export namespace CONST {
         ReDarwGraphic = "ReDarwGraphic",
         ChangeMapThingXY = "ChangeMapThingXY",
         ClearCurMapThingInfo = "ClearCurMapThingInfo",
+        ClickSelecBoxItem = "ClickSelecBoxItem",
+        ClickStage = "ClickStage",
     }
 
     /** 格子类型*/

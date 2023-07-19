@@ -67,7 +67,7 @@ export class MapMgr {
         self.triggerTypes = [
             { type: CONST.MapThingTriggerType.MapThingTrigger_light, desc: '触发发亮' },
             { type: CONST.MapThingTriggerType.MapThingTrigger_unWalk, desc: '不可行走' },
-            { type: CONST.MapThingTriggerType.MapThingTrigger_keyManStand, desc: '犯人周围站立点' },
+            { type: CONST.MapThingTriggerType.MapThingTrigger_keyManStand, desc: '犯人站立点' },
             { type: CONST.MapThingTriggerType.MapThingTrigger_grass, desc: '草丛范围点' },
         ];
     }
@@ -370,5 +370,4 @@ export class MapMgr {
         }
         FileIOHandler.inst.saveTextToLocal(JSON.stringify(mapJsonInfo));
     }
-
 }

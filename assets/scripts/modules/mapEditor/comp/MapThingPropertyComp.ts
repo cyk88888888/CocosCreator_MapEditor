@@ -5,6 +5,7 @@ import { G } from '../../base/Interface';
 import { MapMgr } from '../../base/MapMgr';
 import { BaseUT } from '../../../framework/base/BaseUtil';
 import { MessageTip } from '../../common/message/MessageTip';
+import { SelectBoxComp } from './SelectBoxComp';
 const { ccclass, property } = _decorator;
 
 @ccclass('MapThingPropertyComp')
@@ -27,6 +28,10 @@ export class MapThingPropertyComp extends UIComp {
      private lbl_anchorY: EditBox;
      @property({ type: Label })
      private lbl_thingRect: Label;
+     @property({ type: SelectBoxComp })
+     private combo_taskType: SelectBoxComp;
+     @property({ type: SelectBoxComp })
+     private combo_triggerType: SelectBoxComp;
 
      @property({ type: Node })
      private grp_mapThingInfo: Node;
@@ -40,7 +45,21 @@ export class MapThingPropertyComp extends UIComp {
           self.onEmitter(CONST.GEVT.ClickMapTing, self.onClickMapTing);
           self.onEmitter(CONST.GEVT.ChangeGridType, self.onChangeGridType);
           self.onEmitter(CONST.GEVT.ClearCurMapThingInfo, self.onClearCurMapThingInfo);
+
+          self.combo_triggerType.setData(self.mapMgr.triggerTypes);
+          self.combo_triggerType.selectCb = self.onClickTriggerType;
+          self.combo_triggerType.selectCbCtx = self;
+          self.combo_triggerType.selectedIndex = 0;
           self.grp_mapThingInfo.active = self.grp_bevel.active = false;
+     }
+
+     public init(data: any) {
+          let self = this;
+          let thingTypeList = data.thingPram?.thingTypeList ?? [];
+          self.combo_taskType.setData(thingTypeList);
+          self.combo_taskType.selectCb = self.onClickTaskType;
+          self.combo_taskType.selectCbCtx = self;
+          self.combo_taskType.selectedIndex = 0;
      }
 
      private onChangeGridType(dt: any) {
@@ -68,7 +87,7 @@ export class MapThingPropertyComp extends UIComp {
                self.lbl_anchorX.string = curMapThingInfo.anchorX + '';
                self.lbl_anchorY.string = curMapThingInfo.anchorY + '';
                self.lbl_thingRect.string = curMapThingInfo.width + "," + curMapThingInfo.height;
-               // combo_taskType.selectedIndex = curMapThingInfo.type - 1;
+               self.combo_taskType.selectedIndex = curMapThingInfo.type - 1;
           }
 
           self.grp_mapThingInfo.active = !isBelve;
@@ -78,6 +97,16 @@ export class MapThingPropertyComp extends UIComp {
      private onClearCurMapThingInfo() {
           let self = this;
           self.grp_mapThingInfo.active = self.grp_bevel.active = false;
+     }
+
+     private onClickTaskType(dt: any) {
+          let self = this;
+          if (self.mapMgr.curMapThingInfo) self.mapMgr.curMapThingInfo.type = dt.type;
+     }
+
+     private onClickTriggerType(dt: any) {
+          let self = this;
+          self.mapMgr.curMapThingTriggerType = dt.type;
      }
 
      private onFocusOutTaskId(editBox: EditBox) {
@@ -93,7 +122,7 @@ export class MapThingPropertyComp extends UIComp {
      private onFocusOutGroupId2(editBox: EditBox) {
           let self = this;
           let curMapThingInfo = self.mapMgr.curMapThingInfo;
-          if(curMapThingInfo){
+          if (curMapThingInfo) {
                let reg = /^(\d+,?)+$/;//是否只包含数字和英文逗号
                let inputStr = editBox.string;
                let isLegal = reg.test(inputStr);
@@ -149,10 +178,10 @@ export class MapThingPropertyComp extends UIComp {
                curMapThingInfo.anchorX = isLegal ? Number(inputStr) : curMapThingInfo.anchorX;
                let anchorX: number = curMapThingInfo.anchorX, anchorY: number = curMapThingInfo.anchorY;
                BaseUT.setPivot(mapThingComp, anchorX, anchorY);
-               if (!isLegal){
+               if (!isLegal) {
                     editBox.string = anchorX + "";
                     MessageTip.show({ msg: "输入内容不合法" });
-               } 
+               }
           }
      }
 
