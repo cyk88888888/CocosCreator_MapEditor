@@ -1,7 +1,7 @@
 [
   {
     "__type__": "cc.Prefab",
-    "_name": "SelectBoxComp",
+    "_name": "ComboBoxComp",
     "_objFlags": 0,
     "_native": "",
     "data": {
@@ -12,7 +12,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "SelectBoxComp",
+    "_name": "ComboBoxComp",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": null,
@@ -585,7 +585,7 @@
     "fileId": "e8FQ/gs2ZBgqAgaQdsqk9y"
   },
   {
-    "__type__": "86670T2CH9HWbY80PV6W8jI",
+    "__type__": "1064eJDM3FEBonfQPLkFnt9",
     "_name": "",
     "_objFlags": 0,
     "node": {
@@ -595,7 +595,7 @@
     "__prefab": {
       "__id__": 27
     },
-    "selectBoxPrefab": {
+    "comboBoxContainerPrefab": {
       "__uuid__": "ccb42864-3e35-4d07-838b-ba478c42154b",
       "__expectedType__": "cc.Prefab"
     },
@@ -624,7 +624,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "617upQxjdIxI3sGKPYCHuj"
+    "fileId": "b7wpBpOD5PsYH61fwB+rNC"
   },
   {
     "__type__": "cc.PrefabInfo",

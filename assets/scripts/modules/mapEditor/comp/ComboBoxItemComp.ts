@@ -3,8 +3,8 @@ import { UIComp } from '../../../framework/ui/UIComp';
 import { CONST } from '../../base/CONST';
 const { ccclass, property } = _decorator;
 
-@ccclass('SelectBoxItemComp')
-export class SelectBoxItemComp extends UIComp {
+@ccclass('ComboBoxItemComp')
+export class ComboBoxItemComp extends UIComp {
      @property({type: Label})
      private lbl_desc: Label;
 

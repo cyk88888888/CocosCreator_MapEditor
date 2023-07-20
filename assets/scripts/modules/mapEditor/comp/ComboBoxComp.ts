@@ -2,17 +2,17 @@ import { _decorator, EventMouse, instantiate, Label, Node, Prefab, Sprite, Sprit
 import { UIComp } from '../../../framework/ui/UIComp';
 import { SceneMgr } from '../../../framework/mgr/SceneMgr';
 import { CONST } from '../../base/CONST';
-import { SelectBoxContainerComp } from './SelectBoxContainerComp';
+import { ComboBoxContainerComp } from './ComboBoxContainerComp';
 const { ccclass, property } = _decorator;
 /*
  * @Descripttion: 下拉框选中组件
  * @Author: CYK
  * @Date: 2023-07-19 20:00:00
  */
-@ccclass('SelectBoxComp')
-export class SelectBoxComp extends UIComp {
+@ccclass('ComboBoxComp')
+export class ComboBoxComp extends UIComp {
      @property({ type: Prefab })
-     public selectBoxPrefab: Prefab;
+     public comboBoxContainerPrefab: Prefab;
      @property({ type: Node })
      private grp_touchArea: Node;
      @property({ type: Label })
@@ -26,8 +26,8 @@ export class SelectBoxComp extends UIComp {
      @property({ type: SpriteFrame })
      private press: SpriteFrame;
 
-     private _selectedIndex: number;
-     private _selectBoxContainerComp: SelectBoxContainerComp;
+     private _selectedIndex: number; 
+     private _comboBoxContainerComp: ComboBoxContainerComp;
      protected onEnter(): void {
           let self = this;
           self.onEmitter(CONST.GEVT.ClickSelecBoxItem, self.onClickSelecBoxItem);
@@ -63,12 +63,12 @@ export class SelectBoxComp extends UIComp {
      private onMouseDown(e: EventMouse) {
           let self = this;
           self.img_bg.spriteFrame = self.press;
-          if (self._selectBoxContainerComp && !self._selectBoxContainerComp.hasDestory) {
-               self._selectBoxContainerComp.node.destroy();
-               self._selectBoxContainerComp = null;
+          if (self._comboBoxContainerComp && !self._comboBoxContainerComp.hasDestory) {
+               self._comboBoxContainerComp.node.destroy();
+               self._comboBoxContainerComp = null;
           } else {
-               let box = instantiate(self.selectBoxPrefab);
-               let selectBoxContainerComp = self._selectBoxContainerComp = box.getComponent(SelectBoxContainerComp);
+               let box = instantiate(self.comboBoxContainerPrefab);
+               let selectBoxContainerComp = self._comboBoxContainerComp = box.getComponent(ComboBoxContainerComp);
                selectBoxContainerComp.__deletegate__ = self;
                selectBoxContainerComp.setData(self.data);
                let uiTransform = self.node.getComponent(UITransform);

@@ -1,13 +1,13 @@
 import { _decorator, instantiate, Node, Prefab } from 'cc';
 import { UIComp } from '../../../framework/ui/UIComp';
-import { SelectBoxItemComp } from './SelectBoxItemComp';
+import { ComboBoxItemComp } from './ComboBoxItemComp';
 import { CONST } from '../../base/CONST';
 const { ccclass, property } = _decorator;
 
-@ccclass('SelectBoxContainerComp')
-export class SelectBoxContainerComp extends UIComp {
+@ccclass('ComboBoxContainerComp')
+export class ComboBoxContainerComp extends UIComp {
      @property({ type: Prefab })
-     public selectBoxItemPrefab: Prefab;
+     public comboBoxItemPrefab: Prefab;
      @property({ type: Node })
      private grp_items: Node;
 
@@ -22,11 +22,11 @@ export class SelectBoxContainerComp extends UIComp {
           let self = this;
           let data = self.data || [];
           for (let i = 0; i < data.length; i++) {
-               let node = instantiate(self.selectBoxItemPrefab);
-               let selectBoxItemComp = node.getComponent(SelectBoxItemComp);
-               selectBoxItemComp.__deletegate__ = self.__deletegate__;
-               selectBoxItemComp.__index__ = i;
-               selectBoxItemComp.setData(data[i]);
+               let node = instantiate(self.comboBoxItemPrefab);
+               let comboBoxItemComp = node.getComponent(ComboBoxItemComp);
+               comboBoxItemComp.__deletegate__ = self.__deletegate__;
+               comboBoxItemComp.__index__ = i;
+               comboBoxItemComp.setData(data[i]);
                node.setParent(self.grp_items);
           }
      }

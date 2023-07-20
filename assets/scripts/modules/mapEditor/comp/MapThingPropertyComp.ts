@@ -5,9 +5,13 @@ import { G } from '../../base/Interface';
 import { MapMgr } from '../../base/MapMgr';
 import { BaseUT } from '../../../framework/base/BaseUtil';
 import { MessageTip } from '../../common/message/MessageTip';
-import { SelectBoxComp } from './SelectBoxComp';
+import { ComboBoxComp } from './ComboBoxComp';
 const { ccclass, property } = _decorator;
-
+/*
+ * @Descripttion: 场景物件属性面板
+ * @Author: CYK
+ * @Date: 2023-07-19 20:00:00
+ */
 @ccclass('MapThingPropertyComp')
 export class MapThingPropertyComp extends UIComp {
      @property({ type: Label })
@@ -28,10 +32,10 @@ export class MapThingPropertyComp extends UIComp {
      private lbl_anchorY: EditBox;
      @property({ type: Label })
      private lbl_thingRect: Label;
-     @property({ type: SelectBoxComp })
-     private combo_taskType: SelectBoxComp;
-     @property({ type: SelectBoxComp })
-     private combo_triggerType: SelectBoxComp;
+     @property({ type: ComboBoxComp })
+     private combo_taskType: ComboBoxComp;
+     @property({ type: ComboBoxComp })
+     private combo_triggerType: ComboBoxComp;
 
      @property({ type: Node })
      private grp_mapThingInfo: Node;
