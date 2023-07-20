@@ -119,13 +119,13 @@ export class MapThingFactory extends UIComp {
         let elementName = data.thingName;
         let isBelve = elementName.indexOf(self.mapMgr.bavelResStr) > -1;//是否为斜角顶点
         if (isBelve && !isImportJson) {
-            let xy = self.mapMgr.pos2Grid(mapThingX, mapThingY);
+            let grid = self.mapMgr.pos2Grid(mapThingX, mapThingY);
             let cellSize = self.mapMgr.cellSize;
             let pointArr = [
-                [xy.x * cellSize, xy.y * cellSize],
-                [xy.x * cellSize + cellSize, xy.y * cellSize],
-                [xy.x * cellSize + cellSize, xy.y * cellSize + cellSize],
-                [xy.x * cellSize, xy.y * cellSize + cellSize],
+                [grid.x * cellSize, grid.y * cellSize],
+                [grid.x * cellSize + cellSize, grid.y * cellSize],
+                [grid.x * cellSize + cellSize, grid.y * cellSize + cellSize],
+                [grid.x * cellSize, grid.y * cellSize + cellSize],
             ];
             let minDist: number;//最小距离
             let distArr = [];

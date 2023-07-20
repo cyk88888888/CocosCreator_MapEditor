@@ -1,10 +1,9 @@
-import { _decorator, EventMouse, instantiate, Prefab, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, instantiate, Prefab, Vec3 } from 'cc';
 import { UIComp } from '../../../framework/ui/UIComp';
 import { MapMgr } from '../../base/MapMgr';
 import { ColorGrid } from '../comp/ColorGrid';
 import { CONST } from '../../base/CONST';
 import { G } from '../../base/Interface';
-import { BaseUT } from '../../../framework/base/BaseUtil';
 const { ccclass, property } = _decorator;
 /*
  * @Descripttion: 网格绘制工厂
@@ -66,11 +65,10 @@ export class MapGridFactory extends UIComp {
 
         function addGridDataByType(gridType: string, gridList: number[]) {
             for (let i = 0; i < gridList.length; i++) {
-                let xy = self.mapMgr.idx2Grid(gridList[i]);
-                self.addGrid(gridType, { x: xy.x, y: xy.y });
+                let grid = self.mapMgr.idx2Grid(gridList[i]);
+                self.addGrid(gridType, { x: grid.x, y: grid.y });
             }
         }
-
     }
 
     public onAddNodeHandler(localUIPos: Vec3) {
@@ -87,21 +85,21 @@ export class MapGridFactory extends UIComp {
     private addOrRmRangeGrid(localUIPos: Vec3, isAdd: boolean) {
         let self = this;
         let range = self.mapMgr.gridRange;
-        let gridPos = self.mapMgr.pos2Grid(localUIPos.x, localUIPos.y);
+        let grid = self.mapMgr.pos2Grid(localUIPos.x, localUIPos.y);
         self._redrawTempMap = {};
         if (range == 0) {
             if (isAdd) {
-                self.addGrid(self.mapMgr.gridType, gridPos);
+                self.addGrid(self.mapMgr.gridType, grid);
             } else {
-                self.removeGrid(self.mapMgr.gridType, gridPos);
+                self.removeGrid(self.mapMgr.gridType, grid);
             }
         } else {
             let numCols = self.mapMgr.totCol;
             let numRows = self.mapMgr.totRow;
-            let startCol = Math.max(0, gridPos.x - range);
-            let endCol = Math.min(numCols - 1, gridPos.x + range);
-            let startRow = Math.max(0, gridPos.y - range);
-            let endRow = Math.min(numRows - 1, gridPos.y + range);
+            let startCol = Math.max(0, grid.x - range);
+            let endCol = Math.min(numCols - 1, grid.x + range);
+            let startRow = Math.max(0, grid.y - range);
+            let endRow = Math.min(numRows - 1, grid.y + range);
             for (let i = startCol; i <= endCol; i++) {
                 for (let j = startRow; j <= endRow; j++) {
                     if (isAdd) {
