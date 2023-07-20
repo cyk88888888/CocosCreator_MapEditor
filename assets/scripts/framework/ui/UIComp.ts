@@ -41,6 +41,8 @@ export class UIComp extends Component {
     }
 
     onDestroy() {
+        let self = this;
+        self.hasDestory = true;
         // console.log('onDestroy: ' + this.scriptName);
     }
 

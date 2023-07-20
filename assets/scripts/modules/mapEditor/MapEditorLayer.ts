@@ -250,7 +250,6 @@ export class MapEditorLayer extends UILayer {
                 }
             }
         }
-        self.emit(CONST.GEVT.ClickStage);
     }
 
     private onMouseMove(e: EventMouse) {

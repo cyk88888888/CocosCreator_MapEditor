@@ -283,6 +283,7 @@ export class MapMgr {
     public exportJson() {
         let self = this;
         let gridDataMap = self.gridDataMap;
+        if(!gridDataMap) return;
         let mapJsonInfo = <G.MapJsonInfo>{};
         mapJsonInfo.mapWidth = self.mapWidth;
         mapJsonInfo.mapHeight = self.mapHeight;

@@ -8,30 +8,35 @@ const { ccclass, property } = _decorator;
 export class SelectBoxContainerComp extends UIComp {
      @property({ type: Prefab })
      public selectBoxItemPrefab: Prefab;
-     @property({type: Node})
+     @property({ type: Node })
      private grp_items: Node;
-     
-     public deletegate: any;
+
+     public __deletegate__: any;
+     private _hasTrigger: boolean;
      protected onEnter(): void {
           let self = this;
-          // self.onEmitter(CONST.GEVT.ClickStage, self.onClickStage);
-          self.onEmitter(CONST.GEVT.ClickSelecBoxItem, self.onClickStage);
+          self.onEmitter(CONST.GEVT.ClickStage, self.onClickStage);
      }
 
      protected dchg(): void {
           let self = this;
           let data = self.data || [];
-          for(let i = 0; i < data.length; i++){
+          for (let i = 0; i < data.length; i++) {
                let node = instantiate(self.selectBoxItemPrefab);
                let selectBoxItemComp = node.getComponent(SelectBoxItemComp);
-               selectBoxItemComp.deletegate = self.deletegate;
+               selectBoxItemComp.__deletegate__ = self.__deletegate__;
+               selectBoxItemComp.__index__ = i;
                selectBoxItemComp.setData(data[i]);
                node.setParent(self.grp_items);
           }
      }
 
-     private onClickStage(){
+     private onClickStage() {
           let self = this;
+          if (!self._hasTrigger) {//这里设置是否已触发过，不然显示的时候就会监听到点击舞台，从而显示不出来
+               self._hasTrigger = true;
+               return;
+          }
           self.destory();
      }
 }

@@ -3,17 +3,17 @@
  * @Author: CYK
  * @Date: 2022-05-20 09:53:17
  */
-import { _decorator } from 'cc';
+import { UITransform, _decorator } from 'cc';
 import { SubLayerMgr } from '../mgr/SubLayerMgr';
 import { UILayer } from './UILayer';
 import { emmiter } from '../base/Emmiter';
 import { BaseUT } from '../base/BaseUtil';
-import { Component, Node} from 'cc';
+import { Component, Node } from 'cc';
 import { SceneMgr } from '../mgr/SceneMgr';
 const { ccclass } = _decorator;
 
 @ccclass('UIScene')
-export class UIScene extends Component{
+export class UIScene extends Component {
     protected mainClassLayer: typeof UILayer;
     protected subLayerMgr: SubLayerMgr;
     public layer: Node;
@@ -73,14 +73,19 @@ export class UIScene extends Component{
         let self = this;
         return self.node.name;
     }
-    
-    onLoad(){
+
+    onLoad() {
         let self = this;
         self.initLayer();
         if (self.mainClassLayer) {
             self.subLayerMgr.register(self.mainClassLayer);
             self.push(self.mainClassLayer, { str: '我叫' + self.mainClassLayer.name });
         }
+    }
+
+    public get uiTransform() {
+        let self = this;
+        return self.getComponent(UITransform);
     }
 
     private initLayer() {
@@ -103,7 +108,7 @@ export class UIScene extends Component{
         return newNode;
     }
 
-    private __doEnter(){
+    private __doEnter() {
         let self = this;
         // console.log('进入' + self.className);
         self.onEnter_b();
@@ -119,12 +124,12 @@ export class UIScene extends Component{
         this._moduleParam = data;
     }
 
-    onEnable(){
+    onEnable() {
         let self = this;
         self.__doEnter();
     }
 
-    onDisable(){
+    onDisable() {
         let self = this;
         self.__dispose();
     }
@@ -190,8 +195,8 @@ export class UIScene extends Component{
         this.subLayerMgr = null;
         this.node.destroy();
     }
-    
-    onDestroy(){
+
+    onDestroy() {
         let self = this;
         // console.log('onDestroy: ' + this.className);
     }

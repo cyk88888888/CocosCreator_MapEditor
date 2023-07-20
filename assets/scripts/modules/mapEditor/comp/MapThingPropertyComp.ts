@@ -47,8 +47,7 @@ export class MapThingPropertyComp extends UIComp {
           self.onEmitter(CONST.GEVT.ClearCurMapThingInfo, self.onClearCurMapThingInfo);
 
           self.combo_triggerType.setData(self.mapMgr.triggerTypes);
-          self.combo_triggerType.selectCb = self.onClickTriggerType;
-          self.combo_triggerType.selectCbCtx = self;
+          self.combo_triggerType.node.on(CONST.GEVT.ComboBox_Change, self.onClickTriggerType, self);
           self.combo_triggerType.selectedIndex = 0;
           self.grp_mapThingInfo.active = self.grp_bevel.active = false;
      }
@@ -57,8 +56,7 @@ export class MapThingPropertyComp extends UIComp {
           let self = this;
           let thingTypeList = data.thingPram?.thingTypeList ?? [];
           self.combo_taskType.setData(thingTypeList);
-          self.combo_taskType.selectCb = self.onClickTaskType;
-          self.combo_taskType.selectCbCtx = self;
+          self.combo_taskType.node.on(CONST.GEVT.ComboBox_Change, self.onClickTaskType, self);
           self.combo_taskType.selectedIndex = 0;
      }
 

@@ -18,6 +18,7 @@ export namespace CONST {
         ClearCurMapThingInfo = "ClearCurMapThingInfo",
         ClickSelecBoxItem = "ClickSelecBoxItem",
         ClickStage = "ClickStage",
+        ComboBox_Change = "ComboBox_Change",
     }
 
     /** 格子类型*/

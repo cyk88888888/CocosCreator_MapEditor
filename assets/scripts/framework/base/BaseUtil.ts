@@ -5,11 +5,11 @@
  */
 import { game, Layers, Node, Scene, screen, Size, UIOpacity, UITransform, Vec2, view } from "cc";
 export namespace BaseUT {
-    export function getView(){
+    export function getView() {
         return view;
     }
 
-    export function getScreen(){
+    export function getScreen() {
         return screen;
     }
 
@@ -39,7 +39,7 @@ export namespace BaseUT {
     }
 
     /**获取鼠标位置（相对于游戏左下角） */
-    export function getMousePos(origin: Vec2){
+    export function getMousePos(origin: Vec2) {
         let view = getView();
         return new Vec2(origin.x / view.getScaleX(), origin.y / view.getScaleY());
     }
@@ -58,7 +58,7 @@ export namespace BaseUT {
         let Opacity = node.getComponent(UIOpacity);
         Opacity.opacity = 255 * alpha;
     }
-    
+
     /**设置node锚点 */
     export function setPivot(node: Node, xv: number, yv: number) {
         let tranform = node.getComponent(UITransform);

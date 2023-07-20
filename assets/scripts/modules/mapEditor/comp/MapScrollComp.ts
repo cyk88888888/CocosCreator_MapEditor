@@ -280,7 +280,7 @@ export class MapScrollComp extends UIComp {
         let editAreaWidth = self._editAreaSize.width;
         let editAreaHeight = self._editAreaSize.height;
         let minScale = Math.max(editAreaWidth / self.mapMgr.mapWidth, editAreaHeight / self.mapMgr.mapHeight);
-        if (scale > 3) scale = 3;
+        if (scale > 2.5) scale = 2.5;
         if (scale < minScale) scale = minScale;
         if (self.mapScale == scale) return;
         let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
