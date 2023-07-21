@@ -248,7 +248,7 @@ export class MapMgr {
         return node;
     }
 
-    //通过xy获取场景已有的物件
+    /** 通过xy获取场景已有的物件*/
     public getMapThingCompByXY(x: number, y: number): Node {
         let self = this;
         let mapThingInfo = self.mapThingMap[Math.floor(x) + "_" + Math.floor(y)];
