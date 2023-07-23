@@ -69,6 +69,7 @@ export class MapScrollComp extends UIComp {
         self.grp_colorGrid.destroyAllChildren();
         self.grp_scrollMap.setPosition(0, 0, 0);
         self.grp_scrollMap.setScale(new Vec3(1, 1, 1));
+        self.mapMgr.mapScale = 1;
         let mapMgr = self.mapMgr;
         let mapFloorArr = mapMgr.mapFloorArr;
         let mapslice = mapMgr.mapslice;
@@ -266,7 +267,7 @@ export class MapScrollComp extends UIComp {
         let selfSize = BaseUT.getSize(self.node);
         let view = BaseUT.getView();
         let location = new Vec2((widget.left + selfSize.width / 2) * view.getScaleX(), (widget.bottom + selfSize.height / 2) * view.getScaleY());//以当前地图视角中心为圆心来重置缩放
-        self.scaleMap(1 - self.grp_scrollMap.scale.x, location);
+        self.scaleMap(1 - self.mapScale, location);
     }
 
     /**
@@ -283,6 +284,7 @@ export class MapScrollComp extends UIComp {
         if (scale > 2.5) scale = 2.5;
         if (scale < minScale) scale = minScale;
         if (self.mapScale == scale) return;
+        self.mapMgr.mapScale = scale;
         let mousePos = BaseUT.getMousePos(location);//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
         let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
         self.grp_scrollMap.setScale(new Vec3(scale, scale, scale));//一定要设置z的scale，不然会影响转换成世界坐标的值

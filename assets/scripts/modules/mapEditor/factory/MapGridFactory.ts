@@ -86,12 +86,13 @@ export class MapGridFactory extends UIComp {
         let self = this;
         let range = self.mapMgr.gridRange;
         let grid = self.mapMgr.pos2Grid(localUIPos.x, localUIPos.y);
+        let gridType = self.mapMgr.gridType;
         self._redrawTempMap = {};
         if (range == 0) {
             if (isAdd) {
-                self.addGrid(self.mapMgr.gridType, grid);
+                self.addGrid(gridType, grid);
             } else {
-                self.removeGrid(self.mapMgr.gridType, grid);
+                self.removeGrid(gridType, grid);
             }
         } else {
             let numCols = self.mapMgr.totCol;
@@ -103,9 +104,9 @@ export class MapGridFactory extends UIComp {
             for (let i = startCol; i <= endCol; i++) {
                 for (let j = startRow; j <= endRow; j++) {
                     if (isAdd) {
-                        self.addGrid(self.mapMgr.gridType, { x: i, y: j });
+                        self.addGrid(gridType, { x: i, y: j });
                     } else {
-                        self.removeGrid(self.mapMgr.gridType, { x: i, y: j });
+                        self.removeGrid(gridType, { x: i, y: j });
                     }
                 }
             }

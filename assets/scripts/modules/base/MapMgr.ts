@@ -39,6 +39,8 @@ export class MapMgr {
     public gridRange: number;
     /**当前绘制的格子类型 */
     public gridType: CONST.GridType;
+    /**当前地图缩放比例 */
+    public mapScale: number;
     /**绘制格子的单个Graphic区域大小 */
     public areaGraphicSize: number;
     /** 导入的地图场景物件数组*/
