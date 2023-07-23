@@ -10,6 +10,7 @@ import { CONST } from "./CONST";
 import { G } from "./Interface";
 import { BaseUT } from "../../framework/base/BaseUtil";
 import { ImgLoader } from "../../framework/uiComp/ImgLoader";
+import { InvalidImportDlg } from "../mapEditor/dlg/InvalidImportDlg";
 
 export class MapMgr {
     private static _inst: MapMgr;
@@ -83,9 +84,9 @@ export class MapMgr {
         let root = await fileIOHandler.getDirTreeMap();
         console.log(root);
         if (!root) return;
-        self.mapFloorArr = [];
-        self.mapThingUrlMap = {};
-        self.mapslice = 0;
+        let mapFloorArr = [];
+        let mapThingUrlMap = {};
+        let mapslice = 0;
         let firstRow: number;
         let mapData: G.MapJsonInfo, thingPram: G.ThingPramInfo;
         await getFilesRecursively(root);
@@ -116,13 +117,13 @@ export class MapMgr {
                     let file: File = await parent.getFile();
                     if (!firstRow) firstRow = row;
                     if (firstRow == row) {
-                        self.mapslice++;
+                        mapslice++;
                     }
-                    self.mapFloorArr.push({ col: col, row: row, sourceName: parent.name, nativePath: fileIOHandler.createObjectURL(file) });
+                    mapFloorArr.push({ col: col, row: row, sourceName: parent.name, nativePath: fileIOHandler.createObjectURL(file) });
                 } else if (parent["rootName"] == "thing") {
                     if (parent.name.indexOf("_") == -1) {
                         let file: File = await parent.getFile();
-                        self.mapThingUrlMap[parent.name] = fileIOHandler.createObjectURL(file);
+                        mapThingUrlMap[parent.name] = fileIOHandler.createObjectURL(file);
                     }
                 }
                 if (parent.name == "mapData.json") {
@@ -137,6 +138,28 @@ export class MapMgr {
             }
         }
 
+        let errorMsg: string = '';
+        if (!mapData) {
+            errorMsg += "mapData.json文件不存在|";
+        } 
+        if (!thingPram) {
+            errorMsg += "thingPram.json文件不存在|";
+        } 
+        if (!mapFloorArr.length) {
+            errorMsg += "floor地图切片文件夹不存在|";
+        } 
+        if (!Object.keys(mapThingUrlMap).length) {
+            errorMsg += "thing地图场景物件文件夹不存在|";
+        }
+
+        if (!!errorMsg) {
+            InvalidImportDlg.show({ errorMsg: errorMsg });
+            return;
+        }
+
+        self.mapFloorArr = mapFloorArr;
+        self.mapThingUrlMap = mapThingUrlMap;
+        self.mapslice = mapslice;
         self.mapFloorArr.sort((a: any, b: any): number => {
             if (a.row < b.row) {
                 return -1;
@@ -205,17 +228,17 @@ export class MapMgr {
      * @param y 
      * @returns 
      */
-    public pos2Grid(x: number, y: number) { 
+    public pos2Grid(x: number, y: number) {
         let self = this;
         return { x: Math.floor(x / self.cellSize), y: Math.floor(y / self.cellSize) };
     }
 
-     /**
-     * 格子idx转为格子所在的行列 
-     * @param idx
-     * @return 
-     */
-     public idx2Grid(idx: number) {
+    /**
+    * 格子idx转为格子所在的行列 
+    * @param idx
+    * @return 
+    */
+    public idx2Grid(idx: number) {
         let self = this;
         let size: number = self.cellSize;
         let totLine: number = Math.ceil(self.mapHeight / size);//总行数
@@ -285,7 +308,7 @@ export class MapMgr {
     public exportJson() {
         let self = this;
         let gridDataMap = self.gridDataMap;
-        if(!gridDataMap) return;
+        if (!gridDataMap) return;
         let mapJsonInfo = <G.MapJsonInfo>{};
         mapJsonInfo.mapWidth = self.mapWidth;
         mapJsonInfo.mapHeight = self.mapHeight;

@@ -36,7 +36,6 @@ export class UIDlg extends UILayer {
 
     private resetParent() {
         let self = this;
-        self._bgMaskNode.removeFromParent();
         self.node.insertChild(self._bgMaskNode, 0);
     }
 

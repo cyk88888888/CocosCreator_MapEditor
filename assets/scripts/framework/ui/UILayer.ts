@@ -15,7 +15,6 @@ export class UILayer extends UIComp {
 
     private _oldParent: Node;
     public static async show(data?: any) {
-      
         let prefab = await ResMgr.inst.loadPrefab(this.prefabUrl);
         const newNode = instantiate(prefab);
         // newNode.layer = Layers.Enum.UI_2D;
