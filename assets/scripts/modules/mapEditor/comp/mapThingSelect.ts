@@ -34,7 +34,7 @@ export class mapThingSelect extends UIComp {
           let self = this;
           if (!self._graphics) self._graphics = self.node.getComponent(Graphics);
           self._curDrawInfo = { x: x, y: y, width: width, height: height, alpha: alpha };
-          let lineWidth = 5 / self.mapMgr.mapScale;
+          let lineWidth = 4 / self.mapMgr.mapScale;
           let offSet = lineWidth / 2;
           self._graphics.clear();
           self._graphics.lineWidth = lineWidth;

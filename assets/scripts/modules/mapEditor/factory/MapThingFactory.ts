@@ -30,9 +30,11 @@ export class MapThingFactory extends UIComp {
         self.onEmitter(CONST.GEVT.DragMapThingDown, self.onDragMapThingDown);
         self.onEmitter(CONST.GEVT.ChangeGridType, self.onChangeGridType);
         self.onEmitter(CONST.GEVT.ChangeMapThingXY, self.onChangeMapThingXY);
-        let prefab = instantiate(self.mapThingSelectPrefab);
-        prefab.setParent(self.grp_mapThingSelect);
-        self._mapThingSelect = prefab.getComponent(mapThingSelect);
+        if(!self._mapThingSelect){
+            let prefab = instantiate(self.mapThingSelectPrefab);
+            prefab.setParent(self.grp_mapThingSelect);
+            self._mapThingSelect = prefab.getComponent(mapThingSelect);
+        }
     }
 
     public init(data: any) {

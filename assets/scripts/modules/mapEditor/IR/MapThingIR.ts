@@ -16,7 +16,7 @@ export class MapThingIR extends ListItem {
         self.lbl_name.string = data.thingName.split(".")[0];
         let loader = self.img_mapthing.getComponent(ImgLoader);
         loader.loadComplete = function(spriteFrame: SpriteFrame) {
-            let normalSize = 112;
+            let normalSize = 70;
             let maxSize = Math.max(spriteFrame.width, spriteFrame.height);
             let scale = normalSize / maxSize;
             BaseUT.setSize(self.img_mapthing, spriteFrame.width * scale,spriteFrame.height * scale);
