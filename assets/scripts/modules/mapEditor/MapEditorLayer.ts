@@ -22,6 +22,8 @@ const { ccclass, property } = _decorator;
 export class MapEditorLayer extends UILayer {
     /** 预制体路径 */
     public static prefabUrl: string = 'prefab/mapEditor/MapEditorLayer';
+    @property({ type: Label })
+    private lbl_version: Label;
     @property({ type: Button })
     private btn_changeMap: Button;
     @property({ type: Button })
@@ -84,6 +86,7 @@ export class MapEditorLayer extends UILayer {
         self.onEmitter(CONST.GEVT.ImportMapJson, self.onImportMapJson);//导入josn地图数据成功
         self.onEmitter(CONST.GEVT.UpdateMapScale, self.updateMapScale);//地图缩放变更
         self.onEmitter(CONST.GEVT.DragMapThingStart, self.onDragMapThingStart);
+        self.lbl_version.string = 'version: 1.0.0';
         self._selectIdx = 1;
         self.list_pathSize.selectedId = 0;
         self.showEditOperate();
