@@ -32,11 +32,12 @@ export class MapThingPropertyComp extends UIComp {
      private lbl_anchorY: EditBox;
      @property({ type: Label })
      private lbl_thingRect: Label;
+     @property({ type: Label })
+     private lbl_thingName: Label;
      @property({ type: ComboBoxComp })
      private combo_taskType: ComboBoxComp;
      @property({ type: ComboBoxComp })
      private combo_triggerType: ComboBoxComp;
-
      @property({ type: Node })
      private grp_mapThingInfo: Node;
      @property({ type: Node })
@@ -89,6 +90,7 @@ export class MapThingPropertyComp extends UIComp {
                self.lbl_anchorX.string = curMapThingInfo.anchorX + '';
                self.lbl_anchorY.string = curMapThingInfo.anchorY + '';
                self.lbl_thingRect.string = curMapThingInfo.width + "," + curMapThingInfo.height;
+               self.lbl_thingName.string = curMapThingInfo.thingName;
                self.combo_taskType.selectedIndex = curMapThingInfo.type - 1;
           }
 

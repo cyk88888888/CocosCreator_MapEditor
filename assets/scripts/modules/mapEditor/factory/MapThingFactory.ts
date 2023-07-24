@@ -19,8 +19,12 @@ export class MapThingFactory extends UIComp {
     @property({ type: Prefab })
     public mapThingSelectPrefab: Prefab;
     @property({ type: Node })
+    public grp_mapThingBevel: Node;
+    @property({ type: Node })
     public grp_mapThingSelect: Node;
     private mapMgr: MapMgr;
+    /**物件层级排序列表（用于根据物件y来控制物件层级） */
+    private _mapThingSortList: { y: number, node: Node }[];
     private _mapThingSelect: mapThingSelect;
     private _lastSelectMapThingComp: Node;
     private _tid: number;
@@ -30,7 +34,7 @@ export class MapThingFactory extends UIComp {
         self.onEmitter(CONST.GEVT.DragMapThingDown, self.onDragMapThingDown);
         self.onEmitter(CONST.GEVT.ChangeGridType, self.onChangeGridType);
         self.onEmitter(CONST.GEVT.ChangeMapThingXY, self.onChangeMapThingXY);
-        if(!self._mapThingSelect){
+        if (!self._mapThingSelect) {
             let prefab = instantiate(self.mapThingSelectPrefab);
             prefab.setParent(self.grp_mapThingSelect);
             self._mapThingSelect = prefab.getComponent(mapThingSelect);
@@ -40,11 +44,11 @@ export class MapThingFactory extends UIComp {
     public init(data: any) {
         let self = this;
         self.node.destroyAllChildren();
+        self._mapThingSortList = [];
         let mapData: G.MapJsonInfo = data.mapData;
         if (mapData.mapThingList) {
             mapData.mapThingList.forEach(mapThingData => {
                 self.onDragMapThingDown({
-                    isImportJson: true,
                     url: self.mapMgr.mapThingUrlMap[mapThingData.thingName],
                     thingName: mapThingData.thingName,
                     x: mapThingData.x,
@@ -54,7 +58,6 @@ export class MapThingFactory extends UIComp {
                     taskId: mapThingData.taskId,
                     groupId: mapThingData.groupId,
                     type: mapThingData.type,
-                    isByDrag: false
                 });
             });
         }
@@ -67,7 +70,6 @@ export class MapThingFactory extends UIComp {
                     groupIdStr += groupIdList[ii] + (ii == groupIdList.length - 1 ? "" : ",");
                 }
                 self.onDragMapThingDown({
-                    isImportJson: true,
                     url: self.mapMgr.mapThingUrlMap[self.mapMgr.bavelResStr],
                     thingName: self.mapMgr.bavelResStr,
                     x: mapThingData.x,
@@ -75,19 +77,20 @@ export class MapThingFactory extends UIComp {
                     anchorX: 0.5,
                     anchorY: 0.5,
                     groupIdStr: groupIdStr,
-                    isByDrag: true
+                    type: CONST.MapThingType.bevel,
                 });
             })
         }
-
+        self.sortMapThing();
         self._mapThingSelect.clear();
         self.mapMgr.curMapThingInfo = null;
         self.emit(CONST.GEVT.ClearCurMapThingInfo);
     }
 
-    public refSelfVsb(){
+    public refSelfVsb() {
         let self = this;
         self.grp_mapThingSelect.active = !self.grp_mapThingSelect.active;
+        self.grp_mapThingBevel.active = !self.grp_mapThingBevel.active;
         self.node.active = !self.node.active;
     }
 
@@ -111,7 +114,7 @@ export class MapThingFactory extends UIComp {
 
     private onDragMapThingDown(data: G.DragMapthingInfo) {
         let self = this;
-        let isImportJson = data.isImportJson;//是否为导入json进来
+        let isByDrag = data.isByDrag;//是否拖拽放下
         let mapThingX = data.x;//场景物件坐标X
         let mapThingY = data.y;//场景物件坐标Y
         let anchorX = data.anchorX == undefined ? 0.5 : data.anchorX;
@@ -120,57 +123,60 @@ export class MapThingFactory extends UIComp {
         let mapThingComp = self.mapMgr.getMapThingComp(self.mapThingPrefab, data.url, anchorX, anchorY, imgLoaded, self);
         let elementName = data.thingName;
         let isBelve = elementName.indexOf(self.mapMgr.bavelResStr) > -1;//是否为斜角顶点
-        if (isBelve && !isImportJson) {
-            let grid = self.mapMgr.pos2Grid(mapThingX, mapThingY);
-            let cellSize = self.mapMgr.cellSize;
-            let pointArr = [
-                [grid.x * cellSize, grid.y * cellSize],
-                [grid.x * cellSize + cellSize, grid.y * cellSize],
-                [grid.x * cellSize + cellSize, grid.y * cellSize + cellSize],
-                [grid.x * cellSize, grid.y * cellSize + cellSize],
-            ];
-            let minDist: number;//最小距离
-            let distArr = [];
-            distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[0][0], y: pointArr[0][1] }));
-            distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[1][0], y: pointArr[1][1] }));
-            distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[2][0], y: pointArr[2][1] }));
-            distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[3][0], y: pointArr[3][1] }));
-            for (let i = 0; i < distArr.length; i++) {
-                if (!minDist) minDist = distArr[i];
-                else if (distArr[i] < minDist) minDist = distArr[i];
+        if(isBelve){
+            if(isByDrag){
+                let grid = self.mapMgr.pos2Grid(mapThingX, mapThingY);
+                let cellSize = self.mapMgr.cellSize;
+                let pointArr = [
+                    [grid.x * cellSize, grid.y * cellSize],
+                    [grid.x * cellSize + cellSize, grid.y * cellSize],
+                    [grid.x * cellSize + cellSize, grid.y * cellSize + cellSize],
+                    [grid.x * cellSize, grid.y * cellSize + cellSize],
+                ];
+                let minDist: number;//最小距离
+                let distArr = [];
+                distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[0][0], y: pointArr[0][1] }));
+                distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[1][0], y: pointArr[1][1] }));
+                distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[2][0], y: pointArr[2][1] }));
+                distArr.push(Vec2.distance({ x: Math.floor(mapThingX), y: Math.floor(mapThingY) }, { x: pointArr[3][0], y: pointArr[3][1] }));
+                for (let i = 0; i < distArr.length; i++) {
+                    if (!minDist) minDist = distArr[i];
+                    else if (distArr[i] < minDist) minDist = distArr[i];
+                }
+                let minIndex = distArr.indexOf(minDist);
+                mapThingX = pointArr[minIndex][0];
+                mapThingY = pointArr[minIndex][1];
             }
-            let minIndex = distArr.indexOf(minDist);
-            mapThingX = pointArr[minIndex][0];
-            mapThingY = pointArr[minIndex][1];
+            mapThingInfo.type = CONST.MapThingType.bevel;
+        }else{
+            mapThingInfo.type = data.type || CONST.MapThingType.task;
+            self._mapThingSortList.push({ y: mapThingY, node: mapThingComp });
         }
         mapThingComp.setPosition(mapThingX, mapThingY);
         BaseUT.setPivot(mapThingComp, anchorX, anchorY);
-        mapThingComp.setParent(self.node);
+        mapThingComp.setParent(isBelve ? self.grp_mapThingBevel : self.node);
         mapThingComp.name = Math.floor(mapThingX) + "_" + Math.floor(mapThingY);
         mapThingInfo.thingName = elementName;
         mapThingInfo.anchorX = anchorX;
         mapThingInfo.anchorY = anchorY;
         mapThingInfo.x = mapThingX;
         mapThingInfo.y = mapThingY;
-        mapThingInfo.type = data.type || CONST.MapThingType.task;
         if (data.taskId) mapThingInfo.taskId = data.taskId;
         if (data.groupId) mapThingInfo.groupId = data.groupId;
         if (data.groupIdStr) mapThingInfo.groupIdStr = data.groupIdStr;
-        if (data.isByDrag) {
-            if (isBelve) mapThingInfo.type = CONST.MapThingType.bevel;
-        }
-        if(self.mapMgr.mapThingMap[mapThingComp.name]){
+        if (self.mapMgr.mapThingMap[mapThingComp.name]) {
             self.mapMgr.mapThingMap[mapThingComp.name][1].destroy();
         }
         self.mapMgr.mapThingMap[mapThingComp.name] = [mapThingInfo, mapThingComp];
-        if (!isImportJson) {
+        if (isByDrag) {
             self._lastSelectMapThingComp = mapThingComp;
             self.mapMgr.curMapThingInfo = mapThingInfo;
+            self.sortMapThing();
         }
         function imgLoaded(width: number, height: number) {
             mapThingInfo.width = width;
             mapThingInfo.height = height;
-            if (!isImportJson) {
+            if (isByDrag) {
                 self.emit(CONST.GEVT.ClickMapTing);
                 self._mapThingSelect.drawRect(mapThingX - width / 2, mapThingY - height / 2, width, height);
             }
@@ -215,11 +221,40 @@ export class MapThingFactory extends UIComp {
             }
             self._mapThingSelect.clear();
             btn.destroy();
+            let isBelve = mapThingInfo.thingName.indexOf(self.mapMgr.bavelResStr) > -1;//是否为斜角顶点
+            if (!isBelve) self.removeItemFromMapThingSortList(mapThingInfo.y);
             mapMgr.rmMapThingGrid(Math.floor(mapThingInfo.x) + "_" + Math.floor(mapThingInfo.y));
             mapMgr.curMapThingInfo = null;
             delete mapMgr.mapThingMap[btn.name];
             self.emit(CONST.GEVT.ClearCurMapThingInfo);
             console.log('右键点击场景物件');
+        }
+    }
+
+    /**排序场景物件层级 */
+    private sortMapThing() {
+        let self = this;
+        let list = self._mapThingSortList;
+        if (!list || !list.length) return;
+        list.sort((a: { y: number }, b: { y: number }) => {
+            if (a.y < b.y) return 1;
+            else return -1;
+        });
+        for (let i = 0; i < list.length; i++) {
+            list[i].node.removeFromParent();
+            self.node.addChild(list[i].node);
+        }
+    }
+
+    private removeItemFromMapThingSortList(y: number) {
+        let self = this;
+        let list = self._mapThingSortList;
+        if (!list || !list.length) return;
+        for (let i = list.length - 1; i >= 0; i--) {
+            if (list[i].y == y) {
+                self._mapThingSortList.splice(i, 1);
+                break;
+            }
         }
     }
 }

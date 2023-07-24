@@ -71,6 +71,5 @@ export namespace G {
         /**物件坐标Y */
         y?: number;
         isByDrag?: boolean;
-        isImportJson?: boolean;
     }
 }
