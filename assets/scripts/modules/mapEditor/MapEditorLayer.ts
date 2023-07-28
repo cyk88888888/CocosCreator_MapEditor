@@ -1,4 +1,4 @@
-import { _decorator, Button, EventMouse, Label, Prefab, profiler, ScrollView, Vec2, Vec3 } from 'cc';
+import { _decorator, Button, EventMouse, Label, Prefab, profiler, ScrollView, Toggle, Vec2, Vec3 } from 'cc';
 import { UILayer } from '../../framework/ui/UILayer';
 import { MapScrollComp } from './comp/MapScrollComp';
 import { MapMgr } from '../base/MapMgr';
@@ -298,10 +298,11 @@ export class MapEditorLayer extends UILayer {
     }
 
     /** 选中对应编辑页签*/
-    private select_toogle_group(event: EventTouch, index: any) {
+    private select_toogle_group(event: Toggle) {
         let self = this;
-        let selectIdx = Number(index);
-        if (self._selectIdx == selectIdx) return;
+        let curTarget = event.node;
+        let selectIdx = event.node.parent.children.indexOf(curTarget);
+        if (selectIdx == -1 || self._selectIdx == selectIdx) return;
         self._selectIdx = selectIdx;
         self.showEditOperate();
     }
