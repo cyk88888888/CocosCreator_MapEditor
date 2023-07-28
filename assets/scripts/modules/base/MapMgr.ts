@@ -76,9 +76,9 @@ export class MapMgr {
     }
 
     /**
-     * 切换地图目录
+     * 打开地图目录
      */
-    public async changeMap() {
+    public async openMap() {
         let self = this;
         let fileIOHandler = FileIOHandler.inst;
         let root = await fileIOHandler.getDirTreeMap();

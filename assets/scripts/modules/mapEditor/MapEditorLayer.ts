@@ -12,6 +12,7 @@ import { BaseUT } from '../../framework/base/BaseUtil';
 import { G } from '../base/Interface';
 import { MapThingPropertyComp } from './comp/MapThingPropertyComp';
 import { HelpDlg } from './dlg/HelpDlg';
+import { MessageTip } from '../common/message/MessageTip';
 const { ccclass, property } = _decorator;
 
 /*
@@ -26,9 +27,11 @@ export class MapEditorLayer extends UILayer {
     @property({ type: Label })
     private lbl_version: Label;
     @property({ type: Button })
-    private btn_changeMap: Button;
+    private btn_create: Button;
     @property({ type: Button })
-    private btn_exportJson: Button;
+    private btn_open: Button;
+    @property({ type: Button })
+    private btn_save: Button;
     @property({ type: Button })
     private btn_runDemo: Button;
     @property({ type: Button })
@@ -267,14 +270,19 @@ export class MapEditorLayer extends UILayer {
         }
     }
 
+    /** 新建地图目录结构 */
+    private _tap_btn_create(){
+        MessageTip.show({ msg: "功能实现中....." });
+    }
+
     /** 打开文件选择器+读取数据 */
-    private async _tap_btn_changeMap() {
+    private _tap_btn_open() {
         let self = this;
-        self.mapMgr.changeMap();
+        self.mapMgr.openMap();
     }
 
     /** 导出地图json数据 */
-    private _tap_btn_exportJson() {
+    private _tap_btn_save() {
         let self = this;
         self.mapMgr.exportJson();
     }

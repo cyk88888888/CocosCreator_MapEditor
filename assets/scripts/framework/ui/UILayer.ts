@@ -3,7 +3,7 @@
  * @Author: CYK
  * @Date: 2022-05-12 09:23:41
  */
-import { _decorator, Component, Node, instantiate, NodeEventType } from 'cc';
+import { _decorator, Node, instantiate } from 'cc';
 import { BaseUT } from '../base/BaseUtil';
 import { ResMgr } from '../mgr/ResMgr';
 import { SceneMgr } from '../mgr/SceneMgr';
