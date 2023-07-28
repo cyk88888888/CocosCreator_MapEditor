@@ -26,8 +26,8 @@ export class InvalidImportDlg extends UIDlg {
             if(!str) continue;
             let lblNode = BaseUT.newUINode(`lbl_msg${i}`);
             let label = lblNode.addComponent(Label);
-            label.fontSize = 40;
-            label.color.fromHEX('#E06666');
+            label.fontSize = 30;
+            label.color.fromHEX('#000000');
             label.string = `${i + 1}. ${str}`;
             lblNode.setParent(self.grp_label);
         }

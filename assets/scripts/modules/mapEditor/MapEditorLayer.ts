@@ -11,6 +11,7 @@ import { ResMgr } from '../../framework/mgr/ResMgr';
 import { BaseUT } from '../../framework/base/BaseUtil';
 import { G } from '../base/Interface';
 import { MapThingPropertyComp } from './comp/MapThingPropertyComp';
+import { HelpDlg } from './dlg/HelpDlg';
 const { ccclass, property } = _decorator;
 
 /*
@@ -40,6 +41,8 @@ export class MapEditorLayer extends UILayer {
     private btn_profiler: Button;
     @property({ type: Button })
     private btn_resetScale: Button;
+    @property({ type: Button })
+    private btn_help: Button;
     @property({ type: Label })
     private lbl_grid: Label;
     @property({ type: Label })
@@ -70,7 +73,7 @@ export class MapEditorLayer extends UILayer {
     private grp_dragMapthing: Node = null;
     @property({ type: Prefab })
     private mapThingComp: Prefab = null;
-    
+
     private mapMgr: MapMgr;
     private _selectIdx: number;
     /**当前拖拽的场景物件 */
@@ -279,6 +282,11 @@ export class MapEditorLayer extends UILayer {
     /** 显隐fps*/
     private _tap_btn_profiler() {
         profiler.isShowingStats() ? profiler.hideStats() : profiler.showStats();
+    }
+
+    /** 打开帮助*/
+    private _tap_btn_help() {
+        HelpDlg.show();
     }
 
     /** 选中对应编辑页签*/
