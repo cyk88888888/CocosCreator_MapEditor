@@ -272,7 +272,7 @@ export class MapEditorLayer extends UILayer {
 
     /** 新建地图目录结构 */
     private _tap_btn_create(){
-        MessageTip.show({ msg: "功能实现中....." });
+        MessageTip.show({ msg: "功能开发中....." });
     }
 
     /** 打开文件选择器+读取数据 */

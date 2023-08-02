@@ -160,7 +160,7 @@ export class MapThingPropertyComp extends UIComp {
                let isLegal = reg.test(inputStr);
                curMapThingInfo.groupIdStr = isLegal ? editBox.string : curMapThingInfo.groupIdStr;
                if (!isLegal) {
-                    editBox.string = curMapThingInfo.groupIdStr;
+                    editBox.string = curMapThingInfo.groupIdStr || "";
                     MessageTip.show({ msg: "输入内容不合法" });
                }
           }

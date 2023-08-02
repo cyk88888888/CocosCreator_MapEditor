@@ -1,5 +1,5 @@
 {
-  "ver": "1.1.0",
+  "ver": "1.2.0",
   "importer": "directory",
   "imported": true,
   "uuid": "44aabda9-db13-464f-84bc-706dccf2ecba",
@@ -9,10 +9,6 @@
     "isBundle": true,
     "bundleName": "resources",
     "priority": 8,
-    "compressionType": {},
-    "isRemoteBundle": {
-      "wechatgame": true,
-      "web-desktop": true
-    }
+    "bundleConfigID": "auto_3cUWCr+2RGn7gW0hdSfiO1"
   }
 }
