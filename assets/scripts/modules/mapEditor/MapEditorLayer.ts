@@ -334,6 +334,11 @@ export class MapEditorLayer extends UILayer {
         self.mapScrollComp.resetScale();
         self.updateMapScale();
     }
+
+       /** 新建地图目录结构 */
+       private _tap_btn_runDemo(){
+        MessageTip.show({ msg: "功能开发中....." });
+    }
 }
 
 
