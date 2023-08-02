@@ -335,7 +335,7 @@ export class MapEditorLayer extends UILayer {
         self.updateMapScale();
     }
 
-       /** 新建地图目录结构 */
+       /** 测试运行 */
        private _tap_btn_runDemo(){
         MessageTip.show({ msg: "功能开发中....." });
     }

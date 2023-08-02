@@ -1,8 +1,3 @@
-/*
- * @Descripttion: 说明
- * @Author: CYK
- * @Date: 2023-06-01 09:05:10
- */
 import { MessageTip } from "../../modules/common/message/MessageTip";
 import { JuHuaDlg } from "../ui/JuHuaDlg";
 
