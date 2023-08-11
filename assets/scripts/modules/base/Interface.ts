@@ -1,4 +1,3 @@
-import { Vec2 } from "cc";
 import { CONST } from "./CONST";
 
 export namespace G {
