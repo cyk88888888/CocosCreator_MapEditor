@@ -43,10 +43,33 @@ export namespace CONST {
     }
 
     /**场景物件触发类型 */
-    export enum MapThingTriggerType{
+    export enum MapThingTriggerType {
         MapThingTrigger_light = 1,//发亮
         MapThingTrigger_unWalk = 2,//不可行走范围点列表
         MapThingTrigger_keyManStand = 3,//关键人物站立范围点列表(引导模式下，传送机器人用)
         MapThingTrigger_grass = 4,//草丛范围点列表
+    }
+
+    /**地图类型枚举 */
+    export enum MapType {
+        /**
+         * 45度等视角地图
+         */
+        angle45 = 0,
+
+        /**
+         * 90度平面地图
+         */
+        angle90 = 1,
+
+        /**
+         * 纵式六边形地图类型
+         */
+        honeycomb = 2,
+
+        /**
+         * 横式六边形地图类型
+         */
+        honeycomb2 = 3,
     }
 }

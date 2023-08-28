@@ -5,6 +5,7 @@ export namespace G {
     export interface MapJsonInfo {
         mapWidth: number;
         mapHeight: number;
+        type: CONST.MapType;
         totRow: number;
         totCol: number;
         cellSize: number;

@@ -141,13 +141,13 @@ export class MapMgr {
         let errorMsg: string = '';
         if (!mapData) {
             errorMsg += "mapData.json文件不存在|";
-        } 
+        }
         if (!thingPram) {
             errorMsg += "thingPram.json文件不存在|";
-        } 
+        }
         if (!mapFloorArr.length) {
             errorMsg += "floor地图切片文件夹不存在|";
-        } 
+        }
         if (!Object.keys(mapThingUrlMap).length) {
             errorMsg += "thing地图场景物件文件夹不存在|";
         }
@@ -307,14 +307,23 @@ export class MapMgr {
     /**导出json文件到本地 */
     public exportJson() {
         let self = this;
+        let mapData = self.getMapData();
+        if(!mapData) return;
+        FileIOHandler.inst.saveTextToLocal(JSON.stringify(mapData));
+    }
+
+    /**获取当前地图数据 */
+    public getMapData(): G.MapJsonInfo {
+        let self = this;
         let gridDataMap = self.gridDataMap;
-        if (!gridDataMap) return;
+        if (!gridDataMap) return null;
         let mapJsonInfo = <G.MapJsonInfo>{};
         mapJsonInfo.mapWidth = self.mapWidth;
         mapJsonInfo.mapHeight = self.mapHeight;
         mapJsonInfo.cellSize = self.cellSize;
         mapJsonInfo.totRow = self.totRow;
         mapJsonInfo.totCol = self.totCol;
+        mapJsonInfo.type = CONST.MapType.angle90;//默认是90度视角
         mapJsonInfo.walkList = [];
         mapJsonInfo.waterVertList = [];
         mapJsonInfo.startList = [];
@@ -394,6 +403,6 @@ export class MapMgr {
                 }
             }
         }
-        FileIOHandler.inst.saveTextToLocal(JSON.stringify(mapJsonInfo));
+        return mapJsonInfo;
     }
 }
