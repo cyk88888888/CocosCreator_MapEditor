@@ -52,7 +52,6 @@ export class JoyStickDlg extends UIDlg {
         let toX = distance * Math.cos(rad);
         let toY = distance * Math.sin(rad);
         self.joyStick.setPosition(new Vec3(toX, toY, 0));
-        console.log(toX,toY,rad);
     }
 
     private onMouseUp(e: EventMouse) {
