@@ -1,6 +1,5 @@
 import { _decorator, EventMouse, Node, UITransform, Vec2, Vec3 } from 'cc';
 import { UIDlg } from '../../../framework/ui/UIDlg';
-import { BaseUT } from '../../../framework/base/BaseUtil';
 const { ccclass, property } = _decorator;
 
 @ccclass('JoyStickDlg')
