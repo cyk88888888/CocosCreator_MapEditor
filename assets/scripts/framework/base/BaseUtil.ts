@@ -4,6 +4,8 @@
  * @Date: 2022-05-19 11:39:05
  */
 import { game, Layers, Node, Scene, screen, Size, UIOpacity, UITransform, Vec2, view } from "cc";
+import { SceneMgr } from "../mgr/SceneMgr";
+import { UIDlg } from "../ui/UIDlg";
 export namespace BaseUT {
     export function getView() {
         return view;
@@ -86,6 +88,19 @@ export namespace BaseUT {
     /** 改变鼠标样式*/
     export function changeMouseCursor(type: string = "auto") {
         game.canvas.style.cursor = type;
+    }
+
+    /**关闭指定弹窗 */
+    export function closeDlgByName(dlgNames: string[]) {
+        let tray = SceneMgr.inst.curScene.dlg;
+        let children = tray.children || [];
+        for (let len = children.length, i = len - 1; i >= 0; i--) {
+            let node = children[i];
+            if (dlgNames.indexOf(node.name) > -1) {
+                let script = node.getComponent(node.name) as UIDlg;
+                script.close();
+            }
+        }
     }
 
     // 角度转弧度

@@ -520,7 +520,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             return this._isPassCallBack(node);
         }
 
-        if (node == null || node.value == 1) {
+        if (node == null || node.value == 0) {
             return false;
         }
 

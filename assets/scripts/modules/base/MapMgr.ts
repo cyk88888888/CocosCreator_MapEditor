@@ -356,8 +356,8 @@ export class MapMgr {
                     let areaGridMap = gridTypeDataMap[areaKey];
                     for (const gridKey in areaGridMap) {
                         let newList = [];
-                        if (gridType == CONST.GridType.GridType_start) newList = mapJsonInfo.waterVertList;
-                        else if (gridType == CONST.GridType.GridType_WaterVerts) newList = mapJsonInfo.startList;
+                        if (gridType == CONST.GridType.GridType_start) newList = mapJsonInfo.startList;
+                        else if (gridType == CONST.GridType.GridType_WaterVerts) newList = mapJsonInfo.waterVertList;
                         let splitArr = gridKey.split("_");
                         newList.push(self.pos2Idx(Number(splitArr[0]), Number(splitArr[1])));
                     }

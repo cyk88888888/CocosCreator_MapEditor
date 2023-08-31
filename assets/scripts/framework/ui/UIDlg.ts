@@ -14,20 +14,17 @@ export class UIDlg extends UILayer {
     private dlgMaskName = '__bgMask';//弹窗底部灰色rect名称
     /**灰色遮罩是否可点击 */
     private _clickBgMask: boolean;
+    /**灰色遮罩是否启用 */
+    private _maskEnabled: boolean
     private _bgMaskNode: Node;
     protected addToLayer() {
         let self = this;
         let bgMaskNode = self._bgMaskNode = BaseUT.newUINode(self.dlgMaskName);
-        let bg = bgMaskNode.addComponent(Graphics);
         let stageSize = BaseUT.getStageSize();
-        let modalLayerColor: Color = new Color(0x00, 0x00, 0x00, 255 * 0.4);
-        bg.fillColor = modalLayerColor;
-        bg.rect(-stageSize.width / 2, -stageSize.height / 2, stageSize.width, stageSize.height);
-        bg.fill();
+        self.outSideClosed = true;
+        self.maskEnabled = true;
         BaseUT.setSize(bgMaskNode, stageSize.width, stageSize.height);
-        self.clickBgMask = true;
         bgMaskNode.setParent(SceneMgr.inst.curScene.dlg);
-
         BaseUT.setPivot(self.node, 0.5, 0.5);
         self.node.setParent(SceneMgr.inst.curScene.dlg);
 
@@ -36,7 +33,7 @@ export class UIDlg extends UILayer {
 
     private resetParent() {
         let self = this;
-        self.node.insertChild(self._bgMaskNode, 0);
+        if (self._bgMaskNode) self.node.insertChild(self._bgMaskNode, 0);
     }
 
     protected onOpenAnimation() {
@@ -55,7 +52,7 @@ export class UIDlg extends UILayer {
     }
 
     /**灰色遮罩是否可点击 */
-    protected set clickBgMask(value: boolean) {
+    protected set outSideClosed(value: boolean) {
         let self = this;
         if (self._clickBgMask == value) return;
         self._clickBgMask = value;
@@ -66,9 +63,29 @@ export class UIDlg extends UILayer {
         }
     }
 
+    /**灰色遮罩是否启用 */
+    protected set maskEnabled(value: boolean) {
+        let self = this;
+        if (self._maskEnabled == value) return;
+        self._maskEnabled = value;
+        let stageSize = BaseUT.getStageSize();
+        let bgGraphic = self._bgMaskNode.getComponent(Graphics);
+        if(!bgGraphic){
+            bgGraphic = self._bgMaskNode.addComponent(Graphics);
+        }
+        let alpha = value ? 0.4 : 0;
+        let modalLayerColor: Color = new Color(0x00, 0x00, 0x00, 255 * alpha);
+        bgGraphic.clear();
+        bgGraphic.fillColor = modalLayerColor;
+        bgGraphic.rect(-stageSize.width / 2, -stageSize.height / 2, stageSize.width, stageSize.height);
+        bgGraphic.fill();
+    }
+
     private offBgMaskClick() {
         let self = this;
-        self._bgMaskNode.off(Node.EventType.TOUCH_END, self.close, self);
+        if (self._bgMaskNode) {
+            self._bgMaskNode.off(Node.EventType.TOUCH_END, self.close, self);
+        }
     }
 }
 

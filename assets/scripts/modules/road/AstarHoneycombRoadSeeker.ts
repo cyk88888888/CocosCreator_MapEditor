@@ -622,7 +622,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	 * @param node 
 	 */
 	public isPassNode(node: RoadNode): boolean {
-		if (node == null || node.value == 1) {
+		if (node == null || node.value == 0) {
 			return false;
 		}
 

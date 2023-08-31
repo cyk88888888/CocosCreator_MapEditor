@@ -14,7 +14,7 @@ export class InvalidImportDlg extends UIDlg {
 
     protected ctor(): void {
         let self = this;
-        self.clickBgMask = true;
+        self.outSideClosed = true;
     }
 
     protected dchg(): void {

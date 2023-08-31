@@ -2,7 +2,6 @@ import { _decorator, Button, EventMouse, Label, Prefab, profiler, ScrollView, To
 import { UILayer } from '../../framework/ui/UILayer';
 import { MapScrollComp } from './comp/MapScrollComp';
 import { MapMgr } from '../base/MapMgr';
-import { EventTouch } from 'cc';
 import { Node } from 'cc';
 import { List } from '../../framework/uiComp/List';
 import { CONST } from '../base/CONST';
@@ -13,6 +12,8 @@ import { G } from '../base/Interface';
 import { MapThingPropertyComp } from './comp/MapThingPropertyComp';
 import { HelpDlg } from './dlg/HelpDlg';
 import { MessageTip } from '../common/message/MessageTip';
+import PathFindingAgent from '../road/PathFindingAgent';
+import { JoyStickDlg } from './dlg/JoyStickDlg';
 const { ccclass, property } = _decorator;
 
 /*
@@ -56,6 +57,8 @@ export class MapEditorLayer extends UILayer {
     private lbl_mapSize: Label;
     @property({ type: Label })
     private lbl_mapScale: Label;
+    @property({ type: Label })
+    private lbl_runDemo: Label;
     @property({ type: MapScrollComp, tooltip: "编辑器地图滚动组件" })
     private mapScrollComp: MapScrollComp;
     @property({ type: MapThingPropertyComp })
@@ -271,7 +274,7 @@ export class MapEditorLayer extends UILayer {
     }
 
     /** 新建地图目录结构 */
-    private _tap_btn_create(){
+    private _tap_btn_create() {
         MessageTip.show({ msg: "功能开发中....." });
     }
 
@@ -335,9 +338,23 @@ export class MapEditorLayer extends UILayer {
         self.updateMapScale();
     }
 
-       /** 测试运行 */
-       private _tap_btn_runDemo(){
-        MessageTip.show({ msg: "功能开发中....." });
+    /** 测试运行 */
+    private _tap_btn_runDemo() {
+        let self = this;
+        let mapData = self.mapMgr.getMapData();
+        if(!mapData) {
+            MessageTip.show({msg: "地图数据为空"});
+            return;
+        }
+        self.lbl_runDemo.string = self.lbl_runDemo.string == "测试运行" ? "关闭运行" : "测试运行";
+        if(self.lbl_runDemo.string == "测试运行"){
+            BaseUT.closeDlgByName(["JoyStickDlg"]);
+            return;
+        }
+        JoyStickDlg.show();
+        console.log(`地图数据`);
+        console.log(mapData);
+        PathFindingAgent.instance.init(mapData);
     }
 }
 

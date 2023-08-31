@@ -11,7 +11,7 @@ export class HelpDlg extends UIDlg {
 
     protected ctor(): void {
         let self = this;
-        self.clickBgMask = true;
+        self.outSideClosed = true;
     }
 
     private _tap_btn_close() {
