@@ -46,18 +46,13 @@ export class JoyStickDlg extends UIDlg {
     private onMouseMove(e: EventMouse) {
         let self = this;
         let moveUIPos = e.getUILocation();
-        let buttonVec: Vec2 = new Vec2();
         let distance = Vec2.distance(moveUIPos, self._touchStartPos);
         let rad = Math.atan2(moveUIPos.y - self._touchStartPos.y, moveUIPos.x - self._touchStartPos.x);
-        if (distance > self.radius) {
-            buttonVec.x = self.radius * Math.cos(rad);
-            buttonVec.y = self.radius * Math.sin(rad);
-        } else {
-            let localUIPos = self._joyStickUITranstorm.convertToNodeSpaceAR(new Vec3(moveUIPos.x, moveUIPos.y, 0));
-            buttonVec.x = localUIPos.x;
-            buttonVec.y = localUIPos.y;
-        }
-        self.joyStick.setPosition(new Vec3(buttonVec.x, buttonVec.y, 0));
+        if (distance > self.radius) distance = self.radius;
+        let toX = distance * Math.cos(rad);
+        let toY = distance * Math.sin(rad);
+        self.joyStick.setPosition(new Vec3(toX, toY, 0));
+        console.log(toX,toY,rad);
     }
 
     private onMouseUp(e: EventMouse) {
