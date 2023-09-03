@@ -15,6 +15,7 @@ import { MessageTip } from '../common/message/MessageTip';
 import PathFindingAgent from '../road/PathFindingAgent';
 import { JoyStickDlg } from './dlg/JoyStickDlg';
 import { EntityMgr } from './entity/mgr/EntityMgr';
+import { RunDemoMgr } from '../base/RunDemoMgr';
 const { ccclass, property } = _decorator;
 
 /*
@@ -349,11 +350,13 @@ export class MapEditorLayer extends UILayer {
         }
         self.lbl_runDemo.string = self.lbl_runDemo.string == "测试运行" ? "关闭运行" : "测试运行";
         if (self.lbl_runDemo.string == "测试运行") {
+            RunDemoMgr.inst.isRunningDemoMode = false;
             BaseUT.closeDlgByName(["JoyStickDlg"]);
             EntityMgr.inst.clear();
             BaseUT.changeMouseCursor("auto");
             return;
         }
+        RunDemoMgr.inst.isRunningDemoMode = true;
         BaseUT.changeMouseCursor("url('/assets/resources/native/34/341c4534-3c0a-4dd7-adc1-1c235faf3c20.png'),auto");//使用自定义鼠标样式
         JoyStickDlg.show();
         console.log(`地图数据`);
