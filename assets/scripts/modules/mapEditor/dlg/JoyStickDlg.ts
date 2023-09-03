@@ -1,4 +1,4 @@
-import { _decorator, EventMouse, Node, UITransform, Vec2, Vec3 } from 'cc';
+import { _decorator, EventMouse, EventTouch, Node, UITransform, Vec2, Vec3 } from 'cc';
 import { UIDlg } from '../../../framework/ui/UIDlg';
 const { ccclass, property } = _decorator;
 
@@ -13,7 +13,6 @@ export class JoyStickDlg extends UIDlg {
     private grp_touchArea: Node;
     @property({ type: Node })
     private joyStick: Node;
-    private _joyStickUITranstorm: UITransform;
     /**半径 */
     private radius: number;
     private _touchStartPos: Vec2;
@@ -31,10 +30,9 @@ export class JoyStickDlg extends UIDlg {
         self.grp_touchArea.on(Node.EventType.TOUCH_END, self.onMouseUp, self);
         self.grp_touchArea.on(Node.EventType.TOUCH_CANCEL, self.onMouseUp, self);
         self._initPos = new Vec3(self.grp_joyStick.position.x, self.grp_joyStick.position.y);
-        self._joyStickUITranstorm = self.grp_joyStick.getComponent(UITransform);
     }
 
-    private onMouseDown(e: EventMouse) {
+    private onMouseDown(e: EventTouch) {
         let self = this;
         self._touchStartPos = e.getUILocation();
         self.grp_joyStick.setPosition(self._touchStartPos.x, self._touchStartPos.y);
@@ -42,7 +40,7 @@ export class JoyStickDlg extends UIDlg {
         self.joyStick.setPosition(new Vec3(0, 0, 0));
     }
 
-    private onMouseMove(e: EventMouse) {
+    private onMouseMove(e: EventTouch) {
         let self = this;
         let moveUIPos = e.getUILocation();
         let distance = Vec2.distance(moveUIPos, self._touchStartPos);
@@ -53,7 +51,7 @@ export class JoyStickDlg extends UIDlg {
         self.joyStick.setPosition(new Vec3(toX, toY, 0));
     }
 
-    private onMouseUp(e: EventMouse) {
+    private onMouseUp(e: EventTouch) {
         let self = this;
         this.grp_touchArea.off(Node.EventType.TOUCH_MOVE, this.onMouseMove, this);
         self.grp_joyStick.setPosition(self._initPos);

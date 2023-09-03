@@ -14,6 +14,7 @@ import { HelpDlg } from './dlg/HelpDlg';
 import { MessageTip } from '../common/message/MessageTip';
 import PathFindingAgent from '../road/PathFindingAgent';
 import { JoyStickDlg } from './dlg/JoyStickDlg';
+import { EntityMgr } from './entity/mgr/EntityMgr';
 const { ccclass, property } = _decorator;
 
 /*
@@ -95,7 +96,7 @@ export class MapEditorLayer extends UILayer {
         self.onEmitter(CONST.GEVT.ImportMapJson, self.onImportMapJson);//导入josn地图数据成功
         self.onEmitter(CONST.GEVT.UpdateMapScale, self.updateMapScale);//地图缩放变更
         self.onEmitter(CONST.GEVT.DragMapThingStart, self.onDragMapThingStart);
-        self.lbl_version.string = 'version: 1.0.0';
+        self.lbl_version.string = `version: ${self.mapMgr.version}`;
         self._selectIdx = 1;
         self.list_pathSize.selectedId = 0;
         self.showEditOperate();
@@ -342,19 +343,22 @@ export class MapEditorLayer extends UILayer {
     private _tap_btn_runDemo() {
         let self = this;
         let mapData = self.mapMgr.getMapData();
-        if(!mapData) {
-            MessageTip.show({msg: "地图数据为空"});
+        if (!mapData) {
+            MessageTip.show({ msg: "地图数据为空" });
             return;
         }
         self.lbl_runDemo.string = self.lbl_runDemo.string == "测试运行" ? "关闭运行" : "测试运行";
-        if(self.lbl_runDemo.string == "测试运行"){
+        if (self.lbl_runDemo.string == "测试运行") {
             BaseUT.closeDlgByName(["JoyStickDlg"]);
+            EntityMgr.inst.clear();
             return;
         }
         JoyStickDlg.show();
         console.log(`地图数据`);
         console.log(mapData);
+        self._tap_btn_resetScale();
         PathFindingAgent.instance.init(mapData);
+        EntityMgr.inst.init(self.mapScrollComp.grp_scrollMap, self.mapScrollComp.grp_entity);
     }
 }
 

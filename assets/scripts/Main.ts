@@ -20,12 +20,13 @@ export class Main extends Component {
         globalThis.BaseUT = BaseUT;
         globalThis.MapMgr = MapMgr;
         TickMgr.inst.mainNode = this;
+        MapMgr.inst.version = '1.0.0';
         console.log('系统相关环境变量: ');
         console.log(sys);
         let self = this;
         let canvas = director.getScene().getChildByName('Canvas');
         canvas.on(Node.EventType.MOUSE_UP, self.onClickStage, self);
-        SceneMgr.inst.run(MapEditorScene, { name: '测试数据' });
+        SceneMgr.inst.run(MapEditorScene);
     }
 
     private onClickStage(event: EventTouch) {

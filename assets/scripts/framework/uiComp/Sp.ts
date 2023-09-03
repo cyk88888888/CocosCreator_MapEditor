@@ -5,7 +5,6 @@
  */
 import { _decorator, Component, Sprite, SpriteFrame, SpriteAtlas, CCInteger, CCString } from 'cc';
 import { BaseEnum } from '../base/BaseEnum';
-import { emmiter } from '../base/Emmiter';
 import { ResMgr } from '../mgr/ResMgr';
 const { ccclass, property } = _decorator;
 

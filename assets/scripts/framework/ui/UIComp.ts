@@ -46,6 +46,8 @@ export class UIComp extends Component {
         // console.log('onDestroy: ' + this.scriptName);
     }
 
+    protected update(deltaTime: number): void {}
+
     protected ctor_b() { }
 
     protected ctor() { }

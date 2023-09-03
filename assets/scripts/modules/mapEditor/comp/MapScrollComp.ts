@@ -26,12 +26,14 @@ export class MapScrollComp extends UIComp {
     public grp_mapSlices: Node;
     @property({ type: Node, tooltip: "地图格子路点容器" })
     public grp_colorGrid: Node;
-    @property({ type: Graphics })
+    @property({ type: Graphics, tooltip: "地图网格" })
     public graphicsGrid: Graphics;
-    @property({ type: MapGridFactory })
+    @property({ type: MapGridFactory, tooltip: "地图格子绘制工厂" })
     public mapGridFactory: MapGridFactory;
-    @property({ type: MapThingFactory })
+    @property({ type: MapThingFactory, tooltip: "地图物件生成工厂" })
     public mapThingFactory: MapThingFactory;
+    @property({ type: Node, tooltip: "场景实体容器" })
+    public grp_entity: Node;
 
     public isInEditArea: boolean;
 

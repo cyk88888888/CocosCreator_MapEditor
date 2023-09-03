@@ -21,7 +21,8 @@ export class MapMgr {
         }
         return this._inst;
     }
-
+    /** 版本号*/
+    public version: string;
     /** 导入的地图切片数组*/
     public mapFloorArr: any[];
     /** 导入等待地图切片列数*/

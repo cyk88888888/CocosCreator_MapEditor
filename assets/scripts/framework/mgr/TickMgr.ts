@@ -6,6 +6,9 @@ import { Main } from "../../Main";
  */
 export class TickMgr {
     public mainNode: Main;
+    private _tickIndex: number;
+    private _tickMap: { [tickName: string]: IData_Tick };
+
     private static _inst: TickMgr;
     public static get inst() {
         if (!this._inst) {
@@ -14,7 +17,6 @@ export class TickMgr {
         return this._inst;
     }
 
-    private _tickMap: { [tickName: string]: IData_Tick };
     /**全局帧执行方法 */
     public onTick(dt: number) {
         if (this._tickMap) {
@@ -27,18 +29,27 @@ export class TickMgr {
 
     /**
      * 添加帧执行器
-     * @param tickName 
      * @param cb 
+     * @param ctx
      */
-    public addTick(tickName: string, data: IData_Tick) {
-        if (!this._tickMap) this._tickMap = {};
-        this._tickMap[tickName] = data;
+    public addTick(cb: Function, ctx?: any) {
+        if (!this._tickMap) {
+            this._tickIndex = 0;
+            this._tickMap = {};
+        }
+        let tickIndex = cb['__tickIndex__'];
+        if(tickIndex && this._tickMap[tickIndex]) return;
+        let index = ++this._tickIndex;
+        cb['__tickIndex__'] = index;
+        this._tickMap[index] = { cb: cb, ctx: ctx };
     }
 
     /**移除帧执行器 */
-    public rmTick(tickName: string) {
-        if (this._tickMap && this._tickMap[tickName]) {
-            delete this._tickMap[tickName];
+    public rmTick(cb: Function) {
+        let tickIndex = cb['__tickIndex__'];
+        if (this._tickMap && this._tickMap[tickIndex]) {
+            delete cb['__tickIndex__'];
+            delete this._tickMap[tickIndex];
         }
     }
 
