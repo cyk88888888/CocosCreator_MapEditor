@@ -1,5 +1,6 @@
 import { _decorator, EventMouse, EventTouch, Node, UITransform, Vec2, Vec3 } from 'cc';
 import { UIDlg } from '../../../framework/ui/UIDlg';
+import { JoyStickControl } from '../../base/JoyStickControl';
 const { ccclass, property } = _decorator;
 
 @ccclass('JoyStickDlg')
@@ -17,11 +18,14 @@ export class JoyStickDlg extends UIDlg {
     private radius: number;
     private _touchStartPos: Vec2;
     private _initPos: Vec3;
+
+    private _joyStickCtrl: JoyStickControl;
     protected ctor(): void {
         let self = this;
         self.outSideClosed = false;
         self.maskEnabled = false;
         self.radius = 18;
+        self._joyStickCtrl = JoyStickControl.inst;
     }
 
     protected onEnter(): void {
@@ -44,11 +48,13 @@ export class JoyStickDlg extends UIDlg {
         let self = this;
         let moveUIPos = e.getUILocation();
         let distance = Vec2.distance(moveUIPos, self._touchStartPos);
-        let rad = Math.atan2(moveUIPos.y - self._touchStartPos.y, moveUIPos.x - self._touchStartPos.x);
+        let radian = Math.atan2(moveUIPos.y - self._touchStartPos.y, moveUIPos.x - self._touchStartPos.x);
         if (distance > self.radius) distance = self.radius;
-        let toX = distance * Math.cos(rad);
-        let toY = distance * Math.sin(rad);
+        let toX = distance * Math.cos(radian);
+        let toY = distance * Math.sin(radian);
         self.joyStick.setPosition(new Vec3(toX, toY, 0));
+        self._joyStickCtrl.isMoving = true;
+        self._joyStickCtrl.radian = radian;
     }
 
     private onMouseUp(e: EventTouch) {
@@ -56,6 +62,8 @@ export class JoyStickDlg extends UIDlg {
         this.grp_touchArea.off(Node.EventType.TOUCH_MOVE, this.onMouseMove, this);
         self.grp_joyStick.setPosition(self._initPos);
         self.joyStick.setPosition(new Vec3(0, 0, 0));
+        self._joyStickCtrl.isMoving = false;
+        self._joyStickCtrl.radian = undefined;
     }
 
     protected onExit(): void {
@@ -63,6 +71,8 @@ export class JoyStickDlg extends UIDlg {
         self.grp_touchArea.off(Node.EventType.TOUCH_START, self.onMouseDown, self);
         self.grp_touchArea.off(Node.EventType.TOUCH_END, self.onMouseUp, self);
         self.grp_touchArea.off(Node.EventType.TOUCH_CANCEL, self.onMouseUp, self);
+        self._joyStickCtrl.isMoving = false;
+        self._joyStickCtrl.radian = undefined;
     }
 
 }

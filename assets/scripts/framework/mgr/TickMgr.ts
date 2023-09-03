@@ -38,7 +38,7 @@ export class TickMgr {
             this._tickMap = {};
         }
         let tickIndex = cb['__tickIndex__'];
-        if(tickIndex && this._tickMap[tickIndex]) return;
+        if (tickIndex && this._tickMap[tickIndex]) return;
         let index = ++this._tickIndex;
         cb['__tickIndex__'] = index;
         this._tickMap[index] = { cb: cb, ctx: ctx };

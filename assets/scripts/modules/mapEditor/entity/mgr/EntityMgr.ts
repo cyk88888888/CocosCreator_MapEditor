@@ -2,12 +2,14 @@ import { _decorator, instantiate, Node, Prefab } from 'cc';
 import { TickMgr } from '../../../../framework/mgr/TickMgr';
 import { Player } from '../Player';
 import { EntityPrefabs } from '../entityPrefabs/EntityPrefabs';
+import { JoyStickControl } from '../../../base/JoyStickControl';
 const { ccclass, property } = _decorator;
 
 /**测试运行时的实体管理类 */
 @ccclass('EntityMgr')
 export class EntityMgr {
     private static _inst: EntityMgr;
+
 
     private grp_scrollMap: Node;
     private grp_entity: Node;
@@ -37,7 +39,8 @@ export class EntityMgr {
     }
 
     public update(deltaTime: number) {
-        console.log(deltaTime);
+        //控制角色根据摇杆弧度方向移动 todo...
+        if(JoyStickControl.inst.isMoving) console.log('radian: '+ JoyStickControl.inst.radian);
     }
 
     public clear() {

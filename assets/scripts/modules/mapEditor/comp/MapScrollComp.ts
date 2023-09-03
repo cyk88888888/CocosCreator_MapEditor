@@ -361,7 +361,7 @@ export class MapScrollComp extends UIComp {
     private checkMousCursor() {
         let self = this;
         if (self._pressSpace && self.isInEditArea) {
-            BaseUT.changeMouseCursor("move");
+            BaseUT.changeMouseCursor("grab");
         } else {
             BaseUT.changeMouseCursor("auto");
         }

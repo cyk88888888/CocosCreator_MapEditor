@@ -351,8 +351,10 @@ export class MapEditorLayer extends UILayer {
         if (self.lbl_runDemo.string == "测试运行") {
             BaseUT.closeDlgByName(["JoyStickDlg"]);
             EntityMgr.inst.clear();
+            BaseUT.changeMouseCursor("auto");
             return;
         }
+        BaseUT.changeMouseCursor("url('/assets/resources/native/34/341c4534-3c0a-4dd7-adc1-1c235faf3c20.png'),auto");//使用自定义鼠标样式
         JoyStickDlg.show();
         console.log(`地图数据`);
         console.log(mapData);
