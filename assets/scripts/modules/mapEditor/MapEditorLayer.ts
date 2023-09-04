@@ -14,8 +14,8 @@ import { HelpDlg } from './dlg/HelpDlg';
 import { MessageTip } from '../common/message/MessageTip';
 import PathFindingAgent from '../road/PathFindingAgent';
 import { JoyStickDlg } from './dlg/JoyStickDlg';
-import { EntityMgr } from './entity/mgr/EntityMgr';
-import { RunDemoMgr } from '../base/RunDemoMgr';
+import { SceneMgr } from '../../framework/mgr/SceneMgr';
+import { RunDemoCtrl } from './control/RunDemoCtrl';
 const { ccclass, property } = _decorator;
 
 /*
@@ -350,20 +350,20 @@ export class MapEditorLayer extends UILayer {
         }
         self.lbl_runDemo.string = self.lbl_runDemo.string == "测试运行" ? "关闭运行" : "测试运行";
         if (self.lbl_runDemo.string == "测试运行") {
-            RunDemoMgr.inst.isRunningDemoMode = false;
-            BaseUT.closeDlgByName(["JoyStickDlg"]);
-            EntityMgr.inst.clear();
+            self.mapMgr.isRunningDemoMode = false;
+            SceneMgr.inst.closeDlgByName(["JoyStickDlg"]);
+            RunDemoCtrl.inst.clear();
             BaseUT.changeMouseCursor("auto");
             return;
         }
-        RunDemoMgr.inst.isRunningDemoMode = true;
+        self.mapMgr.isRunningDemoMode = true;
         BaseUT.changeMouseCursor("url('/assets/resources/native/34/341c4534-3c0a-4dd7-adc1-1c235faf3c20.png'),auto");//使用自定义鼠标样式
         JoyStickDlg.show();
         console.log(`地图数据`);
         console.log(mapData);
         self._tap_btn_resetScale();
-        PathFindingAgent.instance.init(mapData);
-        EntityMgr.inst.init(self.mapScrollComp.grp_scrollMap, self.mapScrollComp.grp_entity);
+        PathFindingAgent.inst.init(mapData);
+        RunDemoCtrl.inst.init(self.mapScrollComp.grp_scrollMap, self.mapScrollComp.grp_entity, BaseUT.getSize(self.mapScrollComp.grp_mapLayer));
     }
 }
 

@@ -1,5 +1,7 @@
+import { BaseUT } from "../../framework/base/BaseUtil";
 import { CONST } from "../base/CONST";
 import { G } from "../base/Interface";
+import { MapMgr } from "../base/MapMgr";
 import AstarHoneycombRoadSeeker from "./AstarHoneycombRoadSeeker";
 import AStarRoadSeeker from "./AStarRoadSeeker";
 import IRoadSeeker from "./IRoadSeeker";
@@ -18,7 +20,7 @@ export default class PathFindingAgent {
 
     private static _instance: PathFindingAgent;
 
-    public static get instance(): PathFindingAgent {
+    public static get inst(): PathFindingAgent {
         if (this._instance == null) {
             this._instance = new PathFindingAgent();
         }
@@ -33,6 +35,11 @@ export default class PathFindingAgent {
     private _mapType: CONST.MapType = CONST.MapType.angle45;
     public get mapType(): CONST.MapType {
         return this._mapType;
+    }
+
+    /** 当前地图数据*/
+    public get mapData(): G.MapJsonInfo{
+        return this._mapData;
     }
 
     /**
@@ -291,4 +298,17 @@ export default class PathFindingAgent {
         this._roadSeeker.setRoadNodePassCondition(callback);
     }
 
+    /**随机获取一个起始点 */
+    public getRandomStartPos(): {x: number, y: number}{
+        let self = this;
+        let mapData = self._mapData;
+        let startList = mapData.startList;
+        if(!startList) {
+            return {x: 0, y: 0};
+        }
+        let randomIdx = BaseUT.getRandomNumber(0, startList.length - 1);
+        let pos = MapMgr.inst.idx2Pos(startList[randomIdx]);
+        pos.x += MapMgr.inst.cellSize / 2;
+        return pos;
+    }
 }

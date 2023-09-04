@@ -63,6 +63,8 @@ export class MapMgr {
     /**当前场景物件的触发类型 */
     public curMapThingTriggerType: CONST.MapThingTriggerType;
     public triggerTypes: { type: number, desc: string }[];
+    /** 是否测试运行模式*/
+    public isRunningDemoMode: boolean;
     public init() {
         let self = this;
         self.gridRange = 0;
@@ -246,7 +248,20 @@ export class MapMgr {
         let totCol: number = Math.ceil(self.mapWidth / size);//总列数
         let line: number = Math.floor(idx / totCol);
         let col: number = idx - line * totCol;
-        return { x: col, y: line };
+        return { col: col, row: line };
+    }
+
+    /**
+     * 格子idx转为格子所在的坐标x，y
+     * @param idx 
+     * @param isCenter 是否为格子的中心点坐标，false返回左下角角坐标
+     * @returns 
+     */
+    public idx2Pos(idx: number, isCenter?: boolean) {
+        let self = this;
+        let grid = self.idx2Grid(idx);
+        let offSet = isCenter ? self.cellSize / 2 : 0;
+        return { x: grid.col * self.cellSize + offSet, y: grid.row * self.cellSize + offSet };
     }
 
     /**
@@ -309,7 +324,7 @@ export class MapMgr {
     public exportJson() {
         let self = this;
         let mapData = self.getMapData();
-        if(!mapData) return;
+        if (!mapData) return;
         FileIOHandler.inst.saveTextToLocal(JSON.stringify(mapData));
     }
 

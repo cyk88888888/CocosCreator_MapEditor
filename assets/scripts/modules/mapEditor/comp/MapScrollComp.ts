@@ -7,7 +7,6 @@ import { BaseUT } from '../../../framework/base/BaseUtil';
 import { MapGridFactory } from '../factory/MapGridFactory';
 import { MessageTip } from '../../common/message/MessageTip';
 import { MapThingFactory } from '../factory/MapThingFactory';
-import { RunDemoMgr } from '../../base/RunDemoMgr';
 const { ccclass, property } = _decorator;
 
 /*
@@ -361,7 +360,7 @@ export class MapScrollComp extends UIComp {
 
     private checkMousCursor() {
         let self = this;
-        if(RunDemoMgr.inst.isRunningDemoMode) return;
+        if(self.mapMgr.isRunningDemoMode) return;
         if (self._pressSpace && self.isInEditArea) {
             BaseUT.changeMouseCursor("grab");
         } else {

@@ -1,6 +1,6 @@
 import { _decorator, EventMouse, EventTouch, Node, UITransform, Vec2, Vec3 } from 'cc';
 import { UIDlg } from '../../../framework/ui/UIDlg';
-import { JoyStickControl } from '../../base/JoyStickControl';
+import { JoyStickCtrl } from '../control/JoyStickCtrl';
 const { ccclass, property } = _decorator;
 
 @ccclass('JoyStickDlg')
@@ -19,13 +19,13 @@ export class JoyStickDlg extends UIDlg {
     private _touchStartPos: Vec2;
     private _initPos: Vec3;
 
-    private _joyStickCtrl: JoyStickControl;
+    private _joyStickCtrl: JoyStickCtrl;
     protected ctor(): void {
         let self = this;
         self.outSideClosed = false;
         self.maskEnabled = false;
         self.radius = 18;
-        self._joyStickCtrl = JoyStickControl.inst;
+        self._joyStickCtrl = JoyStickCtrl.inst;
     }
 
     protected onEnter(): void {

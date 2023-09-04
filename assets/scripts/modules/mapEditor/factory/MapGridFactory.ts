@@ -34,9 +34,9 @@ export class MapGridFactory extends UIComp {
         let mapData: G.MapJsonInfo = data.mapData;
         let walkList = mapData.walkList || [];
         /** 设置可行走节点**/
-        for (let i = 0; i < walkList.length; i++) {
+        for (let i = 0; i < walkList.length; i++) {//行
             let lineList = walkList[i];
-            for (let j = 0; j < lineList.length; j++) {
+            for (let j = 0; j < lineList.length; j++) {//列
                 if (lineList[j] != 0) {
                     let gridType: string;
                     if (lineList[j] == 1) {//可行走
@@ -66,7 +66,7 @@ export class MapGridFactory extends UIComp {
         function addGridDataByType(gridType: string, gridList: number[]) {
             for (let i = 0; i < gridList.length; i++) {
                 let grid = self.mapMgr.idx2Grid(gridList[i]);
-                self.addGrid(gridType, { x: grid.x, y: grid.y });
+                self.addGrid(gridType, { x: grid.col, y: grid.row });
             }
         }
     }
