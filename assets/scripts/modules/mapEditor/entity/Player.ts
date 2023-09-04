@@ -14,7 +14,7 @@ export class Player extends UIComp {
     private _dir: number;
     protected ctor(): void {
         let self = this;
-        self.speed = 10;
+        self.speed = 3;
     }
 
     protected onEnter(): void {
