@@ -78,6 +78,7 @@ export default class PathFindingAgent {
         MapRoadUtils.instance.updateMapInfo(this._mapData.mapWidth, this._mapData.mapHeight, this._mapData.cellSize, this._mapData.cellSize, this._mapData.type);
 
         var len: number = this._mapData.walkList.length;
+        if(!len) return;
         var len2: number = this._mapData.walkList[0].length;
 
         var value: number = 0;
@@ -303,7 +304,7 @@ export default class PathFindingAgent {
         let self = this;
         let mapData = self._mapData;
         let startList = mapData.startList;
-        if(!startList) {
+        if(!startList || !startList.length) {
             return {x: 0, y: 0};
         }
         let randomIdx = BaseUT.getRandomNumber(0, startList.length - 1);

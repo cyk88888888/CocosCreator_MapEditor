@@ -34,7 +34,7 @@ export class EntityCtrl {
     }
 
     public update(deltaTime: number) {
-        //控制角色根据摇杆弧度方向移动 todo...
+        //控制角色根据摇杆弧度方向移动
         if (JoyStickCtrl.inst.isMoving){
             let self = this;
             let radian = JoyStickCtrl.inst.radian;

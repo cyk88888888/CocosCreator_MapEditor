@@ -343,19 +343,20 @@ export class MapEditorLayer extends UILayer {
     /** 测试运行 */
     private _tap_btn_runDemo() {
         let self = this;
-        let mapData = self.mapMgr.getMapData();
-        if (!mapData) {
-            MessageTip.show({ msg: "地图数据为空" });
-            return;
-        }
-        self.lbl_runDemo.string = self.lbl_runDemo.string == "测试运行" ? "关闭运行" : "测试运行";
-        if (self.lbl_runDemo.string == "测试运行") {
+        if (self.lbl_runDemo.string == "关闭运行") {
+            self.lbl_runDemo.string = "测试运行";
             self.mapMgr.isRunningDemoMode = false;
             SceneMgr.inst.closeDlgByName(["JoyStickDlg"]);
             RunDemoCtrl.inst.clear();
             BaseUT.changeMouseCursor("auto");
             return;
         }
+        let mapData = self.mapMgr.getMapData();
+        if (!mapData) {
+            MessageTip.show({ msg: "地图数据为空" });
+            return;
+        }
+        self.lbl_runDemo.string = "关闭运行";
         self.mapMgr.isRunningDemoMode = true;
         BaseUT.changeMouseCursor("url('/assets/resources/native/34/341c4534-3c0a-4dd7-adc1-1c235faf3c20.png'),auto");//使用自定义鼠标样式
         JoyStickDlg.show();

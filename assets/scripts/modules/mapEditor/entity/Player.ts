@@ -9,7 +9,7 @@ export class Player extends UIComp {
     private player: Node;
 
     private _uiTranstorm: UITransform;
-    /** 角色移动速度*/
+    /** 角色移动速度(1毫秒的移动速度)*/
     public speed: number;
     private _dir: number;
     protected ctor(): void {
@@ -27,9 +27,7 @@ export class Player extends UIComp {
         let playerPos = self.node.position;
         let cos = Math.cos(radian);
         let sin = Math.sin(radian);
-        let newPos = new Vec3(playerPos.x + self.speed * cos, playerPos.y + self.speed * sin);
-        self.node.setPosition(newPos);
-        console.log('cos: ' + cos, "sin: " + sin);
+        self.node.setPosition(playerPos.x + self.speed * cos, playerPos.y + self.speed * sin);
         self.setDir(cos > 0 ? 1 : -1);
         self.checkLimitPos();
     }

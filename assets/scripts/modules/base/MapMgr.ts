@@ -346,19 +346,21 @@ export class MapMgr {
         mapJsonInfo.mapThingList = [];
         mapJsonInfo.borderList = [];
         let walkData = gridDataMap[CONST.GridType.GridType_walk];
-        for (let i = 0; i < self.totRow; i++) {
-            let linewalkList = [];//每一行
-            mapJsonInfo.walkList.push(linewalkList);
-            for (let j = 0; j < self.totCol; j++) {
-                let graphicsPos = { x: Math.floor(j / self.areaGraphicSize), y: Math.floor(i / self.areaGraphicSize) };
-                let areaKey = graphicsPos.x + '_' + graphicsPos.y;
-                let areaGridDataMap = walkData[areaKey];
-                if (!walkData || !areaGridDataMap) {
-                    linewalkList.push(0);
-                } else {
-                    let gridKey = j + "_" + i;
-                    let gridDataItem = areaGridDataMap ? areaGridDataMap[gridKey] : null;
-                    linewalkList.push(gridDataItem != null ? 1 : 0);
+        if (walkData) {
+            for (let i = 0; i < self.totRow; i++) {
+                let linewalkList = [];//每一行
+                mapJsonInfo.walkList.push(linewalkList);
+                for (let j = 0; j < self.totCol; j++) {
+                    let graphicsPos = { x: Math.floor(j / self.areaGraphicSize), y: Math.floor(i / self.areaGraphicSize) };
+                    let areaKey = graphicsPos.x + '_' + graphicsPos.y;
+                    let areaGridDataMap = walkData[areaKey];
+                    if (!walkData || !areaGridDataMap) {
+                        linewalkList.push(0);
+                    } else {
+                        let gridKey = j + "_" + i;
+                        let gridDataItem = areaGridDataMap ? areaGridDataMap[gridKey] : null;
+                        linewalkList.push(gridDataItem != null ? 1 : 0);
+                    }
                 }
             }
         }
