@@ -128,10 +128,10 @@ export class MapThingFactory extends UIComp {
                 let grid = self.mapMgr.pos2Grid(mapThingX, mapThingY);
                 let cellSize = self.mapMgr.cellSize;
                 let pointArr = [
-                    [grid.x * cellSize, grid.y * cellSize],
-                    [grid.x * cellSize + cellSize, grid.y * cellSize],
-                    [grid.x * cellSize + cellSize, grid.y * cellSize + cellSize],
-                    [grid.x * cellSize, grid.y * cellSize + cellSize],
+                    [grid.col * cellSize, grid.row * cellSize],
+                    [grid.col * cellSize + cellSize, grid.row * cellSize],
+                    [grid.col * cellSize + cellSize, grid.row * cellSize + cellSize],
+                    [grid.col * cellSize, grid.row * cellSize + cellSize],
                 ];
                 let minDist: number;//最小距离
                 let distArr = [];

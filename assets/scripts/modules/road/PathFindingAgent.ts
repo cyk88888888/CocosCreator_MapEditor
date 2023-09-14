@@ -312,4 +312,12 @@ export default class PathFindingAgent {
         pos.x += MapMgr.inst.cellSize / 2;
         return pos;
     }
+
+    /** 是否可移动到指定坐标*/
+    public isCanMoveTo(x: number, y: number){
+        let self = this;
+        let grid = MapMgr.inst.pos2Grid(x, y);
+        let node: RoadNode = self._roadDic[grid.col + "_" + grid.row];
+        return node && node.value == 1;
+    }
 }

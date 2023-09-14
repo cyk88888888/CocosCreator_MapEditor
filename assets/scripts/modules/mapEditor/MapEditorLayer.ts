@@ -336,7 +336,7 @@ export class MapEditorLayer extends UILayer {
     /**重置缩放比例 */
     private _tap_btn_resetScale() {
         let self = this;
-        self.mapScrollComp.resetScale();
+        self.mapScrollComp.setMapScale(1);
         self.updateMapScale();
     }
 
@@ -362,7 +362,8 @@ export class MapEditorLayer extends UILayer {
         JoyStickDlg.show();
         console.log(`地图数据`);
         console.log(mapData);
-        self._tap_btn_resetScale();
+        self.mapScrollComp.setMapScale(2.5);
+        self.updateMapScale();
         PathFindingAgent.inst.init(mapData);
         RunDemoCtrl.inst.init(self.mapScrollComp.grp_scrollMap, self.mapScrollComp.grp_entity, BaseUT.getSize(self.mapScrollComp.grp_mapLayer));
     }

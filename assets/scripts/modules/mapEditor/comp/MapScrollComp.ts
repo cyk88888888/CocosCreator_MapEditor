@@ -260,16 +260,15 @@ export class MapScrollComp extends UIComp {
         event.getScrollY() > 0 ? this.scaleMap(0.1, location) : this.scaleMap(-0.1, location);
     }
 
-    /**重置缩放比例 */
-    public resetScale() {
+    /**设置地图缩放比例 */
+    public setMapScale(scale: number) {
         let self = this;
-        let oldScale = self.grp_scrollMap.scale.x;
-        if (oldScale == 1) return;//已经是初始缩放比例
+        if (self.mapScale == scale) return;//已经是初始缩放比例
         let widget = self.node.getComponent(Widget);
         let selfSize = BaseUT.getSize(self.node);
         let view = BaseUT.getView();
         let location = new Vec2((widget.left + selfSize.width / 2) * view.getScaleX(), (widget.bottom + selfSize.height / 2) * view.getScaleY());//以当前地图视角中心为圆心来重置缩放
-        self.scaleMap(1 - self.mapScale, location);
+        self.scaleMap(scale - self.mapScale, location);
     }
 
     /**
@@ -360,7 +359,7 @@ export class MapScrollComp extends UIComp {
 
     private checkMousCursor() {
         let self = this;
-        if(self.mapMgr.isRunningDemoMode) return;
+        if (self.mapMgr.isRunningDemoMode) return;
         if (self._pressSpace && self.isInEditArea) {
             BaseUT.changeMouseCursor("grab");
         } else {

@@ -233,7 +233,7 @@ export class MapMgr {
      */
     public pos2Grid(x: number, y: number) {
         let self = this;
-        return { x: Math.floor(x / self.cellSize), y: Math.floor(y / self.cellSize) };
+        return { col: Math.floor(x / self.cellSize), row: Math.floor(y / self.cellSize) };
     }
 
     /**

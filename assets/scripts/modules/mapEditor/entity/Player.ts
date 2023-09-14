@@ -1,6 +1,7 @@
 import { _decorator, Node, UITransform, Vec3 } from 'cc';
 import { UIComp } from '../../../framework/ui/UIComp';
 import { MapMgr } from '../../base/MapMgr';
+import PathFindingAgent from '../../road/PathFindingAgent';
 const { ccclass, property } = _decorator;
 
 @ccclass('Player')
@@ -27,7 +28,16 @@ export class Player extends UIComp {
         let playerPos = self.node.position;
         let cos = Math.cos(radian);
         let sin = Math.sin(radian);
-        self.node.setPosition(playerPos.x + self.speed * cos, playerPos.y + self.speed * sin);
+        let toX = playerPos.x + self.speed * cos;
+        let toY = playerPos.y + self.speed * sin;
+        let pathFindingAgent = PathFindingAgent.inst;
+        if(pathFindingAgent.isCanMoveTo(toX, playerPos.y)){
+            self.node.setPosition(toX, playerPos.y);
+        }
+        if(pathFindingAgent.isCanMoveTo(playerPos.x, toY)){
+            self.node.setPosition(playerPos.x, toY);
+        }
+        console.log('cos: '+cos,'sin: '+sin);
         self.setDir(cos > 0 ? 1 : -1);
         self.checkLimitPos();
     }
