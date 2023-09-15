@@ -1,6 +1,8 @@
 import { Node, Size, Vec3, _decorator } from 'cc';
 import { JoyStickCtrl } from './JoyStickCtrl';
 import { MapMgr } from '../../base/MapMgr';
+import PathFindingAgent from '../../road/PathFindingAgent';
+import { Player } from '../entity/Player';
 const { ccclass, property } = _decorator;
 
 /**镜头控制器 */
@@ -10,19 +12,22 @@ export class CameraCtrl {
     private _target: Node;
     private _editAreaSize: Size;
     private mapMgr: MapMgr;
+    /**镜头偏移位置 */
     private _offY: number;
     public constructor(grp_scrollMap: Node, mapViewSize: Size) {
         let self = this;
         self.mapMgr = MapMgr.inst;
         self.grp_scrollMap = grp_scrollMap;
         self._editAreaSize = mapViewSize;
-        self._offY = 74 / 2 - 20 /2;//（角色高度一半） - （格子高度一半）
     }
 
     /**绑定跟随目标 */
     public focusTarget(target: Node) {
         let self = this;
         self._target = target;
+        let cellSize = PathFindingAgent.inst.mapData.cellSize;
+        let player = target.getComponent(Player);
+        self._offY = player.height / 2 - cellSize /2;//（角色高度一半） - （格子高度一半）
         self.updateCameraPos();
     }
 

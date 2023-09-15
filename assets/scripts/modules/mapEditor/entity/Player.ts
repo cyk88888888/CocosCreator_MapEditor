@@ -7,9 +7,12 @@ const { ccclass, property } = _decorator;
 @ccclass('Player')
 export class Player extends UIComp {
     @property({ type: Node })
-    private player: Node;
+    private sp_player: Node;
+    @property({ type: Node })
+    private collider: Node;
 
     private _uiTranstorm: UITransform;
+    private _colliderTrans: UITransform;
     /** 角色移动速度(1毫秒的移动速度)*/
     public speed: number;
     private _dir: number;
@@ -21,6 +24,7 @@ export class Player extends UIComp {
     protected onEnter(): void {
         let self = this;
         self._uiTranstorm = self.node.getComponent(UITransform);
+        self._colliderTrans = self.collider.getComponent(UITransform);
     }
 
     public moveByJoyStick(radian: number) {
@@ -31,14 +35,19 @@ export class Player extends UIComp {
         let toX = playerPos.x + self.speed * cos;
         let toY = playerPos.y + self.speed * sin;
         let pathFindingAgent = PathFindingAgent.inst;
-        if(pathFindingAgent.isCanMoveTo(toX, playerPos.y)){
+        let dir = cos > 0 ? 1 : -1;
+        let checkX = toX + dir * (self.colliderWidth / 2);
+        if (pathFindingAgent.isCanMoveTo(checkX, playerPos.y)) {
             self.node.setPosition(toX, playerPos.y);
         }
-        if(pathFindingAgent.isCanMoveTo(playerPos.x, toY)){
+        let checkY = sin > 0 ? toY + self.colliderHeight : toY;
+        if (pathFindingAgent.isCanMoveTo(playerPos.x, checkY)) {
             self.node.setPosition(playerPos.x, toY);
+        } else {
+            console.log(self.node.position);
         }
-        console.log('cos: '+cos,'sin: '+sin);
-        self.setDir(cos > 0 ? 1 : -1);
+        // console.log('cos: ' + cos, 'sin: ' + sin);
+        self.setDir(dir);
         self.checkLimitPos();
     }
 
@@ -46,15 +55,15 @@ export class Player extends UIComp {
         let self = this;
         if (self._dir == dir) return;
         self._dir = dir;
-        let scale = self.player.scale;
-        self.player.setScale(dir, scale.y);
+        let scale = self.sp_player.scale;
+        self.sp_player.setScale(dir, scale.y);
     }
 
     /**检测移动边界 */
     private checkLimitPos() {
         let self = this;
         let pos = self.node.position;
-        let halfWid = self._uiTranstorm.width / 2;
+        let halfWid = self.colliderWidth / 2;
         if (pos.x < halfWid) {
             self.node.setPosition(halfWid, pos.y);
         }
@@ -67,11 +76,31 @@ export class Player extends UIComp {
         if (pos.y < 0) {
             self.node.setPosition(pos.x, 0);
         }
-        let height = self._uiTranstorm.height;
+        let height = self.colliderHeight;
         let mapHeight = mapMgr.mapHeight;
         if (pos.y > mapHeight - height) {
             self.node.setPosition(pos.x, mapHeight - height);
         }
+    }
+
+    /**碰撞器宽度 */
+    private get colliderWidth(): number {
+        return this._colliderTrans.width;
+    }
+
+    /**碰撞器高度 */
+    private get colliderHeight(): number {
+        return this._colliderTrans.height;
+    }
+
+    /**角色宽度 */
+    public get width() {
+        return this._uiTranstorm.width;
+    }
+
+    /**角色高度 */
+    public get height() {
+        return this._uiTranstorm.height;
     }
 }
 

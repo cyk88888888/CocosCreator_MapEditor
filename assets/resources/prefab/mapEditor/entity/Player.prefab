@@ -68,7 +68,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "Graphics",
+    "_name": "collider",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
@@ -134,7 +134,7 @@
     "_contentSize": {
       "__type__": "cc.Size",
       "width": 84,
-      "height": 74
+      "height": 37
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -173,7 +173,7 @@
       "__uuid__": "8f676bf0-d3e5-4b47-8d1e-f3243770eab8@4124b",
       "__expectedType__": "cc.SpriteFrame"
     },
-    "_type": 0,
+    "_type": 1,
     "_fillType": 0,
     "_sizeMode": 0,
     "_fillCenter": {
@@ -223,6 +223,8 @@
       "__id__": 0
     },
     "fileId": "a5yDVLL0BCmYLIG+qdu+ic",
+    "instance": null,
+    "targetOverrides": null,
     "nestedPrefabInstanceRoots": null
   },
   {
@@ -449,8 +451,11 @@
     "__prefab": {
       "__id__": 27
     },
-    "player": {
+    "sp_player": {
       "__id__": 10
+    },
+    "collider": {
+      "__id__": 2
     },
     "_id": ""
   },
