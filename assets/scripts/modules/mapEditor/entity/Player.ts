@@ -61,7 +61,7 @@ export class Player extends UIComp {
         let circleData = { cx: toX + self._cx, cy: playerPos.y + self._cy, r: self._cRadius };
         for (let i = startRow, len = endRow; i < len; i++) {
             let rectData = { x: col * 20, y: i * 20, w: cellSize, h: cellSize };
-            // if (!BaseUT.RectCircleColliding(circleData, rectData)) continue;
+            if (!BaseUT.RectCircleColliding(circleData, rectData)) continue;
             if (!pathFindingAgent.isCanMoveTo(col * 20, i * 20)) {
                 isCanMoveX = false;
                 break;
@@ -75,7 +75,7 @@ export class Player extends UIComp {
         let endCol = Math.ceil(endX / cellSize);
         for (let j = startCol, len = endCol; j < len; j++) {
             let rectData = { x: j * 20, y: row * 20, w: cellSize, h: cellSize };
-            // if (!BaseUT.RectCircleColliding(circleData, rectData)) continue;
+            if (!BaseUT.RectCircleColliding(circleData, rectData)) continue;
             if (!pathFindingAgent.isCanMoveTo(j * 20, row * 20)) {
                 isCanMoveY = false;
                 break;
