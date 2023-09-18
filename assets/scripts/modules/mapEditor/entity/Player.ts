@@ -2,6 +2,7 @@ import { _decorator, Graphics, Node, UITransform, Vec3 } from 'cc';
 import { UIComp } from '../../../framework/ui/UIComp';
 import { MapMgr } from '../../base/MapMgr';
 import PathFindingAgent from '../../road/PathFindingAgent';
+import { BaseUT } from '../../../framework/base/BaseUtil';
 const { ccclass, property } = _decorator;
 
 @ccclass('Player')
@@ -52,12 +53,15 @@ export class Player extends UIComp {
         let isCanMoveX = true;
         let startX = toX - self._cRadius + self._cx;
         let endX = toX + self._cRadius + self._cx;
-        let startY = playerPos.y ;
-        let endY = playerPos.y  + self._cRadius * 2;
+        let startY = playerPos.y;
+        let endY = playerPos.y + self._cRadius * 2;
         let col = dir == 1 ? mapMgr.pos2Grid(endX, playerPos.y).col : mapMgr.pos2Grid(startX, playerPos.y).col;
         let startRow = Math.floor(startY / cellSize);
         let endRow = Math.ceil(endY / cellSize);
+        let circleData = { cx: toX + self._cx, cy: playerPos.y + self._cy, r: self._cRadius };
         for (let i = startRow, len = endRow; i < len; i++) {
+            let rectData = { x: col * 20, y: i * 20, w: cellSize, h: cellSize };
+            // if (!BaseUT.RectCircleColliding(circleData, rectData)) continue;
             if (!pathFindingAgent.isCanMoveTo(col * 20, i * 20)) {
                 isCanMoveX = false;
                 break;
@@ -68,14 +72,16 @@ export class Player extends UIComp {
         let isCanMoveY = true;
         let row = sin > 0 ? mapMgr.pos2Grid(playerPos.x, endY).row : mapMgr.pos2Grid(playerPos.x, startY).row;
         let startCol = Math.floor(startX / cellSize);
-        let endCol = Math.ceil(endX / cellSize); 
+        let endCol = Math.ceil(endX / cellSize);
         for (let j = startCol, len = endCol; j < len; j++) {
+            let rectData = { x: j * 20, y: row * 20, w: cellSize, h: cellSize };
+            // if (!BaseUT.RectCircleColliding(circleData, rectData)) continue;
             if (!pathFindingAgent.isCanMoveTo(j * 20, row * 20)) {
                 isCanMoveY = false;
                 break;
             }
         }
-        if(isCanMoveY) self.node.setPosition(playerPos.x, toY);
+        if (isCanMoveY) self.node.setPosition(playerPos.x, toY);
         // console.log('cos: ' + cos, 'sin: ' + sin);
         self.setDir(dir);
     }
