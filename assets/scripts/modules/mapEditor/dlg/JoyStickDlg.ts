@@ -48,6 +48,7 @@ export class JoyStickDlg extends UIDlg {
         let self = this;
         let moveUIPos = e.getUILocation();
         let distance = Vec2.distance(moveUIPos, self._touchStartPos);
+        if(distance == 0) return;
         let radian = Math.atan2(moveUIPos.y - self._touchStartPos.y, moveUIPos.x - self._touchStartPos.x);
         if (distance > self.radius) distance = self.radius;
         let toX = distance * Math.cos(radian);

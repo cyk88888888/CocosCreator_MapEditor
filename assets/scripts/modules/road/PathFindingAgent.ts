@@ -38,7 +38,7 @@ export default class PathFindingAgent {
     }
 
     /** 当前地图数据*/
-    public get mapData(): G.MapJsonInfo{
+    public get mapData(): G.MapJsonInfo {
         return this._mapData;
     }
 
@@ -78,7 +78,7 @@ export default class PathFindingAgent {
         MapRoadUtils.instance.updateMapInfo(this._mapData.mapWidth, this._mapData.mapHeight, this._mapData.cellSize, this._mapData.cellSize, this._mapData.type);
 
         var len: number = this._mapData.walkList.length;
-        if(!len) return;
+        if (!len) return;
         var len2: number = this._mapData.walkList[0].length;
 
         var value: number = 0;
@@ -300,12 +300,12 @@ export default class PathFindingAgent {
     }
 
     /**随机获取一个起始点 */
-    public getRandomStartPos(): {x: number, y: number}{
+    public getRandomStartPos(): { x: number, y: number } {
         let self = this;
         let mapData = self._mapData;
         let startList = mapData.startList;
-        if(!startList || !startList.length) {
-            return {x: 0, y: 0};
+        if (!startList || !startList.length) {
+            return { x: 0, y: 0 };
         }
         let randomIdx = BaseUT.getRandomNumber(0, startList.length - 1);
         let pos = MapMgr.inst.idx2Pos(startList[randomIdx]);
@@ -313,10 +313,17 @@ export default class PathFindingAgent {
         return pos;
     }
 
-    /** 是否可移动到指定坐标*/
-    public isCanMoveTo(x: number, y: number){
+    /**
+     * 是否可移动到指定坐标
+     * @param x 
+     * @param y 
+     * @param isGrid 是否为格子行列
+     * @returns 
+     */
+     
+    public isCanMoveTo(x: number, y: number, isGrid?: boolean) {
         let self = this;
-        let grid = MapMgr.inst.pos2Grid(x, y);
+        let grid = isGrid ? { col: x, row: y } : MapMgr.inst.pos2Grid(x, y);
         let node: RoadNode = self._roadDic[grid.col + "_" + grid.row];
         return node && node.value == 1;
     }

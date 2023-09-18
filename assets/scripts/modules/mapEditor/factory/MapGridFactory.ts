@@ -42,7 +42,7 @@ export class MapGridFactory extends UIComp {
                     if (lineList[j] == 1) {//可行走
                         gridType = CONST.GridType.GridType_walk;
                     }
-                    self.addGrid(gridType, { x: j, y: i });
+                    self.addGrid(gridType, { col: j, row: i });
                 }
             }
         }
@@ -66,7 +66,7 @@ export class MapGridFactory extends UIComp {
         function addGridDataByType(gridType: string, gridList: number[]) {
             for (let i = 0; i < gridList.length; i++) {
                 let grid = self.mapMgr.idx2Grid(gridList[i]);
-                self.addGrid(gridType, { x: grid.col, y: grid.row });
+                self.addGrid(gridType, { col: grid.col, row: grid.row });
             }
         }
     }
@@ -97,16 +97,16 @@ export class MapGridFactory extends UIComp {
         } else {
             let numCols = self.mapMgr.totCol;
             let numRows = self.mapMgr.totRow;
-            let startCol = Math.max(0, grid.x - range);
-            let endCol = Math.min(numCols - 1, grid.x + range);
-            let startRow = Math.max(0, grid.y - range);
-            let endRow = Math.min(numRows - 1, grid.y + range);
+            let startCol = Math.max(0, grid.col - range);
+            let endCol = Math.min(numCols - 1, grid.col + range);
+            let startRow = Math.max(0, grid.row - range);
+            let endRow = Math.min(numRows - 1, grid.row + range);
             for (let i = startCol; i <= endCol; i++) {
                 for (let j = startRow; j <= endRow; j++) {
                     if (isAdd) {
-                        self.addGrid(gridType, { x: i, y: j });
+                        self.addGrid(gridType, { col: i, row: j });
                     } else {
-                        self.removeGrid(gridType, { x: i, y: j });
+                        self.removeGrid(gridType, { col: i, row: j });
                     }
                 }
             }
@@ -119,11 +119,11 @@ export class MapGridFactory extends UIComp {
      * @param gridPos 格子行列
      * @returns 
      */
-    private addGrid(gridType: string, gridPos: { x: number, y: number }) {
+    private addGrid(gridType: string, gridPos: { col: number, row: number }) {
         let self = this;
         let mapMgr = self.mapMgr;
-        let gridKey = gridPos.x + "_" + gridPos.y;
-        let graphicsPos = { x: Math.floor(gridPos.x / mapMgr.areaGraphicSize), y: Math.floor(gridPos.y / mapMgr.areaGraphicSize) };
+        let gridKey = gridPos.col + "_" + gridPos.row;
+        let graphicsPos = { x: Math.floor(gridPos.col / mapMgr.areaGraphicSize), y: Math.floor(gridPos.row / mapMgr.areaGraphicSize) };
         let gridDataMap = mapMgr.gridDataMap;
         let areaKey = graphicsPos.x + '_' + graphicsPos.y;
         let colorType = gridType;
@@ -142,7 +142,7 @@ export class MapGridFactory extends UIComp {
         let cellSize = mapMgr.cellSize;
         let graphicsKey = gridType + '_' + areaKey;
         let graphics = self.getGraphic(graphicsKey);
-        graphics.drawRect(color, gridPos.x * cellSize, gridPos.y * cellSize, cellSize, cellSize);
+        graphics.drawRect(color, gridPos.col * cellSize, gridPos.row * cellSize, cellSize, cellSize);
     }
 
     /**
@@ -150,10 +150,10 @@ export class MapGridFactory extends UIComp {
      * @param gridPos 格子行列
      * @returns 
      */
-    private removeGrid(gridType: string, gridPos: { x: number, y: number }) {
+    private removeGrid(gridType: string, gridPos: { col: number, row: number }) {
         let self = this;
         let mapMgr = self.mapMgr;
-        let gridKey = gridPos.x + "_" + gridPos.y;
+        let gridKey = gridPos.col + "_" + gridPos.row;
         if (gridType.indexOf(CONST.GridType.GridType_mapThing) > -1) {//场景物件格子有归属关系，这里特殊处理，方便物件删除时，把格子一起删除
             let mapThingInfo: G.MapThingInfo = mapMgr.curMapThingInfo;
             if (!mapThingInfo) return;
@@ -161,7 +161,7 @@ export class MapGridFactory extends UIComp {
             gridType = gridType + mapMgr.curMapThingTriggerType + "_" + mapThingKey;
         }
         let gridDataMap = mapMgr.gridDataMap;
-        let graphicsPos = { x: Math.floor(gridPos.x / mapMgr.areaGraphicSize), y: Math.floor(gridPos.y / mapMgr.areaGraphicSize) };
+        let graphicsPos = { x: Math.floor(gridPos.col / mapMgr.areaGraphicSize), y: Math.floor(gridPos.row / mapMgr.areaGraphicSize) };
         let areaKey = graphicsPos.x + '_' + graphicsPos.y;
 
         if (gridDataMap[gridType] && gridDataMap[gridType][areaKey] && gridDataMap[gridType][areaKey][gridKey]) {

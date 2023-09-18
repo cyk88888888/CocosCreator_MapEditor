@@ -1,4 +1,4 @@
-import { _decorator, Node, UITransform, Vec3 } from 'cc';
+import { _decorator, Graphics, Node, UITransform, Vec3 } from 'cc';
 import { UIComp } from '../../../framework/ui/UIComp';
 import { MapMgr } from '../../base/MapMgr';
 import PathFindingAgent from '../../road/PathFindingAgent';
@@ -12,19 +12,30 @@ export class Player extends UIComp {
     private collider: Node;
 
     private _uiTranstorm: UITransform;
-    private _colliderTrans: UITransform;
     /** 角色移动速度(1毫秒的移动速度)*/
     public speed: number;
+    /**角色当前转向（-1左，1右） */
     private _dir: number;
+    /**圆心x */
+    private _cx: number;
+    /**圆心y */
+    private _cy: number;
+    /**碰撞器圆心半径 */
+    private _cRadius: number;
     protected ctor(): void {
         let self = this;
-        self.speed = 4;
-    }
-
-    protected onEnter(): void {
-        let self = this;
+        self.speed = 2;
         self._uiTranstorm = self.node.getComponent(UITransform);
-        self._colliderTrans = self.collider.getComponent(UITransform);
+        self._cx = 0;
+        self._cy = 37;
+        self._cRadius = 37;
+        //绘制圆形碰撞器
+        let graphics = self.collider.getComponent(Graphics);
+        let fillColor = graphics.fillColor;
+        fillColor.fromHEX('00FFFF');
+        graphics.fillColor.set(fillColor.r, fillColor.g, fillColor.b, 0.6 * 255);
+        graphics.circle(self._cx, self._cy, self._cRadius);
+        graphics.fill();
     }
 
     public moveByJoyStick(radian: number) {
@@ -35,20 +46,38 @@ export class Player extends UIComp {
         let toX = playerPos.x + self.speed * cos;
         let toY = playerPos.y + self.speed * sin;
         let pathFindingAgent = PathFindingAgent.inst;
+        let mapMgr = MapMgr.inst;
+        let cellSize = mapMgr.cellSize;
         let dir = cos > 0 ? 1 : -1;
-        let checkX = toX + dir * (self.colliderWidth / 2);
-        if (pathFindingAgent.isCanMoveTo(checkX, playerPos.y)) {
-            self.node.setPosition(toX, playerPos.y);
+        let isCanMoveX = true;
+        let startX = toX - self._cRadius + self._cx;
+        let endX = toX + self._cRadius + self._cx;
+        let startY = playerPos.y ;
+        let endY = playerPos.y  + self._cRadius * 2;
+        let col = dir == 1 ? mapMgr.pos2Grid(endX, playerPos.y).col : mapMgr.pos2Grid(startX, playerPos.y).col;
+        let startRow = Math.floor(startY / cellSize);
+        let endRow = Math.ceil(endY / cellSize);
+        for (let i = startRow, len = endRow; i < len; i++) {
+            if (!pathFindingAgent.isCanMoveTo(col * 20, i * 20)) {
+                isCanMoveX = false;
+                break;
+            }
         }
-        let checkY = sin > 0 ? toY + self.colliderHeight : toY;
-        if (pathFindingAgent.isCanMoveTo(playerPos.x, checkY)) {
-            self.node.setPosition(playerPos.x, toY);
-        } else {
-            console.log(self.node.position);
+        if (isCanMoveX) self.node.setPosition(toX, playerPos.y);
+
+        let isCanMoveY = true;
+        let row = sin > 0 ? mapMgr.pos2Grid(playerPos.x, endY).row : mapMgr.pos2Grid(playerPos.x, startY).row;
+        let startCol = Math.floor(startX / cellSize);
+        let endCol = Math.ceil(endX / cellSize); 
+        for (let j = startCol, len = endCol; j < len; j++) {
+            if (!pathFindingAgent.isCanMoveTo(j * 20, row * 20)) {
+                isCanMoveY = false;
+                break;
+            }
         }
+        if(isCanMoveY) self.node.setPosition(playerPos.x, toY);
         // console.log('cos: ' + cos, 'sin: ' + sin);
         self.setDir(dir);
-        self.checkLimitPos();
     }
 
     public setDir(dir: number) {
@@ -57,40 +86,6 @@ export class Player extends UIComp {
         self._dir = dir;
         let scale = self.sp_player.scale;
         self.sp_player.setScale(dir, scale.y);
-    }
-
-    /**检测移动边界 */
-    private checkLimitPos() {
-        let self = this;
-        let pos = self.node.position;
-        let halfWid = self.colliderWidth / 2;
-        if (pos.x < halfWid) {
-            self.node.setPosition(halfWid, pos.y);
-        }
-        let mapMgr = MapMgr.inst;
-        let mapWidth = mapMgr.mapWidth;
-        if (pos.x > mapWidth - halfWid) {
-            self.node.setPosition(mapWidth - halfWid, pos.y);
-        }
-
-        if (pos.y < 0) {
-            self.node.setPosition(pos.x, 0);
-        }
-        let height = self.colliderHeight;
-        let mapHeight = mapMgr.mapHeight;
-        if (pos.y > mapHeight - height) {
-            self.node.setPosition(pos.x, mapHeight - height);
-        }
-    }
-
-    /**碰撞器宽度 */
-    private get colliderWidth(): number {
-        return this._colliderTrans.width;
-    }
-
-    /**碰撞器高度 */
-    private get colliderHeight(): number {
-        return this._colliderTrans.height;
     }
 
     /**角色宽度 */
