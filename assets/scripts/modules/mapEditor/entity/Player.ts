@@ -28,8 +28,8 @@ export class Player extends UIComp {
         self.speed = 2;
         self._uiTranstorm = self.node.getComponent(UITransform);
         self._cx = 0;
-        self._cy = 37;
-        self._cRadius = 37;
+        self._cy = 25;
+        self._cRadius = 25;
         //绘制圆形碰撞器
         let graphics = self.collider.getComponent(Graphics);
         let fillColor = graphics.fillColor;
