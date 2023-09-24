@@ -948,7 +948,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "graphicsGrid",
+    "_name": "graphicsLine",
     "_objFlags": 0,
     "__editorExtras__": {},
     "_parent": {
@@ -1434,7 +1434,7 @@
     "grp_colorGrid": {
       "__id__": 18
     },
-    "graphicsGrid": {
+    "graphicsLine": {
       "__id__": 43
     },
     "mapGridFactory": {

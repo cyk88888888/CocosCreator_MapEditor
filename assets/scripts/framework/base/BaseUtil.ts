@@ -153,8 +153,8 @@ export namespace BaseUT {
      * @param rect 矩形x，矩形y，矩形宽，矩形高
      */
     export function RectCircleColliding(circle: { cx: number, cy: number, r: number }, rect: { x: number, y: number, w: number, h: number }) {
-        let DeltaX = circle.cx - Math.max(rect.x, Math.min(circle.cx, rect.x + rect.w));
-        let DeltaY = circle.cy - Math.max(rect.y, Math.min(circle.cy, rect.y + rect.h));
-        return (DeltaX * DeltaX + DeltaY * DeltaY) < (circle.r * circle.r);
+        let deltaX = circle.cx - Math.max(rect.x, Math.min(circle.cx, rect.x + rect.w));
+        let deltaY = circle.cy - Math.max(rect.y, Math.min(circle.cy, rect.y + rect.h));
+        return (deltaX * deltaX + deltaY * deltaY) < (circle.r * circle.r);
     }
 }

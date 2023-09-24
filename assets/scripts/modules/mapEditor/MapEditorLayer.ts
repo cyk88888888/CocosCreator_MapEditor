@@ -316,7 +316,7 @@ export class MapEditorLayer extends UILayer {
     private _tap_btn_showGrid() {
         let self = this;
         self.lbl_grid.string = self.lbl_grid.string == "显示网格" ? "隐藏网格" : "显示网格";
-        self.mapScrollComp.graphicsGrid.node.active = !self.mapScrollComp.graphicsGrid.node.active;
+        self.mapScrollComp.graphicsLine.node.active = !self.mapScrollComp.graphicsLine.node.active;
     }
 
     /**显隐路点 */

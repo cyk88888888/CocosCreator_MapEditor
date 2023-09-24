@@ -64,10 +64,10 @@ export class Player extends UIComp {
             if (!BaseUT.RectCircleColliding(circleData, rectData)) continue;
             if (!pathFindingAgent.isCanMoveTo(col, i, true)) {
                 isCanMoveX = false;
+                console.warn(`第${i}列不可行走`);
                 break;
             }
         }
-        if (isCanMoveX) self.node.setPosition(toX, playerPos.y);
 
         let isCanMoveY = true;
         let row = sin > 0 ? mapMgr.pos2Grid(playerPos.x, endY).row : mapMgr.pos2Grid(playerPos.x, startY).row;
@@ -78,10 +78,18 @@ export class Player extends UIComp {
             if (!BaseUT.RectCircleColliding(circleData, rectData)) continue;
             if (!pathFindingAgent.isCanMoveTo(j, row, true)) {
                 isCanMoveY = false;
+                console.warn(`第${j}行不可行走`);
                 break;
             }
         }
+        if (isCanMoveX) self.node.setPosition(toX, playerPos.y);
+        // else{
+        //     console.log('toX: '+toX,"playerPos.x: " + playerPos.x);
+        // }
         if (isCanMoveY) self.node.setPosition(playerPos.x, toY);
+        // else{
+        //     console.log('toY: '+toY,"playerPos.y: " + playerPos.y);
+        // }
         // console.log('cos: ' + cos, 'sin: ' + sin);
         self.setDir(dir);
     }

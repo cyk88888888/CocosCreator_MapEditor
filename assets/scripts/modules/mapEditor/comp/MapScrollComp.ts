@@ -26,8 +26,8 @@ export class MapScrollComp extends UIComp {
     public grp_mapSlices: Node;
     @property({ type: Node, tooltip: "地图格子路点容器" })
     public grp_colorGrid: Node;
-    @property({ type: Graphics, tooltip: "地图网格" })
-    public graphicsGrid: Graphics;
+    @property({ type: Graphics, tooltip: "地图网格线条" })
+    public graphicsLine: Graphics;
     @property({ type: MapGridFactory, tooltip: "地图格子绘制工厂" })
     public mapGridFactory: MapGridFactory;
     @property({ type: MapThingFactory, tooltip: "地图物件生成工厂" })
@@ -135,7 +135,7 @@ export class MapScrollComp extends UIComp {
         let totGrid = numRows * numCols;//总格子数
         self.mapMgr.areaGraphicSize = totGrid < 65536 ? 16 : totGrid < 300000 ? 32 : 64
 
-        let lineGraphics = self.graphicsGrid;
+        let lineGraphics = self.graphicsLine;
         lineGraphics.clear();
         lineGraphics.lineWidth = 1;
         for (let i = 0; i < numCols + 1; i++)//画竖线
