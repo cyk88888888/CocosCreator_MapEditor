@@ -362,7 +362,7 @@ export class MapEditorLayer extends UILayer {
         JoyStickDlg.show();
         console.log(`地图数据`);
         console.log(mapData);
-        self.mapScrollComp.setMapScale(2.5);
+        self.mapScrollComp.setMapScale(1);
         self.updateMapScale();
         PathFindingAgent.inst.init(mapData);
         RunDemoCtrl.inst.init(self.mapScrollComp.grp_scrollMap, self.mapScrollComp.grp_entity, BaseUT.getSize(self.mapScrollComp.grp_mapLayer));
