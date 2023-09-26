@@ -56,8 +56,8 @@ export class Player extends UIComp {
         let startY = playerPos.y;
         let endY = playerPos.y + self._cRadius * 2;
         let col = dir == 1 ? mapMgr.pos2Grid(endX, playerPos.y).col : mapMgr.pos2Grid(startX, playerPos.y).col;
-        let startRow = Math.floor(startY / cellSize);
-        let endRow = Math.ceil(endY / cellSize);
+        let startRow = Math.round(startY / cellSize);
+        let endRow = Math.round(endY / cellSize);
         let circleData = { cx: toX + self._cx, cy: playerPos.y + self._cy, r: self._cRadius };
         for (let i = startRow, len = endRow; i < len; i++) {
             let rectData = { x: col * cellSize, y: i * cellSize, w: cellSize, h: cellSize };
@@ -71,8 +71,8 @@ export class Player extends UIComp {
 
         let isCanMoveY = true;
         let row = sin > 0 ? mapMgr.pos2Grid(playerPos.x, endY).row : mapMgr.pos2Grid(playerPos.x, startY).row;
-        let startCol = Math.floor(startX / cellSize);
-        let endCol = Math.ceil(endX / cellSize);
+        let startCol = Math.round(startX / cellSize);
+        let endCol = Math.round(endX / cellSize);
         for (let j = startCol, len = endCol; j < len; j++) {
             let rectData = { x: j * cellSize, y: row * cellSize, w: cellSize, h: cellSize };
             if (!BaseUT.RectCircleColliding(circleData, rectData)) continue;
@@ -83,13 +83,7 @@ export class Player extends UIComp {
             }
         }
         if (isCanMoveX) self.node.setPosition(toX, playerPos.y);
-        // else{
-        //     console.log('toX: '+toX,"playerPos.x: " + playerPos.x);
-        // }
         if (isCanMoveY) self.node.setPosition(playerPos.x, toY);
-        // else{
-        //     console.log('toY: '+toY,"playerPos.y: " + playerPos.y);
-        // }
         // console.log('cos: ' + cos, 'sin: ' + sin);
         self.setDir(dir);
     }
