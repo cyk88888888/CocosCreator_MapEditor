@@ -1,5 +1,5 @@
 {
-  "__version__": "1.0.5",
+  "__version__": "1.0.6",
   "general": {
     "designResolution": {
       "width": 1400,
@@ -18,5 +18,8 @@
       }
     ],
     "increaseId": 1
+  },
+  "script": {
+    "preserveSymlinks": true
   }
 }

@@ -25,7 +25,7 @@ export class Player extends UIComp {
     private _cRadius: number;
     protected ctor(): void {
         let self = this;
-        self.speed = 2;
+        self.speed = 4;
         self._uiTranstorm = self.node.getComponent(UITransform);
         self._cx = 0;
         self._cy = 25;
