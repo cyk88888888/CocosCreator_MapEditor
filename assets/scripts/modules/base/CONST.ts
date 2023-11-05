@@ -19,6 +19,8 @@ export namespace CONST {
         ClickSelecBoxItem = "ClickSelecBoxItem",
         ClickStage = "ClickStage",
         ComboBox_Change = "ComboBox_Change",
+        UpdateMousePos= "UpdateMousePos",
+        UpdateAstarGrid= "UpdateAstarGrid",
     }
 
     /** 格子类型*/

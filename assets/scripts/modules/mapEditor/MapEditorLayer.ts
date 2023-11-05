@@ -16,6 +16,7 @@ import PathFindingAgent from '../road/PathFindingAgent';
 import { JoyStickDlg } from './dlg/JoyStickDlg';
 import { SceneMgr } from '../../framework/mgr/SceneMgr';
 import { RunDemoCtrl } from './control/RunDemoCtrl';
+import { TestAstarDlg } from './dlg/TestAstarDlg';
 const { ccclass, property } = _decorator;
 
 /*
@@ -38,6 +39,8 @@ export class MapEditorLayer extends UILayer {
     @property({ type: Button })
     private btn_runDemo: Button;
     @property({ type: Button })
+    private btn_testAstar: Button;
+    @property({ type: Button })
     private btn_showGrid: Button;
     @property({ type: Button })
     private btn_showPath: Button;
@@ -59,6 +62,8 @@ export class MapEditorLayer extends UILayer {
     private lbl_mapSize: Label;
     @property({ type: Label })
     private lbl_mapScale: Label;
+    @property({ type: Label })
+    private lbl_mousePos: Label;
     @property({ type: Label })
     private lbl_runDemo: Label;
     @property({ type: MapScrollComp, tooltip: "编辑器地图滚动组件" })
@@ -97,6 +102,7 @@ export class MapEditorLayer extends UILayer {
         self.onEmitter(CONST.GEVT.ImportMapJson, self.onImportMapJson);//导入josn地图数据成功
         self.onEmitter(CONST.GEVT.UpdateMapScale, self.updateMapScale);//地图缩放变更
         self.onEmitter(CONST.GEVT.DragMapThingStart, self.onDragMapThingStart);
+        self.onEmitter(CONST.GEVT.UpdateMousePos, self.updateMousePos);
         self.lbl_version.string = `version: ${self.mapMgr.version}`;
         self._selectIdx = 1;
         self.list_pathSize.selectedId = 0;
@@ -149,6 +155,14 @@ export class MapEditorLayer extends UILayer {
         let scale = self.mapScrollComp.mapScale;
         self.lbl_mapScale.string = `地图缩放比例：${scale.toFixed(2)}`;
         if (self._mapThingComp) self._mapThingComp.setScale(new Vec3(scale, scale, scale));
+    }
+
+    /** 刷新显示鼠标所在行列*/
+    private updateMousePos(dt: any){
+        let self = this;
+        let localUIPos = dt.localUIPos;
+        let grid = self.mapMgr.pos2Grid(localUIPos.x, localUIPos.y);
+        self.lbl_mousePos.string = `鼠标所在行列: ${grid.row}, ${grid.col}\nx: ${grid.col * self.mapMgr.cellSize}, y: ${grid.row * self.mapMgr.cellSize}`;
     }
 
     private initEvent() {
@@ -366,6 +380,17 @@ export class MapEditorLayer extends UILayer {
         self.updateMapScale();
         PathFindingAgent.inst.init(mapData);
         RunDemoCtrl.inst.init(self.mapScrollComp.grp_scrollMap, self.mapScrollComp.grp_entity, BaseUT.getSize(self.mapScrollComp.grp_mapLayer));
+    }
+
+    private _tap_btn_testAstar(){
+        let self = this;
+        let mapData = self.mapMgr.getMapData();
+        if (!mapData) {
+            MessageTip.show({ msg: "地图数据为空" });
+            return;
+        }
+        PathFindingAgent.inst.init(mapData);
+        TestAstarDlg.show();
     }
 }
 

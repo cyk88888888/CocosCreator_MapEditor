@@ -119,9 +119,6 @@ export default class PathFindingAgent {
 
     /**
      * 寻路方法，如果目标不可到达，不会返回任何路径。  备注：2d寻路，参数的单位是像素，3d寻路单位是米，2d和3d寻路是通用的
-     * 
-     * 如果有疑问可以联系@作者 QQ 583051842
-     * 
      * @param startX 起始像素位置X
      * @param startY 起始像素位置Y
      * @param targetX 目标像素位置X
@@ -139,9 +136,6 @@ export default class PathFindingAgent {
 
     /**
      * 寻路方法，如果目标点不可达到，则返回离目标点最近的路径。  备注：2d寻路，参数的单位是像素，3d寻路单位是米，2d和3d寻路是通用的
-     * 
-     * 如果有疑问可以联系@作者 QQ 583051842
-     * 
      * @param startX 起始像素位置X
      * @param startY 起始像素位置Y
      * @param targetX 目标像素位置X

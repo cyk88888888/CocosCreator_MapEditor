@@ -59,5 +59,10 @@ export class UILayer extends UIComp {
             self.destory();
         });
     }
+
+    protected _tap_btn_close(){
+        let self = this;
+        self.close();
+    }
 }
 

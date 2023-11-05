@@ -90,6 +90,7 @@ export default class RoadNode {
         this._dy = value;
     }
 
+    /** 路点是否可行走，0不可行走，1可行走*/
     public get value(): number {
         return this._value;
     }

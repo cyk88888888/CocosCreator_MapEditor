@@ -266,7 +266,7 @@ export default class MapRoadUtils {
 
 /**
  *地图路点处理接口 
- * @author Administrator
+ * @author cyk
  * 
  */
 interface IMapRoad {
@@ -350,7 +350,7 @@ interface IMapRoad {
 
 /**
  *45度等视角地图路点处理接口实现 
- * @author Administrator
+ * @author cyk
  * 
  */
 class MapRoad45Angle implements IMapRoad {
@@ -529,7 +529,7 @@ class MapRoad45Angle implements IMapRoad {
 
 /**
  *90度平面地图路点处理接口实现 
- * @author Administrator
+ * @author cyk
  * 
  */
 class MapRoad90Angle implements IMapRoad {
@@ -703,7 +703,7 @@ class MapRoad90Angle implements IMapRoad {
 
 /**
  *蜂巢式（即正六边形）地图路点处理接口实现 
- * @author Administrator
+ * @author cyk
  * 
  */
 class MapRoadHoneycomb implements IMapRoad {
@@ -987,7 +987,7 @@ class MapRoadHoneycomb implements IMapRoad {
 
 /**
  *蜂巢式（即正六边形）地图路点处理接口实现 横
- * @author Administrator
+ * @author cyk
  * 
  */
 class MapRoadHoneycomb2 implements IMapRoad {

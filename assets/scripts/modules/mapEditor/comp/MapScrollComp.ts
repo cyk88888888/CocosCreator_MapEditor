@@ -7,6 +7,7 @@ import { BaseUT } from '../../../framework/base/BaseUtil';
 import { MapGridFactory } from '../factory/MapGridFactory';
 import { MessageTip } from '../../common/message/MessageTip';
 import { MapThingFactory } from '../factory/MapThingFactory';
+import RoadNode from '../../road/RoadNode';
 const { ccclass, property } = _decorator;
 
 /*
@@ -28,6 +29,8 @@ export class MapScrollComp extends UIComp {
     public grp_colorGrid: Node;
     @property({ type: Graphics, tooltip: "地图网格线条" })
     public graphicsLine: Graphics;
+    @property({ type: Graphics, tooltip: "绘制A*x寻路路线线条" })
+    public graphicsDarwAstarLine: Graphics;
     @property({ type: MapGridFactory, tooltip: "地图格子绘制工厂" })
     public mapGridFactory: MapGridFactory;
     @property({ type: MapThingFactory, tooltip: "地图物件生成工厂" })
@@ -57,6 +60,7 @@ export class MapScrollComp extends UIComp {
         self._scrollMapUITranstorm = self.grp_scrollMap.getComponent(UITransform);
         self.onEmitter(CONST.GEVT.ChangeGridType, self.onChangeGridType);
         self.onEmitter(CONST.GEVT.ChangeGridSize, self.onChangeGridRange);
+        self.onEmitter(CONST.GEVT.UpdateAstarGrid, self.updateAstarGrid); 
     }
 
     public async onImportMapJson(data: any) {
@@ -129,8 +133,8 @@ export class MapScrollComp extends UIComp {
     private initGridLine() {
         let self = this;
         let cellSize = self.mapMgr.cellSize;
-        let numCols = self.mapMgr.totCol = Math.floor(self.mapMgr.mapWidth / cellSize);
-        let numRows = self.mapMgr.totRow = Math.floor(self.mapMgr.mapHeight / cellSize);
+        let numCols = self.mapMgr.totCol = Math.ceil(self.mapMgr.mapWidth / cellSize);
+        let numRows = self.mapMgr.totRow = Math.ceil(self.mapMgr.mapHeight / cellSize);
 
         let totGrid = numRows * numCols;//总格子数
         self.mapMgr.areaGraphicSize = totGrid < 65536 ? 16 : totGrid < 300000 ? 32 : 64
@@ -152,13 +156,28 @@ export class MapScrollComp extends UIComp {
         lineGraphics.stroke();
     }
 
+    private updateAstarGrid(dt: any){
+        let self = this;
+        let cellSize = self.mapMgr.cellSize;
+        let roadNodeArr:RoadNode[] = dt.roadNodeArr;
+        let graphic = self.graphicsDarwAstarLine;
+        self.graphicsDarwAstarLine.clear();
+        for(let i = 0, len = roadNodeArr.length; i < len; i++){
+            let node = roadNodeArr[i];
+            // let fillColor = graphic.fillColor;
+            // fillColor.fromHEX(color);
+            // graphic.fillColor.set(fillColor.r, fillColor.g, fillColor.b);
+            graphic.rect(node.px - (cellSize / 2), node.py - (cellSize / 2), cellSize, cellSize);
+            graphic.fill();
+        }
+    }
+
     /**初始化事件 */
     private initEvent() {
         let self = this;
         self._editAreaSize = BaseUT.getSize(self.grp_mapLayer);
         // this.node.on(Node.EventType.MOUSE_MOVE, this.onShowRoadMsg, self),
         self.grp_mapLayer.on(Node.EventType.MOUSE_DOWN, self.onMouseDown, self);
-        self.grp_mapLayer.on(Node.EventType.MOUSE_UP, self.onMouseUp, self);
         self.grp_mapLayer.on(Node.EventType.MOUSE_ENTER, self.onMouseEnter, self, true);//移入必须注册在捕获阶段，不然移到场景物件时会触发MOUSE_LEAVE
         self.grp_mapLayer.on(Node.EventType.MOUSE_LEAVE, self.onMouseLeave, self);
         self.grp_mapLayer.on(Node.EventType.MOUSE_WHEEL, self.onMouseWheel, self);
@@ -171,11 +190,18 @@ export class MapScrollComp extends UIComp {
 
     private onMouseDown(e: EventMouse) {
         let self = this;
+        let buttonId = e.getButton();
+        if(buttonId == EventMouse.BUTTON_MIDDLE){//按下鼠标中建时，显示当前鼠标所在的行列
+            let mousePos = BaseUT.getMousePos(e.getLocation());//这里不直接取evt.getLocation()，再封装一层是因为舞台缩放，会影响evt.getLocation()的坐标） 
+            let localUIPos = self._scrollMapUITranstorm.convertToNodeSpaceAR(new Vec3(mousePos.x, mousePos.y, 0));
+            self.emit(CONST.GEVT.UpdateMousePos, {localUIPos: localUIPos});
+            return;
+        } 
         self._preUIPos = e.getUILocation();
         self.grp_mapLayer.on(Node.EventType.MOUSE_MOVE, self.onMouseMove, self);
+        self.grp_mapLayer.on(Node.EventType.MOUSE_UP, self.onMouseUp, self);
         if (!self._pressSpace) {
             if (self.mapMgr.gridType != CONST.GridType.GridType_none) {
-                let buttonId = e.getButton();
                 if (buttonId == EventMouse.BUTTON_LEFT) {
                     self._pressMouseLeft = true;
                 } else if (buttonId == EventMouse.BUTTON_RIGHT) {
@@ -225,6 +251,7 @@ export class MapScrollComp extends UIComp {
     private onMouseUp(e: EventMouse) {
         let self = this;
         this.grp_mapLayer.off(Node.EventType.MOUSE_MOVE, this.onMouseMove, this);
+        self.grp_mapLayer.off(Node.EventType.MOUSE_UP, self.onMouseUp, self);
         let buttonId = e.getButton();
         if (buttonId == EventMouse.BUTTON_LEFT) {
             self._pressMouseLeft = false;

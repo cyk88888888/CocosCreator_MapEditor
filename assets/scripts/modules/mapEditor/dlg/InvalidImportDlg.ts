@@ -33,10 +33,6 @@ export class InvalidImportDlg extends UIDlg {
         }
     }
 
-    private _tap_btn_close() {
-        let self = this;
-        self.close();
-    }
 }
 
 

@@ -9,6 +9,7 @@ export namespace G {
         totRow: number;
         totCol: number;
         cellSize: number;
+        /** 路径是否可行走的二维数组，0不可行走，1可行走*/
         walkList: number[][];
         blockList: number[];
         blockVertList: number[];
