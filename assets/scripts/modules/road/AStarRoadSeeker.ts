@@ -1,14 +1,13 @@
 import RoadNode from "./RoadNode";
 import IRoadSeeker from "./IRoadSeeker";
 import BinaryTreeNode from "./BinaryTreeNode";
-import PathLog from "./PathLog";
 import { PathOptimize } from "./PathOptimize";
 import { PathQuadSeek } from "./PathQuadSeek";
 
 /*
- * @Descripttion: A*寻路算法
+ * @Descripttion: A*寻路算法（90°四边形）
  * @Author: CYK
- * @Date: 2023-05-30 23:00:00
+ * @Date: 2023-06-30 22:00:00
  */
 export default class AStarRoadSeeker implements IRoadSeeker {
 
@@ -25,7 +24,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
     /**
      *最大搜寻步骤数，超过这个值时表示找不到目标 
      */
-    private maxStep: number = 1000;
+    private maxStep: number = 1000000;
 
     /**
      * 开启列表
@@ -87,7 +86,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
     /**
      * 优化类型，默认使用最短路径的优化
      */
-    private _pathOptimize: PathOptimize = PathOptimize.best;
+    private _pathOptimize: PathOptimize = PathOptimize.none;
 
     /**
      * 默认使用8方向寻路
@@ -98,7 +97,8 @@ export default class AStarRoadSeeker implements IRoadSeeker {
      * 定义一个路点是否能通过，如果是null，则用默认判断条件
      */
     private _isPassCallBack: Function = null;
-
+    /** 计算本次寻路的开始时间*/
+    private _startCalculateTime: number;
 
     public constructor(roadNodes: { [key: string]: RoadNode }) {
         this._roadNodes = roadNodes;
@@ -152,7 +152,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         this._startNode = startNode;
         this._currentNode = startNode;
         this._targetNode = targetNode;
-
+        this._startCalculateTime = this.getTime();
         if (!this._startNode || !this._targetNode)
             return [];
 
@@ -161,7 +161,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         }
 
         if (!this.isPassNode(this._targetNode)) {
-            console.warn("目标不可达到：");
+            console.warn("目标不可达到："+JSON.stringify(this._targetNode));
             return [];
         }
 
@@ -174,10 +174,11 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         let step: number = 0;
 
         while (true) {
-            // if (step > this.maxStep) {
-            //     console.warn("没找到目标计算步骤为：", step);
-            //     return [];
-            // }
+            if (step > this.maxStep) {
+                let totTime = this.getTime() - this._startCalculateTime;
+                console.warn(`超过最大寻路步数{${this.maxStep}}, 没找到目标计算步骤为：${step}, 总耗时: ${totTime}ms` );
+                return [];
+            }
 
             step++;
 
@@ -185,14 +186,16 @@ export default class AStarRoadSeeker implements IRoadSeeker {
 
             if (this._binaryTreeNode.isTreeNull()) //二叉堆树里已经没有任何可搜寻的点了，则寻路结束，每找到目标
             {
-                console.warn("没找到目标计算步骤为：", step);
+                let totTime = this.getTime() - this._startCalculateTime;
+                console.log(`没找到目标计算步骤为：: ${step}，总耗时: ${totTime}ms`, );
                 return [];
             }
 
             this._currentNode = this._binaryTreeNode.getMin_F_Node();
 
             if (this._currentNode == this._targetNode) {
-                console.log("找到目标计算步骤为：", step);
+                let totTime = this.getTime() - this._startCalculateTime;
+                console.log(`找到目标计算步骤为: ${step}，总耗时: ${totTime}ms`, );
                 return this.getPath();
             } else {
                 this._binaryTreeNode.setRoadNodeInCloseList(this._currentNode);//打入关闭列表标记
@@ -696,6 +699,11 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         }
 
         return true;
+    }
+
+      /** 获取当前时间(毫秒)*/
+      private getTime() {
+        return new Date().getTime();
     }
 
     /**

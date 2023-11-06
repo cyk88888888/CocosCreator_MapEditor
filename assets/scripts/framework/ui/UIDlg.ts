@@ -3,7 +3,7 @@
  * @Author: CYK
  * @Date: 2022-05-12 09:23:41
  */
-import { _decorator, Node, Color, Graphics, Vec3 } from 'cc';
+import { _decorator, Node, Color, Graphics, Vec3, BlockInputEvents } from 'cc';
 import { BaseUT } from '../base/BaseUtil';
 import { SceneMgr } from '../mgr/SceneMgr';
 import { UILayer } from './UILayer';
@@ -16,15 +16,17 @@ export class UIDlg extends UILayer {
     private _clickBgMask: boolean;
     /**灰色遮罩是否启用 */
     private _maskEnabled: boolean
+    /** 是否可穿透*/
+    private _penetrable: boolean;
     private _bgMaskNode: Node;
     protected addToLayer() {
         let self = this;
         let bgMaskNode = self._bgMaskNode = BaseUT.newUINode(self.dlgMaskName);
         let stageSize = BaseUT.getStageSize();
-        self.outSideClosed = true;
         self.maskEnabled = true;
         BaseUT.setSize(bgMaskNode, stageSize.width, stageSize.height);
         bgMaskNode.setParent(SceneMgr.inst.curScene.dlg);
+
         BaseUT.setPivot(self.node, 0.5, 0.5);
         self.node.setParent(SceneMgr.inst.curScene.dlg);
 
@@ -33,12 +35,15 @@ export class UIDlg extends UILayer {
 
     private resetParent() {
         let self = this;
-        if (self._bgMaskNode) self.node.insertChild(self._bgMaskNode, 0);
+        if (self._bgMaskNode) {
+            if(!self._penetrable) self._bgMaskNode.addComponent(BlockInputEvents);
+            self.node.insertChild(self._bgMaskNode, 0);
+        }
     }
 
     protected onOpenAnimation() {
         let self = this;
-        self.getTween(this.node)
+        self.getTween(self.node)
             .to(0.1, { scale: new Vec3(1.1, 1.1, 1) })
             .to(0.1, { scale: new Vec3(1, 1, 1) }) // 缩放缓动
             .call(() => {
@@ -86,6 +91,13 @@ export class UIDlg extends UILayer {
         if (self._bgMaskNode) {
             self._bgMaskNode.off(Node.EventType.TOUCH_END, self.close, self);
         }
+    }
+
+    /** 是否可穿透*/
+    protected set penetrable(value: boolean){
+        let self = this;
+        if(self._penetrable == value) return;
+        self._penetrable = value;
     }
 }
 

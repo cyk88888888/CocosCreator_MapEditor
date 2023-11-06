@@ -60,7 +60,7 @@ export class MapScrollComp extends UIComp {
         self._scrollMapUITranstorm = self.grp_scrollMap.getComponent(UITransform);
         self.onEmitter(CONST.GEVT.ChangeGridType, self.onChangeGridType);
         self.onEmitter(CONST.GEVT.ChangeGridSize, self.onChangeGridRange);
-        self.onEmitter(CONST.GEVT.UpdateAstarGrid, self.updateAstarGrid); 
+        self.onEmitter(CONST.GEVT.UpdateAstarGrid, self.drawAstarGrid); 
     }
 
     public async onImportMapJson(data: any) {
@@ -156,7 +156,7 @@ export class MapScrollComp extends UIComp {
         lineGraphics.stroke();
     }
 
-    private updateAstarGrid(dt: any){
+    private drawAstarGrid(dt: any){
         let self = this;
         let cellSize = self.mapMgr.cellSize;
         let roadNodeArr:RoadNode[] = dt.roadNodeArr;
@@ -164,9 +164,6 @@ export class MapScrollComp extends UIComp {
         self.graphicsDarwAstarLine.clear();
         for(let i = 0, len = roadNodeArr.length; i < len; i++){
             let node = roadNodeArr[i];
-            // let fillColor = graphic.fillColor;
-            // fillColor.fromHEX(color);
-            // graphic.fillColor.set(fillColor.r, fillColor.g, fillColor.b);
             graphic.rect(node.px - (cellSize / 2), node.py - (cellSize / 2), cellSize, cellSize);
             graphic.fill();
         }

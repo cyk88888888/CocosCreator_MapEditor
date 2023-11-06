@@ -13,11 +13,6 @@ export class HelpDlg extends UIDlg {
         let self = this;
         self.outSideClosed = true;
     }
-
-    private _tap_btn_close() {
-        let self = this;
-        self.close();
-    }
 }
 
 
