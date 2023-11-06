@@ -1247,7 +1247,7 @@ System.register("chunks:///_virtual/AStarRoadSeeker.ts", ["cc", "./BinaryTreeNod
                     this._binaryTreeNode.refleshTag();
                     for (var r = 0; ; ) {
                         if (r > this.maxStep)
-                            return i.log("没找到目标计算步骤为：", r),
+                            return i.warn("没找到目标计算步骤为：", r),
                             [];
                         if (r++,
                         this.searchRoundNodes(this._currentNode),
