@@ -195,7 +195,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             if (this._binaryTreeNode.isTreeNull()) //二叉堆树里已经没有任何可搜寻的点了，则寻路结束，每找到目标
             {
                 let totTime = this.getTime() - this._startCalculateTime;
-                console.log(`没找到目标计算步骤为：: ${step}，总耗时: ${totTime}ms`, );
+                console.warn(`没找到目标计算步骤为：: ${step}，总耗时: ${totTime}ms`, );
                 return [];
             }
 

@@ -61,7 +61,19 @@ export class TestAstarDlg extends UIDlg {
             MessageTip.show({ msg: "未找到最佳路线" });
             return;
         }
-        console.log(roadNodeArr);
+
+        //测试同时多人寻路
+        // let roadNodeArr = [];
+        // let roadNodeArr1 = PathFindingAgent.inst.seekPath(1960, 5280, 500, 1620, radius);
+        // if(roadNodeArr1) roadNodeArr = roadNodeArr.concat(roadNodeArr1);
+        // console.log(roadNodeArr1);
+        // let roadNodeArr2 = PathFindingAgent.inst.seekPath(1960, 5280, 3500, 1240, radius);
+        // if(roadNodeArr2) roadNodeArr = roadNodeArr.concat(roadNodeArr2);
+        // console.log(roadNodeArr2);
+        // let roadNodeArr3 = PathFindingAgent.inst.seekPath(1960, 5280, 3280, 5080, radius);
+        // if(roadNodeArr3) roadNodeArr = roadNodeArr.concat(roadNodeArr3);
+        // console.log(roadNodeArr3);
+
         self.emit(CONST.GEVT.UpdateAstarGrid, { roadNodeArr: roadNodeArr });
     }
 
