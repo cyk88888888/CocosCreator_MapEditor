@@ -1,7 +1,6 @@
 import RoadNode from "./RoadNode";
 import IRoadSeeker from "./IRoadSeeker";
 import BinaryTreeNode from "./BinaryTreeNode";
-import PathLog from "./PathLog";
 import { PathOptimize } from "./PathOptimize";
 import { PathQuadSeek } from "./PathQuadSeek";
 
@@ -149,7 +148,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 		}
 
 		if (!this.isCanPass(this._targetNode)) {
-			PathLog.log("目标不可达到：");
+			console.warn("目标不可达到：");
 			return [];
 		}
 
@@ -163,7 +162,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
 		while (true) {
 			if (step > this.maxStep) {
-				PathLog.log("没找到目标计算步骤为：", step);
+				console.warn("没找到目标计算步骤为：", step);
 				return [];
 			}
 
@@ -173,14 +172,14 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
 			if (this._binaryTreeNode.isTreeNull()) //二叉堆树里已经没有任何可搜寻的点了，则寻路结束，每找到目标
 			{
-				PathLog.log("没找到目标计算步骤为：", step);
+				console.warn("没找到目标计算步骤为：", step);
 				return [];
 			}
 
 			this._currentNode = this._binaryTreeNode.getMin_F_Node();
 
 			if (this._currentNode == this._targetNode) {
-				PathLog.log("找到目标计算步骤为：", step);
+				console.log("找到目标计算步骤为：", step);
 				return this.getPath();
 			} else {
 				this._binaryTreeNode.setRoadNodeInCloseList(this._currentNode);//打入关闭列表标记
@@ -232,7 +231,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
 		while (true) {
 			if (step > newMaxStep) {
-				PathLog.log("没找到目标计算步骤为：", step);
+				console.warn("没找到目标计算步骤为：", step);
 				return this.seekPath(startNode, closestNode);
 			}
 
@@ -242,7 +241,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
 			if (this._binaryTreeNode.isTreeNull()) //二叉堆树里已经没有任何可搜寻的点了，则寻路结束，没找到目标
 			{
-				PathLog.log("没找到目标计算步骤为：", step);
+				console.warn("没找到目标计算步骤为：", step);
 				return this.seekPath(startNode, closestNode);
 			}
 
@@ -257,7 +256,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 			}
 
 			if (this._currentNode == this._targetNode) {
-				PathLog.log("找到目标计算步骤为：", step);
+				console.log("找到目标计算步骤为：", step);
 				return this.getPath();
 			} else {
 				this._binaryTreeNode.setRoadNodeInCloseList(this._currentNode);//打入关闭列表标记
@@ -699,7 +698,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 		this.handle = setInterval(() => {
 
 			if (step > this.maxStep) {
-				PathLog.log("没找到目标计算步骤为：", step);
+				console.warn("没找到目标计算步骤为：", step);
 				clearInterval(this.handle);
 				return;
 			}
@@ -710,7 +709,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
 			if (this._binaryTreeNode.isTreeNull()) //二叉堆树里已经没有任何可搜寻的点了，则寻路结束，每找到目标
 			{
-				PathLog.log("没找到目标计算步骤为：", step);
+				console.warn("没找到目标计算步骤为：", step);
 				clearInterval(this.handle);
 				return;
 			}
@@ -718,7 +717,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 			this._currentNode = this._binaryTreeNode.getMin_F_Node();
 
 			if (this._currentNode == this._targetNode) {
-				PathLog.log("找到目标计算步骤为：", step);
+				console.log("找到目标计算步骤为：", step);
 				clearInterval(this.handle);
 
 				this._openlist = this._binaryTreeNode.getOpenList();
