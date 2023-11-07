@@ -5,9 +5,10 @@ import PathLog from "./PathLog";
 import { PathOptimize } from "./PathOptimize";
 import { PathQuadSeek } from "./PathQuadSeek";
 
-/**
- * 六边形 A*寻路算法 
- * 
+/*
+ * @Descripttion: A*寻路算法（纵式六边形地图类型 || 横式六边形地图类型）
+ * @Author: CYK
+ * @Date: 2023-07-30 21:05:00
  */
 export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
@@ -24,7 +25,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	/**
 	 *最大搜寻步骤数，超过这个值时表示找不到目标 
 	 */
-	private maxStep: number = 1000;
+	private maxStep: number = 100000;
 
 	/**
 	 * 开启列表
@@ -69,6 +70,12 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	 *用于检索一个节点周围6个点的向量数组 格子列数为奇数时使用
 	 */
 	private _round2: number[][] = [[0, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0]];
+
+	/** 寻路角色体积周围一圈的偏移值*/
+	private _neighbours: number[][];
+
+	/** 寻路角色体积周围一圈的偏移值map缓存*/
+	private _neighboursDic: { [size: number]: number[][] } = {};
 
 	private handle: number = -1;
 
@@ -129,11 +136,11 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	 * @param targetNode
 	 * @return 
 	 */
-	public seekPath(startNode: RoadNode, targetNode: RoadNode): Array<RoadNode> {
+	public seekPath(startNode: RoadNode, targetNode: RoadNode, size?:number): Array<RoadNode> {
 		this._startNode = startNode;
 		this._currentNode = startNode;
 		this._targetNode = targetNode;
-
+		this._neighbours = this.getNeighbours(size);
 		if (!this._startNode || !this._targetNode)
 			return [];
 
@@ -141,7 +148,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 			return [this._targetNode];
 		}
 
-		if (!this.isPassNode(this._targetNode)) {
+		if (!this.isCanPass(this._targetNode)) {
 			PathLog.log("目标不可达到：");
 			return [];
 		}
@@ -191,11 +198,11 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	 * @param targetNode
 	 * @return 
 	 */
-	public seekPath2(startNode: RoadNode, targetNode: RoadNode): Array<RoadNode> {
+	public seekPath2(startNode: RoadNode, targetNode: RoadNode, size?:number): Array<RoadNode> {
 		this._startNode = startNode;
 		this._currentNode = startNode;
 		this._targetNode = targetNode;
-
+		this._neighbours = this.getNeighbours(size);
 		if (!this._startNode || !this._targetNode)
 			return [];
 
@@ -205,7 +212,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
 		var newMaxStep: number = this.maxStep;
 
-		if (!this.isPassNode(this._targetNode)) {
+		if (!this.isCanPass(this._targetNode)) {
 			//如果不能直达目标，最大寻路步骤 = 为两点间的预估距离的3倍
 			newMaxStep = (Math.abs(this._targetNode.cx - this._startNode.cx) + Math.abs(this._targetNode.cy - this._startNode.cy)) * 3;
 			if (newMaxStep > this.maxStep) {
@@ -257,23 +264,6 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 			}
 
 		}
-
-		return this.seekPath(startNode, closestNode);
-	}
-
-	/**
-	 * 对路节点进行排序
-	 * @param node1 
-	 * @param node2 
-	 */
-	private sortNode(node1: RoadNode, node2: RoadNode) {
-		if (node1.f < node2.f) {
-			return -1;
-		} else if (node1.f > node2.f) {
-			return 1;
-		}
-
-		return 0;
 	}
 
 	/**
@@ -482,7 +472,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 		}
 
 		//前两个点只要有一个点不能通过就不能通过，节点3只做方向向导，不用考虑是否可通过和是否存在
-		if (!this.isPassNode(node1) || !this.isPassNode(node2)) {
+		if (!this.isCanPass(node1) || !this.isCanPass(node2)) {
 			return false;
 		}
 
@@ -629,6 +619,20 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 		return true;
 	}
 
+	public isCanPass(node: RoadNode) {
+		if (!this.isPassNode(node))
+			return false;
+		if (!this._neighbours || !this._neighbours.length)
+			return true;
+		let e = this.getHoneyPoint(node);
+		for (let s = 0; s < this._neighbours.length; s++) {
+			let hx = e.hx + this._neighbours[s][0], hy = e.hy + this._neighbours[s][1], r = this.getNodeByHoneyPoint(hx, hy);
+			if (!this.isPassNode(r))
+				return false;
+		}
+		return true;
+	}
+
 	/**
 	 * 根据世界坐标获得路节点
 	 * @param cx 
@@ -640,18 +644,45 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 		return this._roadNodes[key];
 	}
 
+	private getNeighbours(radiu: number) {
+		if (!radiu)
+			return null;
+		var e = null;
+		if (null != this._neighboursDic[radiu])
+			e = this._neighboursDic[radiu];
+		else {
+			e = [];
+			this.getNeighboursRecursive(0, 0, radiu, 1, e, {}, {}, [[-1, -1], [-1, 0], [0, 1], [1, 1], [1, 0], [0, -1]]),
+				this._neighboursDic[radiu] = e
+		}
+		return e
+	}
+
+	private getNeighboursRecursive(t, e, s, i, h, r, o, n) {
+		if (!(i > s)) {
+			r[u = t + "_" + e] = true;
+			for (var a = n.length, d = 0; d < a; d++) {
+				var u, N = t + n[d][0], _ = e + n[d][1];
+				if (0 != N || 0 != _)
+					r[u = N + "_" + _] || (o[u] || (h.push([N, _]),
+						o[u] = !0),
+						this.getNeighboursRecursive(N, _, s, i + 1, h, r, o, n))
+			}
+		}
+	}
+
 	/**
 	 *测试寻路步骤 
 	 * @param startNode
 	 * @param targetNode
 	 * @return 
 	 */
-	public testSeekPathStep(startNode: RoadNode, targetNode: RoadNode, callback: Function, target: any, time: number = 100): void {
+	public testSeekPathStep(startNode: RoadNode, targetNode: RoadNode, size: number, callback: Function, target: any, time: number = 100): void {
 		this._startNode = startNode;
 		this._currentNode = startNode;
 		this._targetNode = targetNode;
-
-		if (!this.isPassNode(this._targetNode))
+		this._neighbours = this.getNeighbours(size);
+		if (!this.isCanPass(this._targetNode))
 			return;
 
 		this._startNode.g = 0; //重置起始节点的g值
@@ -718,7 +749,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 			var cy: number = node.cy + round[i][1];
 			var node2: RoadNode = this.getRoadNode(cx, cy);
 
-			if (this.isPassNode(node2) && node2 != this._startNode && !this.isInCloseList(node2)) {
+			if (this.isCanPass(node2) && node2 != this._startNode && !this.isInCloseList(node2)) {
 				this.setNodeF(node2);
 			}
 		}

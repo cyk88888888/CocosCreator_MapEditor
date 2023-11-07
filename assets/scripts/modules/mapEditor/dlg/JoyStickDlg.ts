@@ -24,6 +24,7 @@ export class JoyStickDlg extends UIDlg {
         let self = this;
         self.outSideClosed = false;
         self.maskEnabled = false;
+        self.penetrable = true;
         self.radius = 18;
         self._joyStickCtrl = JoyStickCtrl.inst;
     }

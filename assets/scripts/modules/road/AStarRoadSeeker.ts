@@ -5,7 +5,7 @@ import { PathOptimize } from "./PathOptimize";
 import { PathQuadSeek } from "./PathQuadSeek";
 
 /*
- * @Descripttion: A*寻路算法（90°四边形）
+ * @Descripttion: A*寻路算法（45度等视角地图 || 90度平面地图）
  * @Author: CYK
  * @Date: 2023-06-30 22:00:00
  */
@@ -24,7 +24,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
     /**
      *最大搜寻步骤数，超过这个值时表示找不到目标 
      */
-    private maxStep: number = 1000000;
+    private maxStep: number = 100000;
 
     /**
      * 开启列表
@@ -75,6 +75,12 @@ export default class AStarRoadSeeker implements IRoadSeeker {
      *用于检索一个节点周围n个点的向量数组，默认8方向
     */
     private _round: number[][] = this._round2;
+
+    /** 寻路角色体积周围一圈的偏移值*/
+    private _neighbours: number[][];
+
+     /** 寻路角色体积周围一圈的偏移值map缓存*/
+    private _neighboursDic:{[size: number]: number[][]} = {};
 
     private handle: number = -1;
 
@@ -143,15 +149,17 @@ export default class AStarRoadSeeker implements IRoadSeeker {
     }
 
     /**
-     *寻路入口方法 
-     * @param startNode
-     * @param targetNode
-     * @return 
+     * 寻路入口方法
+     * @param startNode 
+     * @param targetNode 
+     * @param size 寻路半径
+     * @returns 
      */
-    public seekPath(startNode: RoadNode, targetNode: RoadNode): Array<RoadNode> {
+    public seekPath(startNode: RoadNode, targetNode: RoadNode, size?:number): Array<RoadNode> {
         this._startNode = startNode;
         this._currentNode = startNode;
         this._targetNode = targetNode;
+        this._neighbours = this.getNeighbours(size),
         this._startCalculateTime = this.getTime();
         if (!this._startNode || !this._targetNode)
             return [];
@@ -160,8 +168,8 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             return [this._targetNode];
         }
 
-        if (!this.isPassNode(this._targetNode)) {
-            console.warn("目标不可达到："+JSON.stringify(this._targetNode));
+        if (!this.isCanPass(this._targetNode)) {
+            console.warn(`目标不可达到, 行: ${this._targetNode.cy}, 列: ${this._targetNode.cx}, x: ${this._targetNode.px}, y: ${this._targetNode.py}`);
             return [];
         }
 
@@ -202,22 +210,21 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             }
 
         }
-
-        return [];
     }
 
-    /**
-     *寻路入口方法 如果没有寻到目标，则返回离目标最近的路径
-    * @param startNode
-    * @param targetNode
-    * @return 
-    * 
+   /**
+    * 寻路入口方法 如果没有寻到目标，则返回离目标最近的路径
+    * @param startNode 
+    * @param targetNode 
+    * @param size 寻路半径
+    * @returns 
     */
-    public seekPath2(startNode: RoadNode, targetNode: RoadNode): Array<RoadNode> {
+    public seekPath2(startNode: RoadNode, targetNode: RoadNode, size?:number): Array<RoadNode> {
         this._startNode = startNode;
         this._currentNode = startNode;
         this._targetNode = targetNode;
-
+        this._neighbours = this.getNeighbours(size),
+        this._startCalculateTime = this.getTime();
         if (!this._startNode || !this._targetNode)
             return [];
 
@@ -227,7 +234,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
 
         let newMaxStep: number = this.maxStep;
 
-        if (!this.isPassNode(this._targetNode)) {
+        if (!this.isCanPass(this._targetNode)) {
             //如果不能直达目标，最大寻路步骤 = 为两点间的预估距离的3倍
             newMaxStep = (Math.abs(this._targetNode.cx - this._startNode.cx) + Math.abs(this._targetNode.cy - this._startNode.cy)) * 3;
             if (newMaxStep > this.maxStep) {
@@ -284,22 +291,6 @@ export default class AStarRoadSeeker implements IRoadSeeker {
 
         }
 
-        return this.seekPath(startNode, closestNode);
-    }
-
-    /**
-     * 对路节点进行排序
-     * @param node1 
-     * @param node2 
-     */
-    private sortNode(node1: RoadNode, node2: RoadNode) {
-        if (node1.f < node2.f) {
-            return -1;
-        } else if (node1.f > node2.f) {
-            return 1;
-        }
-
-        return 0;
     }
 
     /**
@@ -488,7 +479,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         }
 
         //两个点只要有一个点不能通过就不能通过
-        if (!this.isPassNode(node1) || !this.isPassNode(node2)) {
+        if (!this.isCanPass(node1) || !this.isCanPass(node2)) {
             return false;
         }
 
@@ -533,6 +524,19 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         return true;
     }
 
+    public isCanPass(node: RoadNode) {
+        if (!this.isPassNode(node))
+            return false;
+        if (!this._neighbours || !this._neighbours.length)
+            return true;
+        for (let i = 0; i < this._neighbours.length; i++) {
+            let cx = node.cx + this._neighbours[i][0], cy = node.cy + this._neighbours[i][1], n = this.getRoadNode(cx, cy);
+            if (!this.isPassNode(n))
+                return false;
+        }
+        return true;
+    }
+
     /**
      * 根据世界坐标获得路节点
      * @param cx 
@@ -544,18 +548,34 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         return this._roadNodes[key];
     }
 
+    private getNeighbours(size:number) {
+        if (!size)
+            return null;
+        let e = null;
+        if (null != this._neighboursDic[size])
+            e = this._neighboursDic[size];
+        else {
+            e = [];
+            for (let j = -size; j <= size; j++)
+                for (var i = -size; i <= size; i++)
+                    0 == i && 0 == j || Math.abs(i) + Math.abs(j) > size || e.push([i, j]);
+            this._neighboursDic[size] = e;
+        }
+        return e;
+    }
+
     /**
      *测试寻路步骤 
      * @param startNode
      * @param targetNode
      * @return 
      */
-    public testSeekPathStep(startNode: RoadNode, targetNode: RoadNode, callback: Function, target: any, time: number = 100): void {
+    public testSeekPathStep(startNode: RoadNode, targetNode: RoadNode, size:number, callback: Function, target: any, time: number = 100): void {
         this._startNode = startNode;
         this._currentNode = startNode;
         this._targetNode = targetNode;
-
-        if (!this.isPassNode(this._targetNode))
+        this._neighbours = this.getNeighbours(size);
+        if (!this.isCanPass(this._targetNode))
             return;
 
         this._startNode.g = 0; //重置起始节点的g值
@@ -617,7 +637,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             let cy: number = node.cy + this._round[i][1];
             let node2: RoadNode = this.getRoadNode(cx, cy);
 
-            if (this.isPassNode(node2) && node2 != this._startNode && !this.isInCloseList(node2) && !this.inInCorner(node2)) {
+            if (this.isCanPass(node2) && node2 != this._startNode && !this.isInCloseList(node2) && !this.inInCorner(node2)) {
                 this.setNodeF(node2);
             }
         }

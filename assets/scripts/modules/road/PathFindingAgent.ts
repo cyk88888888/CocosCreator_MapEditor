@@ -77,23 +77,23 @@ export default class PathFindingAgent {
 
         MapRoadUtils.instance.updateMapInfo(this._mapData.mapWidth, this._mapData.mapHeight, this._mapData.cellSize, this._mapData.cellSize, this._mapData.type);
 
-        var len: number = this._mapData.walkList.length;
+        let len: number = this._mapData.walkList.length;
         if (!len) return;
-        var len2: number = this._mapData.walkList[0].length;
+        let len2: number = this._mapData.walkList[0].length;
 
-        var value: number = 0;
-        var dx: number = 0;
-        var dy: number = 0;
-        var cx: number = 0;
-        var cy: number = 0;
+        let value: number = 0;
+        let dx: number = 0;
+        let dy: number = 0;
+        let cx: number = 0;
+        let cy: number = 0;
 
-        for (var i: number = 0; i < len; i++) {
-            for (var j: number = 0; j < len2; j++) {
+        for (let i: number = 0; i < len; i++) {
+            for (let j: number = 0; j < len2; j++) {
                 value = this._mapData.walkList[i][j];
                 dx = j;
                 dy = i;
 
-                var node: RoadNode = MapRoadUtils.instance.getNodeByDerect(dx, dy);
+                let node: RoadNode = MapRoadUtils.instance.getNodeByDerect(dx, dy);
                 node.value = value;
 
                 if (this._mapType == CONST.MapType.honeycomb2) {
@@ -125,11 +125,11 @@ export default class PathFindingAgent {
      * @param targetY 目标像素位置Y
      * @returns 返回寻路路点路径
      */
-    public seekPath(startX: number, startY: number, targetX: number, targetY: number): RoadNode[] {
-        var startNode: RoadNode = this.getRoadNodeByPixel(startX, startY);
-        var targetNode: RoadNode = this.getRoadNodeByPixel(targetX, targetY);
-
-        var roadNodeArr: RoadNode[] = this._roadSeeker.seekPath(startNode, targetNode);
+    public seekPath(startX: number, startY: number, targetX: number, targetY: number, radius: number,): RoadNode[] {
+        let startNode: RoadNode = this.getRoadNodeByPixel(startX, startY);
+        let targetNode: RoadNode = this.getRoadNodeByPixel(targetX, targetY);
+        let size = this.getSeekSize(radius);
+        let roadNodeArr: RoadNode[] = this._roadSeeker.seekPath(startNode, targetNode, size);
 
         return roadNodeArr;
     }
@@ -142,11 +142,11 @@ export default class PathFindingAgent {
      * @param targetY 目标像素位置Y
      * @returns 返回寻路路点路径
      */
-    public seekPath2(startX: number, startY: number, targetX: number, targetY: number): RoadNode[] {
-        var startNode: RoadNode = this.getRoadNodeByPixel(startX, startY);
-        var targetNode: RoadNode = this.getRoadNodeByPixel(targetX, targetY);
-
-        var roadNodeArr: RoadNode[] = this._roadSeeker.seekPath2(startNode, targetNode);
+    public seekPath2(startX: number, startY: number, targetX: number, targetY: number, radius: number,): RoadNode[] {
+        let startNode: RoadNode = this.getRoadNodeByPixel(startX, startY);
+        let targetNode: RoadNode = this.getRoadNodeByPixel(targetX, targetY);
+        let size = this.getSeekSize(radius);
+        let roadNodeArr: RoadNode[] = this._roadSeeker.seekPath2(startNode, targetNode, size);
 
         return roadNodeArr;
     }
@@ -161,11 +161,19 @@ export default class PathFindingAgent {
      * @param target 回调函数的目标对象，用于给回调函数指定this是什么
      * @param time 测试寻路时，每个步骤之间的时间间隔，单位是毫秒，如果想慢点查看每个寻路步骤，可以把这个值设置大点
      */
-    public testSeekRoad(startX: number, startY: number, targetX: number, targetY: number, seekRoadCallback: Function, target: any, time) {
-        var startNode: RoadNode = this.getRoadNodeByPixel(startX, startY);
-        var targetNode: RoadNode = this.getRoadNodeByPixel(targetX, targetY);
+    public testSeekRoad(startX: number, startY: number, targetX: number, targetY: number, radius: number, seekRoadCallback: Function, target: any, time) {
+        let startNode: RoadNode = this.getRoadNodeByPixel(startX, startY);
+        let targetNode: RoadNode = this.getRoadNodeByPixel(targetX, targetY);
+        let size = this.getSeekSize(radius);
+        this._roadSeeker.testSeekPathStep(startNode, targetNode, size, seekRoadCallback, target, time);
+    }
 
-        this._roadSeeker.testSeekPathStep(startNode, targetNode, seekRoadCallback, target, time);
+    public getSeekSize(radius = 0) {
+        let self = this;
+        let mapData = self._mapData;
+        let t = Math.min(mapData.cellSize/2, mapData.cellSize / 2);
+        let a = Math.ceil((radius - t) / (2 * t));
+        return a > 0 ? a : 0
     }
 
     /**
@@ -191,8 +199,8 @@ export default class PathFindingAgent {
      * @returns 
      */
     public isArriveBetweenTwoPos(x1: number, y1: number, x2: number, y2: number): boolean {
-        var startNode: RoadNode = this.getRoadNodeByPixel(x1, y1);
-        var targetNode: RoadNode = this.getRoadNodeByPixel(x2, y2);
+        let startNode: RoadNode = this.getRoadNodeByPixel(x1, y1);
+        let targetNode: RoadNode = this.getRoadNodeByPixel(x2, y2);
         return this._roadSeeker.isArriveBetweenTwoNodes(startNode, targetNode);
     }
 
@@ -203,9 +211,9 @@ export default class PathFindingAgent {
      * @returns 
      */
     public getRoadNodeByPixel(px: number, py: number): RoadNode {
-        var point: Point = MapRoadUtils.instance.getWorldPointByPixel(px, py);
+        let point: Point = MapRoadUtils.instance.getWorldPointByPixel(px, py);
 
-        var node: RoadNode = null;
+        let node: RoadNode = null;
         if (this._mapType == CONST.MapType.honeycomb2) //因为初始化时 横式六边形已经对世界坐标做过转置，所以读取路节点时也要通过转置的方式
         {
             node = this.getRoadNode(point.y, point.x);
@@ -237,8 +245,8 @@ export default class PathFindingAgent {
             return [];
         }
 
-        var nodeArr: RoadNode[] = [];
-        var round: number[][];
+        let nodeArr: RoadNode[] = [];
+        let round: number[][];
 
         if (isIncludeSelf) {
             nodeArr.push(roadNode);
@@ -250,9 +258,9 @@ export default class PathFindingAgent {
             round = this._round;
         }
 
-        for (var i: number = 0; i < this._round.length; i++) {
-            var cx: number = roadNode.cx + this._round[i][0];
-            var cy: number = roadNode.cy + this._round[i][1];
+        for (let i: number = 0; i < this._round.length; i++) {
+            let cx: number = roadNode.cx + this._round[i][0];
+            let cy: number = roadNode.cy + this._round[i][1];
 
             nodeArr.push(this.getRoadNode(cx, cy));
         }

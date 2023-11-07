@@ -17,6 +17,8 @@ export class TestAstarDlg extends UIDlg {
     private input_endX: EditBox;
     @property({ type: EditBox })
     private input_endY: EditBox;
+    @property({ type: EditBox })
+    private input_radius: EditBox;
     @property({ type: Button })
     private btn_ok: Button;
     @property({ type: Button })
@@ -24,9 +26,11 @@ export class TestAstarDlg extends UIDlg {
     @property({ type: Button })
     private btn_close: Button;
 
-    protected ctor(): void {
+    protected onEnter(): void {
         let self = this;
-        self.outSideClosed = true;
+        //起点测试坐标
+        self.input_startX.string = "2240";
+        self.input_startY.string = "4080";
     }
 
     private _tap_btn_ok() {
@@ -51,7 +55,8 @@ export class TestAstarDlg extends UIDlg {
             return;
         }
 
-        let roadNodeArr = PathFindingAgent.inst.seekPath(Number(self.input_startX.string), Number(self.input_startY.string), Number(self.input_endX.string), Number(self.input_endY.string));
+        let radius = Number(self.input_radius.string || 25);
+        let roadNodeArr = PathFindingAgent.inst.seekPath(Number(self.input_startX.string), Number(self.input_startY.string), Number(self.input_endX.string), Number(self.input_endY.string), radius);
         if (!roadNodeArr || !roadNodeArr.length) {
             MessageTip.show({ msg: "未找到最佳路线" });
             return;

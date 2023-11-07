@@ -11,25 +11,30 @@ export default interface IRoadSeeker {
      *寻路入口方法 
      * @param startNode
      * @param targetNode
+     * @param size 角色大小，单位：圈
      * @returns 
      */
-    seekPath(startNode: RoadNode, targetNode: RoadNode): Array<RoadNode>;
+    seekPath(startNode: RoadNode, targetNode: RoadNode, size: number): Array<RoadNode>;
 
     /**
      *寻路入口方法 如果没有寻到目标，则返回离目标最近的路径
      * @param startNode
      * @param targetNode
+     * @param size 角色大小，单位：圈
      * @returns 
      */
-    seekPath2(startNode: RoadNode, targetNode: RoadNode): Array<RoadNode>;
+    seekPath2(startNode: RoadNode, targetNode: RoadNode, size: number): Array<RoadNode>;
 
     /**
-     *测试寻路步骤 
-     * @param startNode
-     * @param targetNode
-     * @returns
+     * 测试寻路步骤
+     * @param startNode 
+     * @param targetNode 
+     * @param size 角色大小，单位：圈
+     * @param callback 
+     * @param target 
+     * @param time 
      */
-    testSeekPathStep(startNode: RoadNode, targetNode: RoadNode, callback: Function, target: any, time: number): void;
+    testSeekPathStep(startNode: RoadNode, targetNode: RoadNode, size: number, callback: Function, target: any, time: number): void;
 
     /**
      * 两个路点之间是否可直达（即是否可以两点一线到达）
@@ -44,6 +49,11 @@ export default interface IRoadSeeker {
      */
     isPassNode(node: RoadNode): boolean
 
+     /**
+     * 是否是可通过的点（加了角色体积大小的判断）  
+     * @param node 
+     */
+     isCanPass(node: RoadNode): boolean
     /**
      * 根据世界坐标获得路节点
      * @param cx 
