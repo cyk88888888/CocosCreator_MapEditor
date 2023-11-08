@@ -186,8 +186,6 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 			}
 
 		}
-
-		return [];
 	}
 
 
@@ -261,7 +259,6 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 			} else {
 				this._binaryTreeNode.setRoadNodeInCloseList(this._currentNode);//打入关闭列表标记
 			}
-
 		}
 	}
 
