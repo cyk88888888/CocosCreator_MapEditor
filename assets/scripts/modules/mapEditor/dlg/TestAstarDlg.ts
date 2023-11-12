@@ -29,8 +29,8 @@ export class TestAstarDlg extends UIDlg {
     protected onEnter(): void {
         let self = this;
         //起点测试坐标
-        self.input_startX.string = "2240";
-        self.input_startY.string = "4080";
+        self.input_startX.string = "1920";
+        self.input_startY.string = "5280";
     }
 
     private _tap_btn_ok() {
@@ -75,6 +75,11 @@ export class TestAstarDlg extends UIDlg {
         // console.log(roadNodeArr3);
 
         self.emit(CONST.GEVT.UpdateAstarGrid, { roadNodeArr: roadNodeArr });
+
+        //测试两点可直达
+        // let node1 = PathFindingAgent.inst.getRoadNode(0, 0);
+        // let node2 = PathFindingAgent.inst.getRoadNode(1, 2);
+        // console.log(PathFindingAgent.inst.isArriveBetweenTwoNodes(node1, node2));
     }
 
     /** 清除寻路路线*/

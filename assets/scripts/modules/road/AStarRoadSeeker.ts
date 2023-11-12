@@ -409,9 +409,9 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         let ry: number = 0;
         let intNum: number = 0;
         let decimal: number = 0;
-
+        let rate: number;
         if (disX > disY) {
-            let rate: number = disY / disX;
+            rate = disY / disX;
 
             for (let i = 0; i < disX; i++) {
                 ry = startNode.cy + i * dirY * rate;
@@ -439,7 +439,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             }
 
         } else {
-            let rate: number = disX / disY;
+            rate = disX / disY;
 
             for (let i = 0; i < disY; i++) {
                 rx = i * dirX * rate;
@@ -497,10 +497,8 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         }
 
         //只剩对角情况了
-        if (
-            this.isPassNode(this.getRoadNode(node1.cx, node1.cy + dirY)) &&
-            this.isPassNode(this.getRoadNode((node1.cx + dirX), node1.cy))
-        ) {
+        if ( this.isPassNode(this.getRoadNode(node1.cx, node1.cy + dirY)) &&this.isPassNode(this.getRoadNode((node1.cx + dirX), node1.cy))
+) {
             return true;
         }
 
