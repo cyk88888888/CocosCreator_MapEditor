@@ -13,7 +13,7 @@ import RoadNode from "./RoadNode";
 
 /*
  * @Descripttion: 寻路代理器
- * @Author: CYK
+ * @Author: cyk
  * @Date: 2023-05-30 23:00:00
  */
 export default class PathFindingAgent {
@@ -84,8 +84,8 @@ export default class PathFindingAgent {
         let value: number = 0;
         let dx: number = 0;
         let dy: number = 0;
-        let cx: number = 0;
-        let cy: number = 0;
+        let col: number = 0;
+        let row: number = 0;
 
         for (let i: number = 0; i < len; i++) {
             for (let j: number = 0; j < len2; j++) {
@@ -97,15 +97,15 @@ export default class PathFindingAgent {
                 node.value = value;
 
                 if (this._mapType == CONST.MapType.honeycomb2) {
-                    cx = node.cx;
-                    cy = node.cy;
+                    col = node.col;
+                    row = node.row;
 
                     //如果是横式六边形，则需要把路点世界坐标转置，即x,y调换。因为六边形寻路组件AstarHoneycombRoadSeeker是按纵式六边形写的
-                    node.cx = cy;
-                    node.cy = cx;
+                    node.col = row;
+                    node.row = col;
                 }
 
-                this._roadDic[node.cx + "_" + node.cy] = node;
+                this._roadDic[node.col + "_" + node.row] = node;
             }
         }
 
@@ -226,12 +226,12 @@ export default class PathFindingAgent {
 
     /**
      * 根据世界坐标获得路节点
-     * @param cx 
-     * @param cy 
+     * @param col 
+     * @param row 
      */
-    public getRoadNode(cx: number, cy: number): RoadNode {
-        //return this._roadDic[cx + "_" + cy];
-        return this._roadSeeker.getRoadNode(cx, cy);
+    public getRoadNode(col: number, row: number): RoadNode {
+        //return this._roadDic[col + "_" + row];
+        return this._roadSeeker.getRoadNode(col, row);
     }
 
     /**
@@ -253,16 +253,16 @@ export default class PathFindingAgent {
         }
 
         if (this.mapType == CONST.MapType.honeycomb || this.mapType == CONST.MapType.honeycomb2) {
-            roadNode.cx % 2 == 0 ? round = this._round1 : round = this._round2;
+            roadNode.col % 2 == 0 ? round = this._round1 : round = this._round2;
         } else {
             round = this._round;
         }
 
         for (let i: number = 0; i < this._round.length; i++) {
-            let cx: number = roadNode.cx + this._round[i][0];
-            let cy: number = roadNode.cy + this._round[i][1];
+            let col: number = roadNode.col + this._round[i][0];
+            let row: number = roadNode.row + this._round[i][1];
 
-            nodeArr.push(this.getRoadNode(cx, cy));
+            nodeArr.push(this.getRoadNode(col, row));
         }
 
         return nodeArr;

@@ -133,14 +133,14 @@ export default class MapRoadUtils {
 
 	/**
 	 *根据路点场景世界坐标获得路节点 
-		* @param cx
-		* @param cy
+		* @param col
+		* @param row
 		* @return 
 		* 
 		*/
-	public getNodeByWorldPoint(cx: number, cy: number): RoadNode {
+	public getNodeByWorldPoint(col: number, row: number): RoadNode {
 		if (this._mapRoad) {
-			return this._mapRoad.getNodeByWorldPoint(cx, cy);
+			return this._mapRoad.getNodeByWorldPoint(col, row);
 		}
 		return new RoadNode();
 	}
@@ -161,14 +161,14 @@ export default class MapRoadUtils {
 
 	/**
 	 *根据世界坐标获得像素坐标 
-		* @param cx
-		* @param cy
+		* @param col
+		* @param row
 		* @return 
 		* 
 		*/
-	public getPixelByWorldPoint(cx: number, cy: number): Point {
+	public getPixelByWorldPoint(col: number, row: number): Point {
 		if (this._mapRoad) {
-			return this._mapRoad.getPixelByWorldPoint(cx, cy);
+			return this._mapRoad.getPixelByWorldPoint(col, row);
 		}
 		return new Point();
 	}
@@ -190,14 +190,14 @@ export default class MapRoadUtils {
 
 	/**
 	 *根据世界坐标获得网格平面坐标 
-		* @param cx
-		* @param cy
+		* @param col
+		* @param row
 		* @return 
 		* 
 		*/
-	public getDerectByWorldPoint(cx: number, cy: number): Point {
+	public getDerectByWorldPoint(col: number, row: number): Point {
 		if (this._mapRoad) {
-			return this._mapRoad.getDerectByWorldPoint(cx, cy);
+			return this._mapRoad.getDerectByWorldPoint(col, row);
 		}
 		return new Point();
 	}
@@ -211,9 +211,9 @@ export default class MapRoadUtils {
 		*/
 	/*	public getWorldPointByDerect(dx:number,dy:number):Point
 		{
-			var cx:number = (dy + dx) / 2;
-			var cy:number = (dy - dx) / 2 + col - 1;
-			return new Point(cx,cy);
+			var col:number = (dy + dx) / 2;
+			var row:number = (dy - dx) / 2 + col - 1;
+			return new Point(col,row);
 		}*/
 
 	public getPixelByDerect(dx: number, dy: number): Point {
@@ -266,7 +266,7 @@ export default class MapRoadUtils {
 
 /**
  *地图路点处理接口 
- * @author cyk
+ * @author rowk
  * 
  */
 interface IMapRoad {
@@ -290,12 +290,12 @@ interface IMapRoad {
 
 	/**
 	 *根据路点场景世界坐标获得路节点 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	getNodeByWorldPoint(cx: number, cy: number): RoadNode;
+	getNodeByWorldPoint(col: number, row: number): RoadNode;
 
 
 	/**
@@ -310,12 +310,12 @@ interface IMapRoad {
 
 	/**
 	 *根据世界坐标获得像素坐标 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	getPixelByWorldPoint(cx: number, cy: number): Point;
+	getPixelByWorldPoint(col: number, row: number): Point;
 
 
 	/**
@@ -330,12 +330,12 @@ interface IMapRoad {
 
 	/**
 	 *根据世界坐标获得网格平面坐标 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	getDerectByWorldPoint(cx: number, cy: number): Point;
+	getDerectByWorldPoint(col: number, row: number): Point;
 
 
 	/**
@@ -350,7 +350,7 @@ interface IMapRoad {
 
 /**
  *45度等视角地图路点处理接口实现 
- * @author cyk
+ * @author rowk
  * 
  */
 class MapRoad45Angle implements IMapRoad {
@@ -408,8 +408,8 @@ class MapRoad45Angle implements IMapRoad {
 
 		var node: RoadNode = new RoadNode();
 
-		node.cx = wPoint.x;
-		node.cy = wPoint.y;
+		node.col = wPoint.x;
+		node.row = wPoint.y;
 
 		node.px = fPoint.x;
 		node.py = fPoint.y;
@@ -434,8 +434,8 @@ class MapRoad45Angle implements IMapRoad {
 
 		var node: RoadNode = new RoadNode();
 
-		node.cx = wPoint.x;
-		node.cy = wPoint.y;
+		node.col = wPoint.x;
+		node.row = wPoint.y;
 
 		node.px = fPoint.x;
 		node.py = fPoint.y;
@@ -448,13 +448,13 @@ class MapRoad45Angle implements IMapRoad {
 
 	/**
 	 *根据路点场景世界坐标获得路节点 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getNodeByWorldPoint(cx: number, cy: number): RoadNode {
-		var point: Point = this.getPixelByWorldPoint(cx, cy)
+	public getNodeByWorldPoint(col: number, row: number): RoadNode {
+		var point: Point = this.getPixelByWorldPoint(col, row)
 		return this.getNodeByPixel(point.x, point.y);
 	}
 
@@ -466,22 +466,22 @@ class MapRoad45Angle implements IMapRoad {
 	 * 
 	 */
 	public getWorldPointByPixel(x: number, y: number): Point {
-		var cx: number = Math.ceil(x / this._nodeWidth - 0.5 + y / this._nodeHeight) - 1;
-		var cy: number = (this._col - 1) - Math.ceil(x / this._nodeWidth - 0.5 - y / this._nodeHeight);
+		var col: number = Math.ceil(x / this._nodeWidth - 0.5 + y / this._nodeHeight) - 1;
+		var row: number = (this._col - 1) - Math.ceil(x / this._nodeWidth - 0.5 - y / this._nodeHeight);
 
-		return new Point(cx, cy);
+		return new Point(col, row);
 	}
 
 	/**
 	 *根据世界坐标获得像素坐标 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getPixelByWorldPoint(cx: number, cy: number): Point {
-		var x: number = Math.floor((cx + 1 - (cy - (this._col - 1))) * this._halfNodeWidth);
-		var y: number = Math.floor((cx + 1 + (cy - (this._col - 1))) * this._halfNodeHeight);
+	public getPixelByWorldPoint(col: number, row: number): Point {
+		var x: number = Math.floor((col + 1 - (row - (this._col - 1))) * this._halfNodeWidth);
+		var y: number = Math.floor((col + 1 + (row - (this._col - 1))) * this._halfNodeHeight);
 		return new Point(x, y);
 	}
 
@@ -502,14 +502,14 @@ class MapRoad45Angle implements IMapRoad {
 
 	/**
 	 *根据世界坐标获得网格平面坐标 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getDerectByWorldPoint(cx: number, cy: number): Point {
-		var dx: number = Math.floor((cx - (cy - (this._col - 1))) / 2);
-		var dy: number = cx + (cy - (this._col - 1));
+	public getDerectByWorldPoint(col: number, row: number): Point {
+		var dx: number = Math.floor((col - (row - (this._col - 1))) / 2);
+		var dy: number = col + (row - (this._col - 1));
 		return new Point(dx, dy);
 	}
 
@@ -529,7 +529,7 @@ class MapRoad45Angle implements IMapRoad {
 
 /**
  *90度平面地图路点处理接口实现 
- * @author cyk
+ * @author rowk
  * 
  */
 class MapRoad90Angle implements IMapRoad {
@@ -586,8 +586,8 @@ class MapRoad90Angle implements IMapRoad {
 
 		var node: RoadNode = new RoadNode();
 
-		node.cx = wPoint.x;
-		node.cy = wPoint.y;
+		node.col = wPoint.x;
+		node.row = wPoint.y;
 
 		node.px = fPoint.x;
 		node.py = fPoint.y;
@@ -612,8 +612,8 @@ class MapRoad90Angle implements IMapRoad {
 
 		var node: RoadNode = new RoadNode();
 
-		node.cx = wPoint.x;
-		node.cy = wPoint.y;
+		node.col = wPoint.x;
+		node.row = wPoint.y;
 
 		node.px = fPoint.x;
 		node.py = fPoint.y;
@@ -626,13 +626,13 @@ class MapRoad90Angle implements IMapRoad {
 
 	/**
 	 *根据路点场景世界坐标获得路节点 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getNodeByWorldPoint(cx: number, cy: number): RoadNode {
-		var point: Point = this.getPixelByWorldPoint(cx, cy)
+	public getNodeByWorldPoint(col: number, row: number): RoadNode {
+		var point: Point = this.getPixelByWorldPoint(col, row)
 		return this.getNodeByPixel(point.x, point.y);
 	}
 
@@ -644,22 +644,22 @@ class MapRoad90Angle implements IMapRoad {
 	 * 
 	 */
 	public getWorldPointByPixel(x: number, y: number): Point {
-		var cx: number = Math.floor(x / this._nodeWidth);
-		var cy: number = Math.floor(y / this._nodeHeight);
+		var col: number = Math.floor(x / this._nodeWidth);
+		var row: number = Math.floor(y / this._nodeHeight);
 
-		return new Point(cx, cy);
+		return new Point(col, row);
 	}
 
 	/**
 	 *根据世界坐标获得像素坐标 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getPixelByWorldPoint(cx: number, cy: number): Point {
-		var x: number = Math.floor((cx + 1) * this._nodeWidth - this._halfNodeWidth);
-		var y: number = Math.floor((cy + 1) * this._nodeHeight - this._halfNodeHeight);
+	public getPixelByWorldPoint(col: number, row: number): Point {
+		var x: number = Math.floor((col + 1) * this._nodeWidth - this._halfNodeWidth);
+		var y: number = Math.floor((row + 1) * this._nodeHeight - this._halfNodeHeight);
 		return new Point(x, y);
 	}
 
@@ -678,13 +678,13 @@ class MapRoad90Angle implements IMapRoad {
 
 	/**
 	 *根据世界坐标获得网格平面坐标 90度地图的世界坐标和网格坐标相同
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getDerectByWorldPoint(cx: number, cy: number): Point {
-		return new Point(cx, cy);
+	public getDerectByWorldPoint(col: number, row: number): Point {
+		return new Point(col, row);
 	}
 
 	/**
@@ -703,7 +703,7 @@ class MapRoad90Angle implements IMapRoad {
 
 /**
  *蜂巢式（即正六边形）地图路点处理接口实现 
- * @author cyk
+ * @author rowk
  * 
  */
 class MapRoadHoneycomb implements IMapRoad {
@@ -792,8 +792,8 @@ class MapRoadHoneycomb implements IMapRoad {
 
 		var node: RoadNode = new RoadNode();
 
-		node.cx = wPoint.x;
-		node.cy = wPoint.y;
+		node.col = wPoint.x;
+		node.row = wPoint.y;
 
 		node.px = fPoint.x;
 		node.py = fPoint.y;
@@ -818,8 +818,8 @@ class MapRoadHoneycomb implements IMapRoad {
 
 		var node: RoadNode = new RoadNode();
 
-		node.cx = dx;
-		node.cy = dy;
+		node.col = dx;
+		node.row = dy;
 
 		node.px = fPoint.x;
 		node.py = fPoint.y;
@@ -832,13 +832,13 @@ class MapRoadHoneycomb implements IMapRoad {
 
 	/**
 	 *根据路点场景世界坐标获得路节点 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getNodeByWorldPoint(cx: number, cy: number): RoadNode {
-		var point: Point = this.getPixelByWorldPoint(cx, cy)
+	public getNodeByWorldPoint(col: number, row: number): RoadNode {
+		var point: Point = this.getPixelByWorldPoint(col, row)
 		return this.getNodeByPixel(point.x, point.y);
 	}
 
@@ -856,22 +856,22 @@ class MapRoadHoneycomb implements IMapRoad {
 
 		var row: number;              //六边形纵轴的索引
 
-		var cx: number;
+		var col: number;
 
-		var cy: number;
+		var row: number;
 
 		if ((nwDiv4Index - 1) % 6 == 0 || (nwDiv4Index - 2) % 6 == 0) {
 			row = Math.floor(y / this._nodeHeight);
-			cx = col;
-			cy = row;
+			col = col;
+			row = row;
 		} else if ((nwDiv4Index - 4) % 6 == 0 || (nwDiv4Index - 5) % 6 == 0) {
 			if (y < this._nodeHeight / 2) {
 				row = -1;
 			} else {
 				row = Math.floor((y - this._nodeHeight / 2) / this._nodeHeight);
 			}
-			cx = col;
-			cy = row
+			col = col;
+			row = row
 		} else {
 
 
@@ -881,14 +881,14 @@ class MapRoadHoneycomb implements IMapRoad {
 				row = Math.floor(y / this._nodeHeight);
 
 				if (this.testPointInHoneycomb(col, row, x, y)) {
-					cx = col;
-					cy = row;
+					col = col;
+					row = row;
 				} else if (this.testPointInHoneycomb(col - 1, row - 1, x, y)) {
-					cx = col - 1;
-					cy = row - 1;
+					col = col - 1;
+					row = row - 1;
 				} else {
-					cx = col - 1;
-					cy = row;
+					col = col - 1;
+					row = row;
 				}
 
 			} else {
@@ -901,14 +901,14 @@ class MapRoadHoneycomb implements IMapRoad {
 				}
 
 				if (this.testPointInHoneycomb(col, row, x, y)) {
-					cx = col;
-					cy = row;
+					col = col;
+					row = row;
 				} else if (this.testPointInHoneycomb(col - 1, row, x, y)) {
-					cx = col - 1;
-					cy = row;
+					col = col - 1;
+					row = row;
 				} else {
-					cx = col - 1;
-					cy = row + 1;
+					col = col - 1;
+					row = row + 1;
 				}
 
 			}
@@ -916,7 +916,7 @@ class MapRoadHoneycomb implements IMapRoad {
 
 		}
 
-		return new Point(cx, cy);
+		return new Point(col, row);
 	}
 
 	private testPointInHoneycomb(col: number, row: number, px: number, py: number): Boolean {
@@ -935,14 +935,14 @@ class MapRoadHoneycomb implements IMapRoad {
 
 	/**
 	 *根据世界坐标获得像素坐标 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getPixelByWorldPoint(cx: number, cy: number): Point {
-		var x: number = Math.floor((2 + 3 * cx) / 4 * this._nodeWidth);
-		var y: number = Math.floor((cy + 1 / 2 * (1 + (cx % 2))) * this._nodeHeight);
+	public getPixelByWorldPoint(col: number, row: number): Point {
+		var x: number = Math.floor((2 + 3 * col) / 4 * this._nodeWidth);
+		var y: number = Math.floor((row + 1 / 2 * (1 + (col % 2))) * this._nodeHeight);
 
 		return new Point(x, y);
 	}
@@ -961,13 +961,13 @@ class MapRoadHoneycomb implements IMapRoad {
 
 	/**
 	 *根据世界坐标获得网格平面坐标 90度地图的世界坐标和网格坐标相同
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getDerectByWorldPoint(cx: number, cy: number): Point {
-		return new Point(cx, cy);
+	public getDerectByWorldPoint(col: number, row: number): Point {
+		return new Point(col, row);
 	}
 
 	/**
@@ -987,7 +987,7 @@ class MapRoadHoneycomb implements IMapRoad {
 
 /**
  *蜂巢式（即正六边形）地图路点处理接口实现 横
- * @author cyk
+ * @author rowk
  * 
  */
 class MapRoadHoneycomb2 implements IMapRoad {
@@ -1013,12 +1013,12 @@ class MapRoadHoneycomb2 implements IMapRoad {
 	 * @param node 
 	 */
 	private transposedNode(node: RoadNode): RoadNode {
-		var temp_cx = node.cx;
+		var temp_col = node.col;
 		var temp_dx = node.dx;
 		var temp_px = node.px;
 
-		node.cx = node.cy;
-		node.cy = temp_cx;
+		node.col = node.row;
+		node.row = temp_col;
 
 		node.dx = node.dy;
 		node.dy = temp_dx;
@@ -1065,13 +1065,13 @@ class MapRoadHoneycomb2 implements IMapRoad {
 
 	/**
 	 *根据路点场景世界坐标获得路节点 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getNodeByWorldPoint(cx: number, cy: number): RoadNode {
-		return this.transposedNode(this.mapRoadHoneycomb.getNodeByWorldPoint(cy, cx));
+	public getNodeByWorldPoint(col: number, row: number): RoadNode {
+		return this.transposedNode(this.mapRoadHoneycomb.getNodeByWorldPoint(row, col));
 	}
 
 	/**
@@ -1087,13 +1087,13 @@ class MapRoadHoneycomb2 implements IMapRoad {
 
 	/**
 	 *根据世界坐标获得像素坐标 
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getPixelByWorldPoint(cx: number, cy: number): Point {
-		return this.transposedPoint(this.mapRoadHoneycomb.getPixelByWorldPoint(cy, cx));
+	public getPixelByWorldPoint(col: number, row: number): Point {
+		return this.transposedPoint(this.mapRoadHoneycomb.getPixelByWorldPoint(row, col));
 	}
 
 	/**
@@ -1110,13 +1110,13 @@ class MapRoadHoneycomb2 implements IMapRoad {
 
 	/**
 	 *根据世界坐标获得网格平面坐标 90度地图的世界坐标和网格坐标相同
-	 * @param cx
-	 * @param cy
+	 * @param col
+	 * @param row
 	 * @return 
 	 * 
 	 */
-	public getDerectByWorldPoint(cx: number, cy: number): Point {
-		return this.transposedPoint(this.mapRoadHoneycomb.getDerectByWorldPoint(cy, cx));
+	public getDerectByWorldPoint(col: number, row: number): Point {
+		return this.transposedPoint(this.mapRoadHoneycomb.getDerectByWorldPoint(row, col));
 	}
 
 	/**

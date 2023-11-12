@@ -56,11 +56,11 @@ export default interface IRoadSeeker {
      isCanPass(node: RoadNode): boolean
     /**
      * 根据世界坐标获得路节点
-     * @param cx 
-     * @param cy 
+     * @param col 
+     * @param row 
      * @returns 
      */
-    getRoadNode(cx: number, cy: number): RoadNode
+    getRoadNode(col: number, row: number): RoadNode
 
     /**
      * 设置最大寻路步骤，寻路时超过这个寻路步骤还没寻到终点，则视为无法达到目标，寻路结束。

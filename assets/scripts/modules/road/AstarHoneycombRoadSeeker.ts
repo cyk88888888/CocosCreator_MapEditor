@@ -6,7 +6,7 @@ import { PathQuadSeek } from "./PathQuadSeek";
 
 /*
  * @Descripttion: A*寻路算法（纵式六边形地图类型 || 横式六边形地图类型）
- * @Author: CYK
+ * @Author: cyk
  * @Date: 2023-07-30 21:05:00
  */
 export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
@@ -211,7 +211,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
 		if (!this.isCanPass(this._targetNode)) {
 			//如果不能直达目标，最大寻路步骤 = 为两点间的预估距离的3倍
-			newMaxStep = (Math.abs(this._targetNode.cx - this._startNode.cx) + Math.abs(this._targetNode.cy - this._startNode.cy)) * 3;
+			newMaxStep = (Math.abs(this._targetNode.col - this._startNode.col) + Math.abs(this._targetNode.row - this._startNode.row)) * 3;
 			if (newMaxStep > this.maxStep) {
 				newMaxStep = this.maxStep;
 			}
@@ -306,9 +306,9 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 			midHpos = this.getHoneyPoint(midNode);
 			nextHpos = this.getHoneyPoint(nextNode);
 
-			var bool1: Boolean = midNode.cx == preNode.cx && midNode.cx == nextNode.cx;
+			var bool1: Boolean = midNode.col == preNode.col && midNode.col == nextNode.col;
 
-			var bool2: Boolean = (midNode.cy == preNode.cy && midNode.cy == nextNode.cy) && ((preNode.cx % 2 == midNode.cx % 2 && midNode.cx % 2 == nextNode.cx % 2));
+			var bool2: Boolean = (midNode.row == preNode.row && midNode.row == nextNode.row) && ((preNode.col % 2 == midNode.col % 2 && midNode.col % 2 == nextNode.col % 2));
 
 			var bool3: Boolean = preHpos.hx == midHpos.hx && midHpos.hx == nextHpos.hx;
 
@@ -539,8 +539,8 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	 * @param node 
 	 */
 	public getHoneyPoint(node: RoadNode): HoneyPoint {
-		var hx: number = node.cy + Math.ceil(node.cx / 2); //设置反斜角为x坐标
-		var hy: number = node.cy - Math.floor(node.cx / 2); //设置正斜角为y坐标
+		var hx: number = node.row + Math.ceil(node.col / 2); //设置反斜角为x坐标
+		var hy: number = node.row - Math.floor(node.col / 2); //设置正斜角为y坐标
 
 		return new HoneyPoint(hx, hy);
 	}
@@ -552,10 +552,10 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	 * @returns 
 	 */
 	public getNodeByHoneyPoint(hx: number, hy: number): RoadNode {
-		var cx: number = hx - hy; //研究出来的
-		var cy: number = Math.floor((hx - hy) / 2) + hy; //研究出来的
+		var col: number = hx - hy; //研究出来的
+		var row: number = Math.floor((hx - hy) / 2) + hy; //研究出来的
 
-		return this.getRoadNode(cx, cy);
+		return this.getRoadNode(col, row);
 	}
 
 	/**
@@ -572,11 +572,11 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
 		var round: number[][];
 
-		node.cx % 2 == 0 ? round = this._round1 : round = this._round2;
-		var cx: number = node.cx + round[roundIndex][0];
-		var cy: number = node.cy + round[roundIndex][1];
+		node.col % 2 == 0 ? round = this._round1 : round = this._round2;
+		var col: number = node.col + round[roundIndex][0];
+		var row: number = node.row + round[roundIndex][1];
 
-		return this.getRoadNode(cx, cy);
+		return this.getRoadNode(col, row);
 
 	}
 
@@ -587,15 +587,15 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	public getRoundNodes(node: RoadNode): RoadNode[] {
 		var round: number[][];
 
-		node.cx % 2 == 0 ? round = this._round1 : round = this._round2;
+		node.col % 2 == 0 ? round = this._round1 : round = this._round2;
 
 		var nodeArr: RoadNode[] = [];
 
 		for (var i: number = 0; i < round.length; i++) {
-			var cx: number = node.cx + round[i][0];
-			var cy: number = node.cy + round[i][1];
+			var col: number = node.col + round[i][0];
+			var row: number = node.row + round[i][1];
 
-			var node2: RoadNode = this.getRoadNode(cx, cy);
+			var node2: RoadNode = this.getRoadNode(col, row);
 
 			nodeArr.push(node2);
 		}
@@ -631,12 +631,12 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 
 	/**
 	 * 根据世界坐标获得路节点
-	 * @param cx 
-	 * @param cy 
+	 * @param col 
+	 * @param row 
 	 * @returns 
 	 */
-	public getRoadNode(cx: number, cy: number): RoadNode {
-		var key: string = cx + "_" + cy;
+	public getRoadNode(col: number, row: number): RoadNode {
+		var key: string = col + "_" + row;
 		return this._roadNodes[key];
 	}
 
@@ -738,12 +738,12 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	private searchRoundNodes(node: RoadNode): void {
 		var round: number[][];
 
-		node.cx % 2 == 0 ? round = this._round1 : round = this._round2;
+		node.col % 2 == 0 ? round = this._round1 : round = this._round2;
 
 		for (var i: number = 0; i < round.length; i++) {
-			var cx: number = node.cx + round[i][0];
-			var cy: number = node.cy + round[i][1];
-			var node2: RoadNode = this.getRoadNode(cx, cy);
+			var col: number = node.col + round[i][0];
+			var row: number = node.row + round[i][1];
+			var node2: RoadNode = this.getRoadNode(col, row);
 
 			if (this.isCanPass(node2) && node2 != this._startNode && !this.isInCloseList(node2)) {
 				this.setNodeF(node2);
@@ -758,7 +758,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 	public setNodeF(node: RoadNode): void {
 		var g: number;
 
-		if (node.cx == this._currentNode.cx || node.cy == this._currentNode.cy) {
+		if (node.col == this._currentNode.col || node.row == this._currentNode.row) {
 			g = this._currentNode.g + this.COST_STRAIGHT;
 		} else {
 			g = this._currentNode.g + this.COST_DIAGONAL;
@@ -769,7 +769,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 				node.g = g;
 
 				node.parent = this._currentNode;
-				node.h = (Math.abs(this._targetNode.cx - node.cx) + Math.abs(this._targetNode.cy - node.cy)) * this.COST_STRAIGHT;
+				node.h = (Math.abs(this._targetNode.col - node.col) + Math.abs(this._targetNode.row - node.row)) * this.COST_STRAIGHT;
 				node.f = node.g + node.h;
 
 				//节点的g值已经改变，把节点先从二堆叉树结构中删除，再重新添加进二堆叉树
@@ -784,7 +784,7 @@ export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 			node.resetTree();
 
 			node.parent = this._currentNode;
-			node.h = (Math.abs(this._targetNode.cx - node.cx) + Math.abs(this._targetNode.cy - node.cy)) * this.COST_STRAIGHT;
+			node.h = (Math.abs(this._targetNode.col - node.col) + Math.abs(this._targetNode.row - node.row)) * this.COST_STRAIGHT;
 			node.f = node.g + node.h;
 
 			this._binaryTreeNode.addTreeNode(node);

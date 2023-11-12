@@ -6,7 +6,7 @@ import { PathQuadSeek } from "./PathQuadSeek";
 
 /*
  * @Descripttion: A*寻路算法（45度等视角地图 || 90度平面地图）
- * @Author: CYK
+ * @Author: cyk
  * @Date: 2023-06-30 22:00:00
  */
 export default class AStarRoadSeeker implements IRoadSeeker {
@@ -169,7 +169,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         }
 
         if (!this.isCanPass(this._targetNode)) {
-            console.warn(`目标不可达到, 行: ${this._targetNode.cy}, 列: ${this._targetNode.cx}, x: ${this._targetNode.px}, y: ${this._targetNode.py}`);
+            console.warn(`目标不可达到, 行: ${this._targetNode.row}, 列: ${this._targetNode.col}, x: ${this._targetNode.px}, y: ${this._targetNode.py}`);
             return [];
         }
 
@@ -236,7 +236,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
 
         if (!this.isCanPass(this._targetNode)) {
             //如果不能直达目标，最大寻路步骤 = 为两点间的预估距离的3倍
-            newMaxStep = (Math.abs(this._targetNode.cx - this._startNode.cx) + Math.abs(this._targetNode.cy - this._startNode.cy)) * 3;
+            newMaxStep = (Math.abs(this._targetNode.col - this._startNode.col) + Math.abs(this._targetNode.row - this._startNode.row)) * 3;
             if (newMaxStep > this.maxStep) {
                 newMaxStep = this.maxStep;
             }
@@ -321,13 +321,13 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             let midNode: RoadNode = nodeArr[i] as RoadNode;
             let nextNode: RoadNode = nodeArr[i + 1] as RoadNode;
 
-            let bool1: Boolean = midNode.cx == preNode.cx && midNode.cx == nextNode.cx;
-            let bool2: Boolean = midNode.cy == preNode.cy && midNode.cy == nextNode.cy;
+            let bool1: Boolean = midNode.col == preNode.col && midNode.col == nextNode.col;
+            let bool2: Boolean = midNode.row == preNode.row && midNode.row == nextNode.row;
             let bool3: Boolean = false;
 
             if (this._pathQuadSeek == PathQuadSeek.path_dire_8) //寻路类型是8方向时才考虑正斜角路径优化
             {
-                bool3 = ((midNode.cx - preNode.cx) / (midNode.cy - preNode.cy)) * ((nextNode.cx - midNode.cx) / (nextNode.cy - midNode.cy)) == 1
+                bool3 = ((midNode.col - preNode.col) / (midNode.row - preNode.row)) * ((nextNode.col - midNode.col) / (nextNode.row - midNode.row)) == 1
             }
 
             if (bool1 || bool2 || bool3) {
@@ -357,7 +357,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
                 let targetNode: RoadNode = nodeArr[j] as RoadNode;
 
                 //在第一阶段优已经优化过横，竖，正斜了，所以再出现是肯定不能优化的，可以忽略
-                if (startNode.cx == targetNode.cx || startNode.cy == targetNode.cy || Math.abs(targetNode.cx - startNode.cx) == Math.abs(targetNode.cy - startNode.cy)) {
+                if (startNode.col == targetNode.col || startNode.row == targetNode.row || Math.abs(targetNode.col - startNode.col) == Math.abs(targetNode.row - startNode.row)) {
                     continue;
                 }
 
@@ -386,22 +386,22 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             return false;
         }
 
-        let disX: number = Math.abs(targetNode.cx - startNode.cx);
-        let disY: number = Math.abs(targetNode.cy - startNode.cy);
+        let disX: number = Math.abs(targetNode.col - startNode.col);
+        let disY: number = Math.abs(targetNode.row - startNode.row);
 
         let dirX = 0;
 
-        if (targetNode.cx > startNode.cx) {
+        if (targetNode.col > startNode.col) {
             dirX = 1;
-        } else if (targetNode.cx < startNode.cx) {
+        } else if (targetNode.col < startNode.col) {
             dirX = -1;
         }
 
         let dirY = 0;
 
-        if (targetNode.cy > startNode.cy) {
+        if (targetNode.row > startNode.row) {
             dirY = 1;
-        } else if (targetNode.cy < startNode.cy) {
+        } else if (targetNode.row < startNode.row) {
             dirY = -1;
         }
 
@@ -414,24 +414,24 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             rate = disY / disX;
 
             for (let i = 0; i < disX; i++) {
-                ry = startNode.cy + i * dirY * rate;
+                ry = startNode.row + i * dirY * rate;
                 intNum = Math.floor(ry);
                 decimal = ry % 1;
 
-                let cx1: number = startNode.cx + i * dirX;
-                let cy1: number = decimal <= 0.5 ? intNum : intNum + 1;
+                let col1: number = startNode.col + i * dirX;
+                let row1: number = decimal <= 0.5 ? intNum : intNum + 1;
 
-                ry = startNode.cy + (i + 1) * dirY * rate;
+                ry = startNode.row + (i + 1) * dirY * rate;
                 intNum = Math.floor(ry);
                 decimal = ry % 1;
 
-                let cx2: number = startNode.cx + (i + 1) * dirX;
-                let cy2: number = decimal <= 0.5 ? intNum : intNum + 1;
+                let col2: number = startNode.col + (i + 1) * dirX;
+                let row2: number = decimal <= 0.5 ? intNum : intNum + 1;
 
-                let node1: RoadNode = this.getRoadNode(cx1, cy1);
-                let node2: RoadNode = this.getRoadNode(cx2, cy2);
+                let node1: RoadNode = this.getRoadNode(col1, row1);
+                let node2: RoadNode = this.getRoadNode(col2, row2);
 
-                //cc.log(i + "  :: " + node1.cy," yy ",startNode.cy + i * rate,ry % 1);
+                //cc.log(i + "  :: " + node1.row," yy ",startNode.row + i * rate,ry % 1);
 
                 if (!this.isCrossAtAdjacentNodes(node1, node2)) {
                     return false;
@@ -443,21 +443,21 @@ export default class AStarRoadSeeker implements IRoadSeeker {
 
             for (let i = 0; i < disY; i++) {
                 rx = i * dirX * rate;
-                intNum = dirX > 0 ? Math.floor(startNode.cx + rx) : Math.ceil(startNode.cx + rx);
+                intNum = dirX > 0 ? Math.floor(startNode.col + rx) : Math.ceil(startNode.col + rx);
                 decimal = Math.abs(rx % 1);
 
-                let cx1: number = decimal <= 0.5 ? intNum : intNum + 1 * dirX;
-                let cy1: number = startNode.cy + i * dirY;
+                let col1: number = decimal <= 0.5 ? intNum : intNum + 1 * dirX;
+                let row1: number = startNode.row + i * dirY;
 
                 rx = (i + 1) * dirX * rate;
-                intNum = dirX > 0 ? Math.floor(startNode.cx + rx) : Math.ceil(startNode.cx + rx);
+                intNum = dirX > 0 ? Math.floor(startNode.col + rx) : Math.ceil(startNode.col + rx);
                 decimal = Math.abs(rx % 1);
 
-                let cx2: number = decimal <= 0.5 ? intNum : intNum + 1 * dirX;
-                let cy2: number = startNode.cy + (i + 1) * dirY;
+                let col2: number = decimal <= 0.5 ? intNum : intNum + 1 * dirX;
+                let row2: number = startNode.row + (i + 1) * dirY;
 
-                let node1: RoadNode = this.getRoadNode(cx1, cy1);
-                let node2: RoadNode = this.getRoadNode(cx2, cy2);
+                let node1: RoadNode = this.getRoadNode(col1, row1);
+                let node2: RoadNode = this.getRoadNode(col2, row2);
 
                 if (!this.isCrossAtAdjacentNodes(node1, node2)) {
                     return false;
@@ -483,8 +483,8 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             return false;
         }
 
-        let dirX = node2.cx - node1.cx;
-        let dirY = node2.cy - node1.cy
+        let dirX = node2.col - node1.col;
+        let dirY = node2.row - node1.row
 
         //如果不是相邻的两个点 则不能通过
         if (Math.abs(dirX) > 1 || Math.abs(dirY) > 1) {
@@ -492,12 +492,12 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         }
 
         //如果相邻的点是在同一行，或者同一列，则判定为可通过
-        if ((node1.cx == node2.cx) || (node1.cy == node2.cy)) {
+        if ((node1.col == node2.col) || (node1.row == node2.row)) {
             return true;
         }
 
         //只剩对角情况了
-        if ( this.isPassNode(this.getRoadNode(node1.cx, node1.cy + dirY)) &&this.isPassNode(this.getRoadNode((node1.cx + dirX), node1.cy))
+        if ( this.isPassNode(this.getRoadNode(node1.col, node1.row + dirY)) &&this.isPassNode(this.getRoadNode((node1.col + dirX), node1.row))
 ) {
             return true;
         }
@@ -528,7 +528,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         if (!this._neighbours || !this._neighbours.length)
             return true;
         for (let i = 0; i < this._neighbours.length; i++) {
-            let cx = node.cx + this._neighbours[i][0], cy = node.cy + this._neighbours[i][1], n = this.getRoadNode(cx, cy);
+            let col = node.col + this._neighbours[i][0], row = node.row + this._neighbours[i][1], n = this.getRoadNode(col, row);
             if (!this.isPassNode(n))
                 return false;
         }
@@ -537,12 +537,12 @@ export default class AStarRoadSeeker implements IRoadSeeker {
 
     /**
      * 根据世界坐标获得路节点
-     * @param cx 
-     * @param cy 
+     * @param col 
+     * @param row 
      * @returns 
      */
-    public getRoadNode(cx: number, cy: number): RoadNode {
-        let key: string = cx + "_" + cy;
+    public getRoadNode(col: number, row: number): RoadNode {
+        let key: string = col + "_" + row;
         return this._roadNodes[key];
     }
 
@@ -631,9 +631,9 @@ export default class AStarRoadSeeker implements IRoadSeeker {
      */
     private searchRoundNodes(node: RoadNode): void {
         for (let i: number = 0; i < this._round.length; i++) {
-            let cx: number = node.cx + this._round[i][0];
-            let cy: number = node.cy + this._round[i][1];
-            let node2: RoadNode = this.getRoadNode(cx, cy);
+            let col: number = node.col + this._round[i][0];
+            let row: number = node.row + this._round[i][1];
+            let node2: RoadNode = this.getRoadNode(col, row);
 
             if (this.isCanPass(node2) && node2 != this._startNode && !this.isInCloseList(node2) && !this.inInCorner(node2)) {
                 this.setNodeF(node2);
@@ -648,7 +648,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
     public setNodeF(node: RoadNode): void {
         let g: number;
 
-        if (node.cx == this._currentNode.cx || node.cy == this._currentNode.cy) {
+        if (node.col == this._currentNode.col || node.row == this._currentNode.row) {
             g = this._currentNode.g + this.COST_STRAIGHT;
         } else {
             g = this._currentNode.g + this.COST_DIAGONAL;
@@ -659,7 +659,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
                 node.g = g;
 
                 node.parent = this._currentNode;
-                node.h = (Math.abs(this._targetNode.cx - node.cx) + Math.abs(this._targetNode.cy - node.cy)) * this.COST_STRAIGHT;//曼哈顿估价法
+                node.h = (Math.abs(this._targetNode.col - node.col) + Math.abs(this._targetNode.row - node.row)) * this.COST_STRAIGHT;//曼哈顿估价法
                 node.f = node.g + node.h;
 
                 //节点的g值已经改变，把节点先从二堆叉树结构中删除，再重新添加进二堆叉树
@@ -673,7 +673,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             node.resetTree();
 
             node.parent = this._currentNode;
-            node.h = (Math.abs(this._targetNode.cx - node.cx) + Math.abs(this._targetNode.cy - node.cy)) * this.COST_STRAIGHT;
+            node.h = (Math.abs(this._targetNode.col - node.col) + Math.abs(this._targetNode.row - node.row)) * this.COST_STRAIGHT;
             node.f = node.g + node.h;
 
             this._binaryTreeNode.addTreeNode(node);
@@ -708,12 +708,12 @@ export default class AStarRoadSeeker implements IRoadSeeker {
             return false;
         }
 
-        if (node.cx == this._currentNode.cx || node.cy == this._currentNode.cy) {
+        if (node.col == this._currentNode.col || node.row == this._currentNode.row) {
             return false;
         }
 
-        let node1: RoadNode = this.getRoadNode(this._currentNode.cx, node.cy);
-        let node2: RoadNode = this.getRoadNode(node.cx, this._currentNode.cy);
+        let node1: RoadNode = this.getRoadNode(this._currentNode.col, node.row);
+        let node2: RoadNode = this.getRoadNode(node.col, this._currentNode.row);
 
         if (this.isPassNode(node1) && this.isPassNode(node2)) {
             return false;

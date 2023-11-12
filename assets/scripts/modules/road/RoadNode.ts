@@ -2,8 +2,8 @@ export default class RoadNode {
 
     private _px: number;//像素坐标x轴
     private _py: number;//像素坐标y轴
-    private _cx: number;//世界坐标x轴 真 （存储用）
-    private _cy: number;//世界坐标y轴 真 （存储用）
+    private _col: number;//世界坐标x轴 真 （存储用）
+    private _row: number;//世界坐标y轴 真 （存储用）
     private _dx: number;//直角坐标x轴
     private _dy: number;//直角坐标y轴
     private _value: number = 0;//节点的值
@@ -38,7 +38,7 @@ export default class RoadNode {
 
     public toString(): String {
         return "路点像素坐标：（" + this._px + "," + this._py + "),  " +
-            "路点世界坐标：（" + this._cx + "," + this._cy + "),  " +
+            "路点世界坐标：（" + this._col + "," + this._row + "),  " +
             "路点平面直角坐标：（" + this._dx + "," + this._dy + ")";
     }
 
@@ -58,20 +58,20 @@ export default class RoadNode {
         this._py = value;
     }
 
-    public get cx(): number {
-        return this._cx;
+    public get col(): number {
+        return this._col;
     }
 
-    public set cx(value: number) {
-        this._cx = value;
+    public set col(value: number) {
+        this._col = value;
     }
 
-    public get cy(): number {
-        return this._cy;
+    public get row(): number {
+        return this._row;
     }
 
-    public set cy(value: number) {
-        this._cy = value;
+    public set row(value: number) {
+        this._row = value;
     }
 
     public get dx(): number {
