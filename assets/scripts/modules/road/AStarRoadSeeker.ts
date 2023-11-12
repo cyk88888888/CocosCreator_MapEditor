@@ -497,8 +497,7 @@ export default class AStarRoadSeeker implements IRoadSeeker {
         }
 
         //只剩对角情况了
-        if ( this.isPassNode(this.getRoadNode(node1.col, node1.row + dirY)) &&this.isPassNode(this.getRoadNode((node1.col + dirX), node1.row))
-) {
+        if ( this.isPassNode(this.getRoadNode(node1.col, node1.row + dirY)) &&this.isPassNode(this.getRoadNode((node1.col + dirX), node1.row))) {
             return true;
         }
 
