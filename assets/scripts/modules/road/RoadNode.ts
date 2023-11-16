@@ -111,6 +111,7 @@ export default class RoadNode {
         return this._g;
     }
 
+    /** 起点到该点的估值*/
     public set g(value: number) {
         this._g = value;
     }
@@ -119,6 +120,7 @@ export default class RoadNode {
         return this._h;
     }
 
+    /** 该点到终点的估值*/
     public set h(value: number) {
         this._h = value;
     }
