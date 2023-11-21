@@ -108,7 +108,7 @@ export class UIScene extends Component{
         let self = this;
         if(self.isEnter) return;
         self.isEnter = true;
-        console.log('进入' + self.className);
+        // console.log('进入' + self.className);
         self.onEnter_b();
         self.onEnter();
         if (self._isFirstEnter) {
@@ -183,7 +183,7 @@ export class UIScene extends Component{
             }
             self._emmitMap = null;
         }
-        console.log('退出' + self.className);
+        // console.log('退出' + self.className);
         this.onExit_b();
         self.onExit();
         this.onExit_a();

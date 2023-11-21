@@ -113,7 +113,7 @@ export class UIComp extends Component {
         if(self.isEnter) return;
         self.isEnter = true;
         self.addListener();
-        console.log('进入' + self.scriptName);
+        // console.log('进入' + self.scriptName);
         self.onEnter_b();
         self.onEnter();
         if (self.isFirstEnter) {
@@ -340,7 +340,7 @@ export class UIComp extends Component {
         self.clearAllTimeoutOrInterval();
         self.rmAllTweens();
 
-        console.log('退出' + self.scriptName);
+        // console.log('退出' + self.scriptName);
         self.onExit_b();
         self.onExit();
         self.onExit_a();
