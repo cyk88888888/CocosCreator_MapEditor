@@ -13,9 +13,10 @@ export class UIComp extends Component {
     private isFirstEnter: boolean = true;
     /** 预制体路径 */
     public static prefabUrl: string = '';
-    public hasDestory: boolean;//是否已被销毁
     /** 脚本类名**/
     public scriptName: string;
+    public isEnter: boolean;
+    public isDestory: boolean;//是否已被销毁
     protected needRefreshListOnEnter: boolean = true;
 
     __preload() {
@@ -26,7 +27,7 @@ export class UIComp extends Component {
     }
 
     onLoad() {
-        this.scriptName = this.name.match(/<(\S*)>/)[1];
+        this.scriptName = js.getClassName(this);
         // console.log('onLoad: ' + this.scriptName);
     }
 
@@ -42,7 +43,7 @@ export class UIComp extends Component {
 
     onDestroy() {
         let self = this;
-        self.hasDestory = true;
+        self.isDestory = true;
         // console.log('onDestroy: ' + this.scriptName);
     }
 
@@ -91,7 +92,7 @@ export class UIComp extends Component {
     }
 
     public static get __className(): string {
-        return this.name;
+        return js.getClassName(this);
     }
 
     public setData(data: any) {
@@ -109,9 +110,10 @@ export class UIComp extends Component {
      */
     private __doEnter() {
         let self = this;
-        if (self.hasDestory) return;
+        if(self.isEnter) return;
+        self.isEnter = true;
         self.addListener();
-        // console.log('进入' + self.scriptName);
+        console.log('进入' + self.scriptName);
         self.onEnter_b();
         self.onEnter();
         if (self.isFirstEnter) {
@@ -306,13 +308,15 @@ export class UIComp extends Component {
 
     protected destory() {
         let self = this;
-        if (self.hasDestory) return;
+        if (self.isDestory) return;
         self.node.destroy();
-        self.hasDestory = true;
+        self.isDestory = true;
     }
 
     private __dispose() {
         let self = this;
+        if(!self.isEnter) return;
+        self.isEnter = false;;
         if (self._emmitMap) {
             for (let event in self._emmitMap) {
                 self.unEmitter(event, self._emmitMap[event]);
@@ -336,7 +340,7 @@ export class UIComp extends Component {
         self.clearAllTimeoutOrInterval();
         self.rmAllTweens();
 
-        // console.log('退出' + self.scriptName);
+        console.log('退出' + self.scriptName);
         self.onExit_b();
         self.onExit();
         self.onExit_a();

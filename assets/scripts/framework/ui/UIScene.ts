@@ -3,17 +3,17 @@
  * @Author: CYK
  * @Date: 2022-05-20 09:53:17
  */
-import { UITransform, _decorator } from 'cc';
+import { _decorator, js } from 'cc';
 import { SubLayerMgr } from '../mgr/SubLayerMgr';
 import { UILayer } from './UILayer';
 import { emmiter } from '../base/Emmiter';
 import { BaseUT } from '../base/BaseUtil';
-import { Component, Node } from 'cc';
+import { Component, Node} from 'cc';
 import { SceneMgr } from '../mgr/SceneMgr';
 const { ccclass } = _decorator;
 
 @ccclass('UIScene')
-export class UIScene extends Component {
+export class UIScene extends Component{
     protected mainClassLayer: typeof UILayer;
     protected subLayerMgr: SubLayerMgr;
     public layer: Node;
@@ -21,6 +21,8 @@ export class UIScene extends Component {
     public msg: Node;
     public menuLayer: Node;
 
+    public isEnter: boolean;
+    public isDestory: boolean;
     private _moduleParam: any;
     private _isFirstEnter: boolean = true;
     private _emmitMap: { [event: string]: Function };//已注册的监听事件列表
@@ -70,22 +72,16 @@ export class UIScene extends Component {
     }
 
     public get className() {
-        let self = this;
-        return self.node.name;
+        return js.getClassName(this);
     }
-
-    onLoad() {
+    
+    onLoad(){
         let self = this;
         self.initLayer();
         if (self.mainClassLayer) {
             self.subLayerMgr.register(self.mainClassLayer);
-            self.push(self.mainClassLayer, { str: '我叫' + self.mainClassLayer.name });
+            self.push(self.mainClassLayer, { str: '我叫' + self.mainClassLayer.__className });
         }
-    }
-
-    public get uiTransform() {
-        let self = this;
-        return self.getComponent(UITransform);
     }
 
     private initLayer() {
@@ -108,9 +104,11 @@ export class UIScene extends Component {
         return newNode;
     }
 
-    private __doEnter() {
+    private __doEnter(){
         let self = this;
-        // console.log('进入' + self.className);
+        if(self.isEnter) return;
+        self.isEnter = true;
+        console.log('进入' + self.className);
         self.onEnter_b();
         self.onEnter();
         if (self._isFirstEnter) {
@@ -124,12 +122,12 @@ export class UIScene extends Component {
         this._moduleParam = data;
     }
 
-    onEnable() {
+    onEnable(){
         let self = this;
         self.__doEnter();
     }
 
-    onDisable() {
+    onDisable(){
         let self = this;
         self.__dispose();
     }
@@ -177,13 +175,15 @@ export class UIScene extends Component {
 
     private __dispose() {
         let self = this;
+        if(!self.isEnter) return;
+        self.isEnter = false;;
         if (self._emmitMap) {
             for (let event in self._emmitMap) {
                 self.unEmitter(event, self._emmitMap[event]);
             }
             self._emmitMap = null;
         }
-        // console.log('退出' + self.className);
+        console.log('退出' + self.className);
         this.onExit_b();
         self.onExit();
         this.onExit_a();
@@ -195,9 +195,10 @@ export class UIScene extends Component {
         this.subLayerMgr = null;
         this.node.destroy();
     }
-
-    onDestroy() {
+    
+    onDestroy(){
         let self = this;
+        self.isDestory = true;
         // console.log('onDestroy: ' + this.className);
     }
 }

@@ -7,7 +7,7 @@
  * @end
  ******************************************/
 
-import { Node, Component, Enum, Sprite, SpriteFrame, tween, _decorator, EventHandler, Tween, Button, UITransform, Vec3, EventTouch } from 'cc';
+import { Node, Component, Enum, Sprite, SpriteFrame, tween, _decorator, EventHandler, Tween, Button, UITransform, Vec3, EventTouch, js } from 'cc';
 import { DEV } from 'cc/env';
 import { ButtonPlus } from './ButtonPlus';
 import { List, SelectedType_List, SlideType } from './List';
@@ -113,7 +113,7 @@ export class ListItem extends Component {
     }
 
     onLoad() {
-        this.scriptName = this.name.match(/<(\S*)>/)[1];
+        this.scriptName = js.getClassName(this);
         // console.log('onLoad: ' + this.scriptName);
         // //没有按钮组件的话，selectedFlag无效
         // if (!this.btnCom)
@@ -178,7 +178,7 @@ export class ListItem extends Component {
     }
 
     public static get __className(): string {
-        return this.name;
+        return js.getClassName(this);
     }
 
     public setData(data: any) {
@@ -431,7 +431,7 @@ export class ListItem extends Component {
     private createEvt(component: Component, handlerName: string, node: Node = null) {
         if (!component.isValid)
             return;//有些异步加载的，节点以及销毁了。
-        component['comName'] = component['comName'] || component.name.match(/\<(.*?)\>/g).pop().replace(/\<|>/g, '');
+        component['comName'] = component['comName'] || js.getClassName(component); 
         let evt = new EventHandler();
         evt.target = node || component.node;
         evt.component = component['comName'];

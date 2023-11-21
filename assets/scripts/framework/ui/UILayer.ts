@@ -3,7 +3,7 @@
  * @Author: CYK
  * @Date: 2022-05-12 09:23:41
  */
-import { _decorator, Node, instantiate } from 'cc';
+import { _decorator, Component, Node, instantiate, NodeEventType } from 'cc';
 import { BaseUT } from '../base/BaseUtil';
 import { ResMgr } from '../mgr/ResMgr';
 import { SceneMgr } from '../mgr/SceneMgr';
@@ -15,11 +15,12 @@ export class UILayer extends UIComp {
 
     private _oldParent: Node;
     public static async show(data?: any) {
+      
         let prefab = await ResMgr.inst.loadPrefab(this.prefabUrl);
         const newNode = instantiate(prefab);
         // newNode.layer = Layers.Enum.UI_2D;
-        let script = newNode.getComponent(this.name) as UILayer;
-        if (!script) script = newNode.addComponent(this.name) as UILayer;
+        let script = newNode.getComponent(this.__className) as UILayer;
+        if (!script) script = newNode.addComponent(this.__className) as UILayer;
         BaseUT.setFitSize(script.node);
         script.setData(data);
         script.addToLayer();
@@ -58,11 +59,6 @@ export class UILayer extends UIComp {
         self.onCloseAnimation(() => {
             self.destory();
         });
-    }
-
-    protected _tap_btn_close(){
-        let self = this;
-        self.close();
     }
 }
 
