@@ -3,10 +3,10 @@ import { UIScene } from '../../framework/ui/UIScene';
 import { registerModule } from '../../framework/mgr/ModuleMgr';
 import { MapEditorLayer } from './MapEditorLayer';
 const { ccclass, property } = _decorator;
-/*
- * @Descripttion: 首页场景
- * @Author: CYK
- * @Date: 2023-05-30 23:00:00
+/** 
+ * @descripttion 首页场景
+ * @author cyk
+ * @date 2023-05-30 23:00:00
  */
 @ccclass('MapEditorScene')
 export class MapEditorScene extends UIScene {

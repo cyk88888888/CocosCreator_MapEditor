@@ -1,7 +1,7 @@
-/*
- * @Descripttion: 路径优化类型
- * @Author: CYK
- * @Date: 2023-05-30 23:00:00
+/** 
+ * @descripttion 路径优化类型
+ * @author cyk
+ * @date 2023-06-30 22:00:00
  */
 export enum PathOptimize {
    /**

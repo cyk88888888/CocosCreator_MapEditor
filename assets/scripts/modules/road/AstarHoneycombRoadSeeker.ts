@@ -4,10 +4,10 @@ import BinaryTreeNode from "./BinaryTreeNode";
 import { PathOptimize } from "./PathOptimize";
 import { PathQuadSeek } from "./PathQuadSeek";
 
-/*
- * @Descripttion: A*寻路算法（纵式六边形地图类型 || 横式六边形地图类型）
- * @Author: cyk
- * @Date: 2023-07-30 21:05:00
+/** 
+ * @descripttion A*寻路算法（纵式六边形地图类型 || 横式六边形地图类型）
+ * @author cyk
+ * @date 2023-07-30 21:05:00
  */
 export default class AstarHoneycombRoadSeeker implements IRoadSeeker {
 

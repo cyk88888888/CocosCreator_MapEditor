@@ -6,11 +6,10 @@ import { CONST } from '../../base/CONST';
 import { BaseUT } from '../../../framework/base/BaseUtil';
 import { mapThingSelect } from '../comp/mapThingSelect';
 const { ccclass, property } = _decorator;
-
-/*
- * @Descripttion: 场景物件工厂
- * @Author: CYK
- * @Date: 2023-07-10 22:56:00
+/** 
+ * @descripttion 场景物件工厂
+ * @author cyk
+ * @date 2023-07-10 22:56:00
  */
 @ccclass('MapThingFactory')
 export class MapThingFactory extends UIComp {

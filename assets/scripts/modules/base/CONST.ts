@@ -1,7 +1,7 @@
-/*
- * @Descripttion: 枚举类
- * @Author: CYK
- * @Date: 2023-03-24 23:26:33
+/** 
+ * @descripttion 枚举类
+ * @author cyk
+ * @date 2023-03-24 23:26:33
  */
 export namespace CONST {
     export enum GEVT {

@@ -10,7 +10,6 @@
 import { Node, Component, Enum, Sprite, SpriteFrame, tween, _decorator, EventHandler, Tween, Button, UITransform, Vec3, EventTouch, js } from 'cc';
 import { DEV } from 'cc/env';
 import { ButtonPlus } from './ButtonPlus';
-import { List, SelectedType_List, SlideType } from './List';
 import { emmiter } from '../base/Emmiter';
 import { SoundMgr } from '../mgr/SoundMgr';
 const { ccclass, property, disallowMultiple, executionOrder } = _decorator;
@@ -86,7 +85,7 @@ export class ListItem extends Component {
         return this._btnCom;
     }
     //依赖的List组件
-    public list: List;
+    public list: any;
     //是否已经注册过事件
     private _eventReg = false;
     //序列id
@@ -252,27 +251,31 @@ export class ListItem extends Component {
         let self = this;
         let listNode: Node = self[id];
         if (!listNode) return console.warn(`找不到id为${id}的列表`);
-        let list = listNode.getComponent(List);
+        let list = listNode.getComponent('List');
         if (!list) return console.warn(`列表${id}没有绑定List脚本`);
         list['nodeName'] = id;
-        list.renderEvent.target = self.node;
-        list.renderEvent.component = self.scriptName;
-        list.renderEvent.handler = '__onListRender';
+        let renderEvent = list['renderEvent'];
+        renderEvent.target = self.node;
+        renderEvent.component = self.scriptName;
+        renderEvent.handler = '__onListRender';
 
-        if (list.selectedMode != SelectedType_List.NONE) {
-            list.selectedEvent.target = self.node;
-            list.selectedEvent.component = self.scriptName;
-            list.selectedEvent.handler = '__onSelectEvent';
+        let selectedMode = list['selectedMode'];
+        if (selectedMode != 0) {//SelectedType_List.NONE
+            let selectedEvent = list['selectedEvent'];
+            selectedEvent.target = self.node;
+            selectedEvent.component = self.scriptName;
+            selectedEvent.handler = '__onSelectEvent';
         }
 
-        if (list.slideMode == SlideType.PAGE) {
-            list.pageChangeEvent.target = self.node;
-            list.pageChangeEvent.component = self.scriptName;
-            list.pageChangeEvent.handler = '__onPageChangeEvent';
+        if (list['slideMode'] == 3) {//SlideType.PAGE
+            let pageChangeEvent = list['pageChangeEvent'];
+            pageChangeEvent.target = self.node;
+            pageChangeEvent.component = self.scriptName;
+            pageChangeEvent.handler = '__onPageChangeEvent';
         }
 
         let dataList = self['_data_' + id]();
-        list.dataList = dataList || [];
+        list['dataList'] = dataList || [];
     }
 
     //列表项渲染
@@ -296,7 +299,7 @@ export class ListItem extends Component {
         }
     }
 
-    private __onPageChangeEvent(list: List, pageNum: number) {
+    private __onPageChangeEvent(list: any, pageNum: number) {
         let self = this;
         let listName = list['nodeName'];
         if (self["_pageChange_" + listName]) {

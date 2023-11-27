@@ -1,12 +1,11 @@
-/*
- * @Description: 页面模块管理器
- * @Author: CYK
- * @Date: 2022-05-23 09:27:58
- */
 import { js } from "cc";
 import { ModuleCfgInfo } from "../base/ModuleCfgInfo";
 import { UIScene } from "../ui/UIScene";
-
+/** 
+ * @descripttion 页面模块管理器
+ * @author cyk
+ * @date 2022-05-23 09:27:58
+ */
 export class ModuleMgr {
     private static _inst: ModuleMgr;
     public static get inst() {

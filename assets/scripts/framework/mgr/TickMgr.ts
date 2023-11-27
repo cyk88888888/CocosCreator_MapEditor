@@ -1,8 +1,8 @@
 import { Main } from "../../Main";
-/*
- * @Description: 自定义帧管理器
- * @Author: CYK
- * @Date: 2022-06-09 23:46:58
+/** 
+ * @descripttion 自定义帧管理器
+ * @author cyk
+ * @date 2022-06-09 23:46:58
  */
 export class TickMgr {
     public mainNode: Main;

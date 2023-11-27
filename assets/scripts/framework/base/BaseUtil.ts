@@ -1,9 +1,10 @@
-/*
- * @Description: 
- * @Author: CYK
- * @Date: 2022-05-19 11:39:05
- */
 import { game, Layers, Node, Scene, screen, Size, UIOpacity, UITransform, Vec2, view } from "cc";
+/** 
+ * @description 框架工具类
+ * @author CYK
+ * @date 2022-05-19 11:39:05
+ * 
+ */
 export namespace BaseUT {
     export function getView() {
         return view;

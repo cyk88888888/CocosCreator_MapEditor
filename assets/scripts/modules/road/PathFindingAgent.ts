@@ -11,10 +11,10 @@ import { PathQuadSeek } from "./PathQuadSeek";
 import Point from "./Point";
 import RoadNode from "./RoadNode";
 
-/*
- * @Descripttion: 寻路代理器
- * @Author: cyk
- * @Date: 2023-05-30 23:00:00
+/** 
+ * @descripttion 寻路代理器
+ * @author cyk
+ * @date 2023-06-30 22:00:00
  */
 export default class PathFindingAgent {
 

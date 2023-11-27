@@ -1,8 +1,3 @@
-/*
- * @Descripttion: 地图管理器
- * @Author: CYK
- * @Date: 2023-06-01 09:05:10
- */
 import { Node, Prefab, SpriteFrame, instantiate } from "cc";
 import { emmiter } from "../../framework/base/Emmiter";
 import { FileIOHandler } from "../../framework/mgr/FileIOHandler";
@@ -11,7 +6,11 @@ import { G } from "./Interface";
 import { BaseUT } from "../../framework/base/BaseUtil";
 import { ImgLoader } from "../../framework/uiComp/ImgLoader";
 import { InvalidImportDlg } from "../mapEditor/dlg/InvalidImportDlg";
-
+/** 
+ * @descripttion 地图管理器
+ * @author cyk
+ * @date 2023-06-01 09:05:10
+ */
 export class MapMgr {
     private static _inst: MapMgr;
     public static get inst() {

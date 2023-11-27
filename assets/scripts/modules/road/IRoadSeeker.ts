@@ -1,9 +1,10 @@
 import { PathOptimize } from "./PathOptimize";
 import { PathQuadSeek } from "./PathQuadSeek";
 import RoadNode from "./RoadNode";
-
-/**
- * 寻路接口
+/** 
+ * @descripttion 寻路接口
+ * @author cyk
+ * @date 2023-06-30 22:00:00
  */
 export default interface IRoadSeeker {
 

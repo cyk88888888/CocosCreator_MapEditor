@@ -1,10 +1,10 @@
-/*
- * @Description: 子界面管理器
- * @Author: CYK
- * @Date: 2022-05-19 15:25:36
- */
 import { js } from "cc";
 import { UILayer } from "../ui/UILayer";
+/** 
+ * @descripttion 子界面管理器
+ * @author cyk
+ * @date 2022-05-19 15:25:36
+ */
 export class SubLayerMgr {
     private _classMap: any;
     public curLayer: UILayer;

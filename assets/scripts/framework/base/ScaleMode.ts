@@ -1,7 +1,7 @@
-/*
- * @Description: 页面缩放参数设置
- * @Author: CYK
- * @Date: 2022-05-19 10:49:35
+/** 
+ * @descripttion 页面缩放参数设置
+ * @author cyk
+ * @date 2022-05-19 10:49:35
  */
 export class ScaleMode {
     /**

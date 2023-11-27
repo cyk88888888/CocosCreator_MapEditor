@@ -5,10 +5,10 @@ import { ColorGrid } from '../comp/ColorGrid';
 import { CONST } from '../../base/CONST';
 import { G } from '../../base/Interface';
 const { ccclass, property } = _decorator;
-/*
- * @Descripttion: 网格绘制工厂
- * @Author: CYK
- * @Date: 2023-06-30 23:00:00
+/** 
+ * @descripttion 网格绘制工厂
+ * @author cyk
+ * @date 2023-06-30 23:00:00
  */
 @ccclass('MapGridFactory')
 export class MapGridFactory extends UIComp {

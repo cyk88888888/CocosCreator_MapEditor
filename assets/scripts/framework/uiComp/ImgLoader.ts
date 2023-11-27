@@ -1,12 +1,11 @@
-/*
- * @Descripttion: 图片Sprite加载组件
- * @Author: CYK
- * @Date: 2022-06-15 17:01:50
- */
 import { _decorator, Component, Node, Sprite, SpriteFrame, SpriteAtlas, ImageAsset, resources } from 'cc';
 import { ResMgr } from '../mgr/ResMgr';
 const { ccclass, property } = _decorator;
-
+/** 
+ * @descripttion 图片Sprite加载组件
+ * @author cyk
+ * @date 2022-06-15 17:01:50
+ */
 @ccclass('ImgLoader')
 export class ImgLoader extends Component {
     private _sprite: Sprite;

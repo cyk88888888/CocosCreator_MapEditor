@@ -1,11 +1,11 @@
-/*
- * @Descripttion: 资源管理器
- * @Author: CYK
- * @Date: 2022-05-12 16:15:52
- */
 import { Asset, ImageAsset, Prefab, SpriteFrame, Texture2D, assetManager, resources } from "cc";
 import { JuHuaDlg } from "../ui/JuHuaDlg";
 
+/** 
+ * @descripttion 资源管理器
+ * @author cyk
+ * @date 2022-05-12 16:15:52
+ */
 export class ResMgr {
     private static _inst: ResMgr;
     public static get inst() {

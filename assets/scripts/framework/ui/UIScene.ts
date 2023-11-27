@@ -1,9 +1,4 @@
-/*
- * @Description: UI场景基类
- * @Author: CYK
- * @Date: 2022-05-20 09:53:17
- */
-import { _decorator, js } from 'cc';
+import { UITransform, _decorator, js } from 'cc';
 import { SubLayerMgr } from '../mgr/SubLayerMgr';
 import { UILayer } from './UILayer';
 import { emmiter } from '../base/Emmiter';
@@ -11,7 +6,11 @@ import { BaseUT } from '../base/BaseUtil';
 import { Component, Node} from 'cc';
 import { SceneMgr } from '../mgr/SceneMgr';
 const { ccclass } = _decorator;
-
+/** 
+ * @descripttion UI场景基类
+ * @author cyk
+ * @date 2022-05-20 09:53:17
+ */
 @ccclass('UIScene')
 export class UIScene extends Component{
     protected mainClassLayer: typeof UILayer;
@@ -82,6 +81,11 @@ export class UIScene extends Component{
             self.subLayerMgr.register(self.mainClassLayer);
             self.push(self.mainClassLayer, { str: '我叫' + self.mainClassLayer.__className });
         }
+    }
+
+    public get uiTransform() {
+        let self = this;
+        return self.getComponent(UITransform);
     }
 
     private initLayer() {

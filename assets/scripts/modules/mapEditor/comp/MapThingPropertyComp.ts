@@ -7,10 +7,10 @@ import { BaseUT } from '../../../framework/base/BaseUtil';
 import { MessageTip } from '../../common/message/MessageTip';
 import { ComboBoxComp } from './ComboBoxComp';
 const { ccclass, property } = _decorator;
-/*
- * @Descripttion: 场景物件属性面板
- * @Author: CYK
- * @Date: 2023-07-19 20:00:00
+/** 
+ * @descripttion 场景物件属性面板
+ * @author cyk
+ * @date 2023-07-19 20:00:00
  */
 @ccclass('MapThingPropertyComp')
 export class MapThingPropertyComp extends UIComp {

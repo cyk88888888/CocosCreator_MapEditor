@@ -1,13 +1,12 @@
-/*
- * @Descripttion: sp序列帧图片播放器
- * @Author: CYK
- * @Date: 2022-06-24 14:49:32
- */
 import { _decorator, Component, Sprite, SpriteFrame, SpriteAtlas, CCInteger, CCString } from 'cc';
 import { BaseEnum } from '../base/BaseEnum';
 import { ResMgr } from '../mgr/ResMgr';
 const { ccclass, property } = _decorator;
-
+/** 
+ * @descripttion sp序列帧图片播放器
+ * @author cyk
+ * @date 2022-06-24 14:49:32
+ */
 @ccclass('Sp')
 export class Sp extends Component {
     @property({ tooltip: '是否自动播放' })

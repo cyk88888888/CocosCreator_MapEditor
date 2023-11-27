@@ -14,15 +14,15 @@ import { HelpDlg } from './dlg/HelpDlg';
 import { MessageTip } from '../common/message/MessageTip';
 import PathFindingAgent from '../road/PathFindingAgent';
 import { JoyStickDlg } from './dlg/JoyStickDlg';
-import { SceneMgr } from '../../framework/mgr/SceneMgr';
 import { RunDemoCtrl } from './control/RunDemoCtrl';
 import { TestAstarDlg } from './dlg/TestAstarDlg';
+import { UT } from '../base/UT';
 const { ccclass, property } = _decorator;
 
-/*
- * @Descripttion: 编辑器首页
- * @Author: CYK
- * @Date: 2023-05-30 23:00:00
+/**
+ * @descripttion 编辑器首页
+ * @author cyk
+ * @date 2023-05-30 23:00:00
  */
 @ccclass('MapEditorLayer')
 export class MapEditorLayer extends UILayer {
@@ -360,7 +360,7 @@ export class MapEditorLayer extends UILayer {
         if (self.lbl_runDemo.string == "关闭运行") {
             self.lbl_runDemo.string = "测试运行";
             self.mapMgr.isRunningDemoMode = false;
-            SceneMgr.inst.closeDlgByName(["JoyStickDlg"]);
+            UT.closeDlgByName(["JoyStickDlg"]);
             RunDemoCtrl.inst.clear();
             BaseUT.changeMouseCursor("auto");
             return;

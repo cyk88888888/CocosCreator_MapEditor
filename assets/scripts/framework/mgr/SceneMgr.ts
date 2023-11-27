@@ -1,16 +1,14 @@
-/*
- * @Descripttion: 场景管理器
- * @Author: CYK
- * @Date: 2022-05-16 09:18:45
- */
 import { director, js, Node} from "cc";
 import { BaseUT } from "../base/BaseUtil";
 import { ModuleCfgInfo } from "../base/ModuleCfgInfo";
 import { UIScene } from "../ui/UIScene";
 import { moduleInfoMap } from "./ModuleMgr";
 import { ResMgr } from "./ResMgr";
-import { UIDlg } from "../ui/UIDlg";
-
+/** 
+ * @descripttion 场景管理器
+ * @author cyk
+ * @date 2022-05-16 09:18:45
+ */
 export class SceneMgr {
     private static _inst: SceneMgr;
     /**当前场景**/
@@ -107,7 +105,7 @@ export class SceneMgr {
     public pop() {
         let self = this;
         if (self._popArr.length <= 0) {
-            console.error('已经pop到底了！！！！！！！');
+            console.error('已经pop到底了!!!!!');
             return;
         }
         self.checkDestoryLastScene(true);
@@ -115,19 +113,6 @@ export class SceneMgr {
         self.curScene = self._popArr.pop();
         ResMgr.inst.curSceneName = self.curSceneName = self.curScene.className;
         self.curScene.addToGRoot();
-    }
-
-       /**关闭指定弹窗 */
-       public closeDlgByName(dlgNames: string[]) {
-        let tray = SceneMgr.inst.curScene.dlg;
-        let children = tray.children || [];
-        for (let len = children.length, i = len - 1; i >= 0; i--) {
-            let node = children[i];
-            if (dlgNames.indexOf(node.name) > -1) {
-                let script = node.getComponent(node.name) as UIDlg;
-                script.close();
-            }
-        }
     }
 }
 

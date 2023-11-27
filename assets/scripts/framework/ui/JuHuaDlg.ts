@@ -1,12 +1,11 @@
-/*
- * @Descripttion: 转圈等待
- * @Author: CYK
- * @Date: 2022-06-13 14:50:10
- */
 import { Color, Component, Gradient, Graphics, Node, Prefab, _decorator, director, instantiate, resources, tween } from 'cc';
 import { BaseUT } from '../base/BaseUtil';
 const { ccclass, property } = _decorator;
-
+/** 
+ * @descripttion 转圈等待
+ * @author cyk
+ * @date 2022-06-13 14:50:10
+ */
 @ccclass('JuHuaDlg')
 export class JuHuaDlg extends Component {
     /** 预制体路径 */

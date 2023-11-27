@@ -4,10 +4,10 @@ import { SceneMgr } from '../../../framework/mgr/SceneMgr';
 import { CONST } from '../../base/CONST';
 import { ComboBoxContainerComp } from './ComboBoxContainerComp';
 const { ccclass, property } = _decorator;
-/*
- * @Descripttion: 下拉框选中组件
- * @Author: CYK
- * @Date: 2023-07-19 20:00:00
+/** 
+ * @descripttion 下拉框选中组件
+ * @author cyk
+ * @date 2023-07-19 20:00:00
  */
 @ccclass('ComboBoxComp')
 export class ComboBoxComp extends UIComp {
@@ -63,7 +63,7 @@ export class ComboBoxComp extends UIComp {
      private onMouseDown(e: EventMouse) {
           let self = this;
           self.img_bg.spriteFrame = self.press;
-          if (self._comboBoxContainerComp && !self._comboBoxContainerComp.hasDestory) {
+          if (self._comboBoxContainerComp && !self._comboBoxContainerComp.isDestory) {
                self._comboBoxContainerComp.node.destroy();
                self._comboBoxContainerComp = null;
           } else {

@@ -5,7 +5,11 @@ import PathFindingAgent from '../../road/PathFindingAgent';
 import { Player } from '../entity/Player';
 const { ccclass, property } = _decorator;
 
-/**镜头控制器 */
+/** 
+ * @descripttion 镜头控制器
+ * @author cyk
+ * @date 2023-06-10 22:56:00
+ */
 @ccclass('CameraCtrl')
 export class CameraCtrl {
     private grp_scrollMap: Node;

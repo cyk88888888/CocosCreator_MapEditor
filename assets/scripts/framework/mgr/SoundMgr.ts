@@ -1,11 +1,11 @@
-/*
- * @Description: 音效管理器
- * @Author: CYK
- * @Date: 2022-05-23 09:27:58
- */
 import { director, AudioClip, Node, AudioSource } from "cc";
 import { ResMgr } from "./ResMgr";
 import { SceneMgr } from "./SceneMgr";
+/** 
+ * @descripttion 音效管理器
+ * @author cyk
+ * @date 2022-05-23 09:27:58
+ */
 export class SoundMgr {
     private static _inst: SoundMgr;
     public static get inst() {

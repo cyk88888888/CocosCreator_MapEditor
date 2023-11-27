@@ -1,7 +1,8 @@
 import RoadNode from "./RoadNode";
-
-/**
- * 二堆叉结构存储
+/** 
+ * @descripttion 二堆叉结构存储
+ * @author cyk
+ * @date 2023-06-30 22:00:00
  */
 export default class BinaryTreeNode {
 

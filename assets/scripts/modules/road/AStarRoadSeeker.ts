@@ -4,10 +4,10 @@ import BinaryTreeNode from "./BinaryTreeNode";
 import { PathOptimize } from "./PathOptimize";
 import { PathQuadSeek } from "./PathQuadSeek";
 
-/*
- * @Descripttion: A*寻路算法（45度等视角地图 || 90度平面地图）
- * @Author: cyk
- * @Date: 2023-06-30 22:00:00
+/** 
+ * @descripttion A*寻路算法（45度等视角地图 || 90度平面地图）
+ * @author cyk
+ * @date 2023-06-30 22:00:00
  */
 export default class AStarRoadSeeker implements IRoadSeeker {
 

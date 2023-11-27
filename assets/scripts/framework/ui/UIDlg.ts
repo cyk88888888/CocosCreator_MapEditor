@@ -1,14 +1,13 @@
-/*
- * @Descripttion: 弹窗层级基类
- * @Author: CYK
- * @Date: 2022-05-12 09:23:41
- */
 import { _decorator, Node, Color, Graphics, Vec3, BlockInputEvents } from 'cc';
 import { BaseUT } from '../base/BaseUtil';
 import { SceneMgr } from '../mgr/SceneMgr';
 import { UILayer } from './UILayer';
 const { ccclass, property } = _decorator;
-
+/** 
+ * @descripttion 场景管理器
+ * @author cyk
+ * @date 2022-05-12 09:23:41
+ */
 @ccclass('UIDlg')
 export class UIDlg extends UILayer {
     private dlgMaskName = '__bgMask';//弹窗底部灰色rect名称
@@ -23,12 +22,13 @@ export class UIDlg extends UILayer {
         let self = this;
         let bgMaskNode = self._bgMaskNode = BaseUT.newUINode(self.dlgMaskName);
         let stageSize = BaseUT.getStageSize();
+        let parent = SceneMgr.inst.curScene.dlg;
         self.maskEnabled = true;
         BaseUT.setSize(bgMaskNode, stageSize.width, stageSize.height);
-        bgMaskNode.setParent(SceneMgr.inst.curScene.dlg);
+        bgMaskNode.setParent(parent);
 
         BaseUT.setPivot(self.node, 0.5, 0.5);
-        self.node.setParent(SceneMgr.inst.curScene.dlg);
+        self.node.setParent(parent);
 
         self.onOpenAnimation();
     }

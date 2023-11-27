@@ -9,11 +9,10 @@ import { MessageTip } from '../../common/message/MessageTip';
 import { MapThingFactory } from '../factory/MapThingFactory';
 import RoadNode from '../../road/RoadNode';
 const { ccclass, property } = _decorator;
-
-/*
- * @Descripttion: 编辑器地图滚动组件
- * @Author: CYK
- * @Date: 2023-05-30 23:00:00
+/** 
+ * @descripttion 编辑器地图滚动组件
+ * @author cyk
+ * @date 2023-05-30 23:00:00
  */
 @ccclass('MapScrollComp')
 export class MapScrollComp extends UIComp {

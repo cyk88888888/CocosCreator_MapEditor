@@ -1,11 +1,9 @@
 import { MessageTip } from "../../modules/common/message/MessageTip";
 import { JuHuaDlg } from "../ui/JuHuaDlg";
-
-/*
- * @Descripttion: 文件IO处理器
- * @Author: CYK
- * @Date: 2022-06-28 13:56:20
- * 
+/** 
+ * @descripttion 文件IO处理器
+ * @author cyk
+ * @date 2022-06-28 13:56:20
  */
 export class FileIOHandler {
     private static _inst: FileIOHandler;
