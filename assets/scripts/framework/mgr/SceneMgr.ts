@@ -9,6 +9,7 @@ import { ModuleCfgInfo } from "../base/ModuleCfgInfo";
 import { UIScene } from "../ui/UIScene";
 import { moduleInfoMap } from "./ModuleMgr";
 import { ResMgr } from "./ResMgr";
+import { UIDlg } from "../ui/UIDlg";
 
 export class SceneMgr {
     private static _inst: SceneMgr;
@@ -114,6 +115,19 @@ export class SceneMgr {
         self.curScene = self._popArr.pop();
         ResMgr.inst.curSceneName = self.curSceneName = self.curScene.className;
         self.curScene.addToGRoot();
+    }
+
+       /**关闭指定弹窗 */
+       public closeDlgByName(dlgNames: string[]) {
+        let tray = SceneMgr.inst.curScene.dlg;
+        let children = tray.children || [];
+        for (let len = children.length, i = len - 1; i >= 0; i--) {
+            let node = children[i];
+            if (dlgNames.indexOf(node.name) > -1) {
+                let script = node.getComponent(node.name) as UIDlg;
+                script.close();
+            }
+        }
     }
 }
 
