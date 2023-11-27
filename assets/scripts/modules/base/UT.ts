@@ -1,4 +1,3 @@
-import { js } from "cc";
 import { SceneMgr } from "../../framework/mgr/SceneMgr";
 import { UIDlg } from "../../framework/ui/UIDlg";
 
