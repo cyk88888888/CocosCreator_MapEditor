@@ -1,5 +1,6 @@
-import { Asset, ImageAsset, Prefab, SpriteFrame, Texture2D, assetManager, resources } from "cc";
+import { Asset, AssetManager, ImageAsset, Prefab, SpriteFrame, Texture2D, __private, assetManager, resources } from "cc";
 import { JuHuaDlg } from "../ui/JuHuaDlg";
+type IRemoteOptions = { [k: string]: any; ext?: string; } | null;
 
 /** 
  * @descripttion 资源管理器
@@ -16,6 +17,8 @@ export class ResMgr {
         }
         return this._inst;
     }
+    /** 全局默认加载的资源包名 */
+    defaultBundleName: string = "resources";
     /**当前场景名称(用于管理资源用，开发者请勿使用) */
     public curSceneName: string;
     /**模块资源列表map */
@@ -220,16 +223,56 @@ export class ResMgr {
         this._loadWithItor(resList, null, cb, ctx, false, sceneName);
     }
 
+    /**
+   * 加载远程资源
+   * @param url           资源地址
+   * @param options       资源参数，例：{ ext: ".png" }
+   * @param onComplete    加载完成回调
+   * @param ctx           执行上下文
+   * @example
+        let opt: IRemoteOptions = { ext: ".png" };
+        let onComplete = (err: Error | null, data: ImageAsset) => {
+            const texture = new Texture2D();
+            texture.image = data;
+  
+            const spriteFrame = new SpriteFrame();
+            spriteFrame.texture = texture;
+  
+            let sprite = this.sprite.addComponent(Sprite);
+            sprite.spriteFrame = spriteFrame;
+        }
+        ResMgr.inst.loadRemote<ImageAsset>(this.url, opt, onComplete);
+   */
+    loadRemote<T extends Asset>(url: string, options: IRemoteOptions | null, cb?: Function, ctx?: any): void;
+    loadRemote<T extends Asset>(url: string, cb?: Function, ctx?: any): void;
+    loadRemote<T extends Asset>(url: string, ...args): void {
+        let options: IRemoteOptions | null = null;
+        let onComplete = null;
+        let ctx: any;
+        if (args.length == 3) {
+            options = args[0];
+            onComplete = args[1];
+            ctx = args[2];
+        }
+        else {
+            onComplete = args[0];
+            ctx = args[1];
+        }
+        assetManager.loadRemote<T>(url, options, (err: Error | null, data: T)=>{
+            if(onComplete) onComplete.call(ctx, err, data);
+        });
+    }
+
     private _localTexture: Asset[];
     /**
-     * 加载本地图片
+     * 加载本地png图片
      * @param url 资源地址
      * @param cb 
      * @param ctx 
      */
     public loadLocalImg(url: string, cb?: Function, ctx?: any) {
         let self = this;
-        assetManager.loadRemote<ImageAsset>(url, { ext: '.png' }, function (err, imageAsset) {
+        self.loadRemote<ImageAsset>(url, {ext: '.png'}, (err:Error | null, imageAsset:ImageAsset) => {
             const spriteFrame = new SpriteFrame();
             const texture = new Texture2D();
             texture.image = imageAsset;
@@ -237,7 +280,7 @@ export class ResMgr {
             texture.addRef();
             self._localTexture.push(texture);
             cb && cb.call(ctx, spriteFrame);
-        });
+        }, ctx);
     }
 
     /** 减少资源引用计数（用于切换地图时，释放之前的旧资源） */
@@ -256,21 +299,30 @@ export class ResMgr {
         let releaseCount = 0;
         for (let i = self._localTexture.length - 1; i >= 0; i--) {
             let asset = self._localTexture[i];
-            if (!asset.refCount) {
+            if (asset.refCount <= 0) {
                 releaseCount++;
                 self._localTexture.splice(i, 1);
                 assetManager.releaseAsset(asset);
             }
         }
-        
+
         console.log(`清除所有本地无用资源！！！清除数量：${releaseCount}`);
         console.log(`清除后数量：${self._localTexture.length}`);
     }
 
-    /**获取已加载缓存的资源 */
-    public get(resName: string) {
-        return resources.get(resName);
+    /**
+    * 获取资源
+    * @param path          资源路径
+    * @param type          资源类型
+    * @param bundleName    远程资源包名
+    */
+    get<T extends Asset>(path: string, type?: __private._types_globals__Constructor<T> | null, bundleName?: string): T | null {
+        if (bundleName == null) bundleName = this.defaultBundleName;
+
+        var bundle: AssetManager.Bundle = assetManager.getBundle(bundleName)!;
+        return bundle.get(path, type);
     }
+
     /**
      * 释放资源
      * @param res 
