@@ -1,7 +1,7 @@
 import { Node, Size, _decorator } from 'cc';
 import { EntityCtrl } from './EntityCtrl';
 import { CameraCtrl } from './CameraCtrl';
-import { TickMgr } from '../../../framework/mgr/TickMgr';
+import { TickMgr } from '../../../../../extensions/cocos-framework/src/mgr/TickMgr';
 const { ccclass, property } = _decorator;
 
 /**运行模式控制器 */

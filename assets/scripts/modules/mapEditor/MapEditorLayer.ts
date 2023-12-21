@@ -1,22 +1,22 @@
 import { _decorator, Button, EventMouse, Label, Prefab, profiler, ScrollView, Toggle, Vec2, Vec3 } from 'cc';
-import { UILayer } from '../../framework/ui/UILayer';
 import { MapScrollComp } from './comp/MapScrollComp';
 import { MapMgr } from '../base/MapMgr';
 import { Node } from 'cc';
-import { List } from '../../framework/uiComp/List';
 import { CONST } from '../base/CONST';
-import { JuHuaDlg } from '../../framework/ui/JuHuaDlg';
-import { ResMgr } from '../../framework/mgr/ResMgr';
-import { BaseUT } from '../../framework/base/BaseUtil';
 import { G } from '../base/Interface';
 import { MapThingPropertyComp } from './comp/MapThingPropertyComp';
 import { HelpDlg } from './dlg/HelpDlg';
-import { MessageTip } from '../common/message/MessageTip';
 import PathFindingAgent from '../road/PathFindingAgent';
 import { JoyStickDlg } from './dlg/JoyStickDlg';
 import { RunDemoCtrl } from './control/RunDemoCtrl';
 import { TestAstarDlg } from './dlg/TestAstarDlg';
 import { UT } from '../base/UT';
+import { UILayer } from '../../../../extensions/cocos-framework/src/ui/UILayer';
+import { List } from '../../../../extensions/cocos-framework/src/uiComp/List';
+import { JuHuaDlg } from '../../../../extensions/cocos-framework/src/ui/JuHuaDlg';
+import { ResMgr } from '../../../../extensions/cocos-framework/src/mgr/ResMgr';
+import { BaseUT } from '../../../../extensions/cocos-framework/src/base/BaseUtil';
+import { MessageTip } from '../../../../extensions/cocos-framework/src/ui/MessageTip';
 const { ccclass, property } = _decorator;
 
 /**

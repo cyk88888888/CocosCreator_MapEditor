@@ -3,6 +3,7 @@
     "__type__": "cc.Prefab",
     "_name": "MapThingComp",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "_native": "",
     "data": {
       "__id__": 1
@@ -68,6 +69,7 @@
     "__type__": "cc.UITransform",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 1
     },
@@ -95,6 +97,7 @@
     "__type__": "cc.Sprite",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 1
     },
@@ -136,6 +139,7 @@
     "__type__": "bd5ffXtU0JG9LgAlbDlBRyw",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 1
     },
@@ -147,12 +151,13 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "26oDJB9kBB7oauR+zpl5n+"
+    "fileId": "12Wox39O9K4Io+LtvcIg9V"
   },
   {
     "__type__": "cc.UIOpacity",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 1
     },

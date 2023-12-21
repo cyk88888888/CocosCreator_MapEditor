@@ -1,8 +1,8 @@
 import { _decorator, EventMouse, instantiate, Label, Node, Prefab, Sprite, SpriteFrame, UITransform, Vec3 } from 'cc';
-import { UIComp } from '../../../framework/ui/UIComp';
-import { SceneMgr } from '../../../framework/mgr/SceneMgr';
 import { CONST } from '../../base/CONST';
 import { ComboBoxContainerComp } from './ComboBoxContainerComp';
+import { UIComp } from '../../../../../extensions/cocos-framework/src/ui/UIComp';
+import { SceneMgr } from '../../../../../extensions/cocos-framework/src/mgr/SceneMgr';
 const { ccclass, property } = _decorator;
 /** 
  * @descripttion 下拉框选中组件

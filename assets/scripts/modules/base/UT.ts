@@ -1,5 +1,5 @@
-import { SceneMgr } from "../../framework/mgr/SceneMgr";
-import { UIDlg } from "../../framework/ui/UIDlg";
+import { SceneMgr } from "../../../../extensions/cocos-framework/src/mgr/SceneMgr";
+import { UIDlg } from "../../../../extensions/cocos-framework/src/ui/UIDlg";
 
 export namespace UT{
      /**关闭指定弹窗 */

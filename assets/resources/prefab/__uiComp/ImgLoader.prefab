@@ -3,6 +3,7 @@
     "__type__": "cc.Prefab",
     "_name": "ImgLoader",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "_native": "",
     "data": {
       "__id__": 1
@@ -65,6 +66,7 @@
     "__type__": "cc.UITransform",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 1
     },
@@ -92,6 +94,7 @@
     "__type__": "cc.Sprite",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 1
     },
@@ -133,6 +136,7 @@
     "__type__": "bd5ffXtU0JG9LgAlbDlBRyw",
     "_name": "",
     "_objFlags": 0,
+    "__editorExtras__": {},
     "node": {
       "__id__": 1
     },
@@ -144,7 +148,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "dbk1qjL7tEJYeE+kO1LGpj"
+    "fileId": "b0vA0hTgxM/I6EFrB4B0Cg"
   },
   {
     "__type__": "cc.PrefabInfo",

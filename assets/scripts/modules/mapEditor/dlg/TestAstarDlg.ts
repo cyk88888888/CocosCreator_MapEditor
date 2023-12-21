@@ -1,8 +1,8 @@
 import { _decorator, Button, Color, EditBox, Label, Node } from 'cc';
-import { UIDlg } from '../../../framework/ui/UIDlg';
-import { MessageTip } from '../../common/message/MessageTip';
 import PathFindingAgent from '../../road/PathFindingAgent';
 import { CONST } from '../../base/CONST';
+import { UIDlg } from '../../../../../extensions/cocos-framework/src/ui/UIDlg';
+import { MessageTip } from '../../../../../extensions/cocos-framework/src/ui/MessageTip';
 const { ccclass, property } = _decorator;
 
 @ccclass('TestAstarDlg')

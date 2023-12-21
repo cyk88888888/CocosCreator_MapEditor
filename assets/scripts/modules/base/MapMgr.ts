@@ -1,11 +1,12 @@
 import { Node, Prefab, SpriteFrame, instantiate } from "cc";
-import { emmiter } from "../../framework/base/Emmiter";
-import { FileIOHandler } from "../../framework/mgr/FileIOHandler";
 import { CONST } from "./CONST";
 import { G } from "./Interface";
-import { BaseUT } from "../../framework/base/BaseUtil";
-import { ImgLoader } from "../../framework/uiComp/ImgLoader";
 import { InvalidImportDlg } from "../mapEditor/dlg/InvalidImportDlg";
+import { FileIOHandler } from "../../../../extensions/cocos-framework/src/mgr/FileIOHandler";
+import { emmiter } from "../../../../extensions/cocos-framework/src/base/Emmiter";
+import { BaseUT } from "../../../../extensions/cocos-framework/src/base/BaseUtil";
+import { ImgLoader } from "../../../../extensions/cocos-framework/src/uiComp/ImgLoader";
+import { MessageTip } from "../../../../extensions/cocos-framework/src/ui/MessageTip";
 /** 
  * @descripttion 地图管理器
  * @author cyk
@@ -324,7 +325,9 @@ export class MapMgr {
         let self = this;
         let mapData = self.getMapData();
         if (!mapData) return;
-        FileIOHandler.inst.saveTextToLocal(JSON.stringify(mapData));
+        FileIOHandler.inst.saveTextToLocal(JSON.stringify(mapData), function(){
+            MessageTip.show({ msg: '保存成功' });
+        });
     }
 
     /**获取当前地图数据 */

@@ -1,5 +1,5 @@
 import { _decorator, Button } from 'cc';
-import { UIDlg } from '../../../framework/ui/UIDlg';
+import { UIDlg } from '../../../../../extensions/cocos-framework/src/ui/UIDlg';
 const { ccclass, property } = _decorator;
 
 @ccclass('HelpDlg')

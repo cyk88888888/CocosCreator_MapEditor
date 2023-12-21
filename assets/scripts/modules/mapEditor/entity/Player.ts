@@ -1,8 +1,8 @@
 import { _decorator, Graphics, Node, UITransform, Vec3 } from 'cc';
-import { UIComp } from '../../../framework/ui/UIComp';
 import { MapMgr } from '../../base/MapMgr';
 import PathFindingAgent from '../../road/PathFindingAgent';
-import { BaseUT } from '../../../framework/base/BaseUtil';
+import { UIComp } from '../../../../../extensions/cocos-framework/src/ui/UIComp';
+import { BaseUT } from '../../../../../extensions/cocos-framework/src/base/BaseUtil';
 const { ccclass, property } = _decorator;
 
 @ccclass('Player')

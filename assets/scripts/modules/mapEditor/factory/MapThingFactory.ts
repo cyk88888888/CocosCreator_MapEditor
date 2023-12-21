@@ -1,10 +1,10 @@
 import { _decorator, EventMouse, instantiate, Node, Prefab, Vec2 } from 'cc';
-import { UIComp } from '../../../framework/ui/UIComp';
 import { MapMgr } from '../../base/MapMgr';
 import { G } from '../../base/Interface';
 import { CONST } from '../../base/CONST';
-import { BaseUT } from '../../../framework/base/BaseUtil';
 import { mapThingSelect } from '../comp/mapThingSelect';
+import { UIComp } from '../../../../../extensions/cocos-framework/src/ui/UIComp';
+import { BaseUT } from '../../../../../extensions/cocos-framework/src/base/BaseUtil';
 const { ccclass, property } = _decorator;
 /** 
  * @descripttion 场景物件工厂

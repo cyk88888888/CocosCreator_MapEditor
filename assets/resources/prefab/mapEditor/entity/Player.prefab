@@ -282,7 +282,7 @@
         "__id__": 21
       },
       {
-        "__id__": 23
+        "__id__": 22
       },
       {
         "__id__": 24
@@ -389,7 +389,17 @@
   {
     "__type__": "CCPropertyOverrideInfo",
     "targetInfo": {
-      "__id__": 22
+      "__id__": 14
+    },
+    "propertyPath": [
+      "_active"
+    ],
+    "value": true
+  },
+  {
+    "__type__": "CCPropertyOverrideInfo",
+    "targetInfo": {
+      "__id__": 23
     },
     "propertyPath": [
       "url"
@@ -399,28 +409,18 @@
   {
     "__type__": "cc.TargetInfo",
     "localID": [
-      "fcc1shdbVFaLNalzOZz/rw"
+      "ccZK/LurRAC6ugll5ePT9p"
     ]
   },
   {
     "__type__": "CCPropertyOverrideInfo",
     "targetInfo": {
-      "__id__": 22
+      "__id__": 23
     },
     "propertyPath": [
       "frameRate"
     ],
     "value": 12
-  },
-  {
-    "__type__": "CCPropertyOverrideInfo",
-    "targetInfo": {
-      "__id__": 14
-    },
-    "propertyPath": [
-      "_active"
-    ],
-    "value": true
   },
   {
     "__type__": "cc.UITransform",

@@ -1,7 +1,7 @@
 import { _decorator, Graphics } from 'cc';
-import { UIComp } from '../../../framework/ui/UIComp';
 import { CONST } from '../../base/CONST';
 import { MapMgr } from '../../base/MapMgr';
+import { UIComp } from '../../../../../extensions/cocos-framework/src/ui/UIComp';
 const { ccclass, property } = _decorator;
 
 @ccclass('mapThingSelect')

@@ -1,4 +1,4 @@
-import { BaseUT } from "../../framework/base/BaseUtil";
+import { BaseUT } from "../../../../extensions/cocos-framework/src/base/BaseUtil";
 import { CONST } from "../base/CONST";
 import { G } from "../base/Interface";
 import { MapMgr } from "../base/MapMgr";

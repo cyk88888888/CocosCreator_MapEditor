@@ -1,7 +1,7 @@
 import { _decorator, profiler } from 'cc';
-import { UIScene } from '../../framework/ui/UIScene';
-import { registerModule } from '../../framework/mgr/ModuleMgr';
 import { MapEditorLayer } from './MapEditorLayer';
+import { UIScene } from '../../../../extensions/cocos-framework/src/ui/UIScene';
+import { registerModule } from '../../../../extensions/cocos-framework/src/mgr/ModuleMgr';
 const { ccclass, property } = _decorator;
 /** 
  * @descripttion 首页场景

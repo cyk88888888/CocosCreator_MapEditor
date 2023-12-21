@@ -1,7 +1,7 @@
 import { Label, Node, SpriteFrame, UITransform, _decorator } from 'cc';
-import { ListItem } from '../../../framework/uiComp/ListItem';
-import { ImgLoader } from '../../../framework/uiComp/ImgLoader';
-import { BaseUT } from '../../../framework/base/BaseUtil';
+import { ListItem } from '../../../../../extensions/cocos-framework/src/uiComp/ListItem';
+import { ImgLoader } from '../../../../../extensions/cocos-framework/src/uiComp/ImgLoader';
+import { BaseUT } from '../../../../../extensions/cocos-framework/src/base/BaseUtil';
 const { ccclass, property } = _decorator;
 
 @ccclass('MapThingIR')

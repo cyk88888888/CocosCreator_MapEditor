@@ -1,4 +1,4 @@
-import { _decorator, instantiate, Node, Prefab } from 'cc';
+import { _decorator, instantiate, Node } from 'cc';
 import { Player } from '../entity/Player';
 import { EntityPrefabs } from '../entity/entityPrefabs/EntityPrefabs';
 import { JoyStickCtrl } from './JoyStickCtrl';

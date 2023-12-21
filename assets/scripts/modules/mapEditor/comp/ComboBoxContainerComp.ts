@@ -1,7 +1,7 @@
 import { _decorator, instantiate, Node, Prefab } from 'cc';
-import { UIComp } from '../../../framework/ui/UIComp';
 import { ComboBoxItemComp } from './ComboBoxItemComp';
 import { CONST } from '../../base/CONST';
+import { UIComp } from '../../../../../extensions/cocos-framework/src/ui/UIComp';
 const { ccclass, property } = _decorator;
 
 @ccclass('ComboBoxContainerComp')

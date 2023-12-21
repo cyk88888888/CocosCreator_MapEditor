@@ -1,5 +1,5 @@
 import { Graphics, _decorator } from 'cc';
-import { ListItem } from '../../../framework/uiComp/ListItem';
+import { ListItem } from '../../../../../extensions/cocos-framework/src/uiComp/ListItem';
 const { ccclass, property } = _decorator;
 
 @ccclass('PathSizeIR')

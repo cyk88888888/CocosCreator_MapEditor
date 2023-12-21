@@ -4,13 +4,13 @@
  * @Date: 2022-05-13 09:40:14
  */
 import { _decorator, Component, director, EventTouch, Node, sys } from 'cc';
-import { BaseUT } from './framework/base/BaseUtil';
-import { SceneMgr } from './framework/mgr/SceneMgr';
-import { TickMgr } from './framework/mgr/TickMgr';
 import { MapEditorScene } from './modules/mapEditor/MapEditorScene';
 import { MapMgr } from './modules/base/MapMgr';
-import { emmiter } from './framework/base/Emmiter';
 import { CONST } from './modules/base/CONST';
+import { BaseUT } from '../../extensions/cocos-framework/src/base/BaseUtil';
+import { TickMgr } from '../../extensions/cocos-framework/src/mgr/TickMgr';
+import { SceneMgr } from '../../extensions/cocos-framework/src/mgr/SceneMgr';
+import { emmiter } from '../../extensions/cocos-framework/src/base/Emmiter';
 const { ccclass } = _decorator;
 
 @ccclass('Main')
@@ -19,7 +19,6 @@ export class Main extends Component {
         //转成全部变量，可在浏览器console直接输出
         globalThis.BaseUT = BaseUT;
         globalThis.MapMgr = MapMgr;
-        TickMgr.inst.mainNode = this;
         MapMgr.inst.version = '1.0.0';
         console.log('系统相关环境变量: ');
         console.log(sys);

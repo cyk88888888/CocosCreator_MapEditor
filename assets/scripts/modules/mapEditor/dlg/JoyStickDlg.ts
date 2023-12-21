@@ -1,6 +1,6 @@
 import { _decorator, EventMouse, EventTouch, Node, UITransform, Vec2, Vec3 } from 'cc';
-import { UIDlg } from '../../../framework/ui/UIDlg';
 import { JoyStickCtrl } from '../control/JoyStickCtrl';
+import { UIDlg } from '../../../../../extensions/cocos-framework/src/ui/UIDlg';
 const { ccclass, property } = _decorator;
 
 @ccclass('JoyStickDlg')

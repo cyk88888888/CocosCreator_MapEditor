@@ -1,11 +1,11 @@
 import { Button, EditBox, Label, Node, Vec3, _decorator } from 'cc';
-import { UIComp } from '../../../framework/ui/UIComp';
 import { CONST } from '../../base/CONST';
 import { G } from '../../base/Interface';
 import { MapMgr } from '../../base/MapMgr';
-import { BaseUT } from '../../../framework/base/BaseUtil';
-import { MessageTip } from '../../common/message/MessageTip';
 import { ComboBoxComp } from './ComboBoxComp';
+import { UIComp } from '../../../../../extensions/cocos-framework/src/ui/UIComp';
+import { BaseUT } from '../../../../../extensions/cocos-framework/src/base/BaseUtil';
+import { MessageTip } from '../../../../../extensions/cocos-framework/src/ui/MessageTip';
 const { ccclass, property } = _decorator;
 /** 
  * @descripttion 场景物件属性面板

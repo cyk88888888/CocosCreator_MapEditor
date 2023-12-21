@@ -1,12 +1,12 @@
 import { _decorator, Component, Node, Graphics, UITransform, EventTouch, Label, Prefab, instantiate, Vec3, Widget, Vec2 } from 'cc';
-import { BaseUT } from '../../framework/base/BaseUtil';
-import { TickMgr } from '../../framework/mgr/TickMgr';
-import { UIComp } from '../../framework/ui/UIComp';
-import { Sp } from '../../framework/uiComp/Sp';
-import { MessageTip } from '../common/message/MessageTip';
 import { AStar } from './AStar';
 import { Grid } from './Grid';
 import { Nodes } from './Nodes';
+import { UIComp } from '../../../../extensions/cocos-framework/src/ui/UIComp';
+import { TickMgr } from '../../../../extensions/cocos-framework/src/mgr/TickMgr';
+import { BaseUT } from '../../../../extensions/cocos-framework/src/base/BaseUtil';
+import { Sp } from '../../../../extensions/cocos-framework/src/uiComp/Sp';
+import { MessageTip } from '../../../../extensions/cocos-framework/src/ui/MessageTip';
 const { ccclass, property } = _decorator;
 
 /**

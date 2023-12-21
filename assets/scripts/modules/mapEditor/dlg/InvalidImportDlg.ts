@@ -1,6 +1,6 @@
 import { _decorator, Button, Color, Label, Node } from 'cc';
-import { UIDlg } from '../../../framework/ui/UIDlg';
-import { BaseUT } from '../../../framework/base/BaseUtil';
+import { UIDlg } from '../../../../../extensions/cocos-framework/src/ui/UIDlg';
+import { BaseUT } from '../../../../../extensions/cocos-framework/src/base/BaseUtil';
 const { ccclass, property } = _decorator;
 
 @ccclass('InvalidImportDlg')

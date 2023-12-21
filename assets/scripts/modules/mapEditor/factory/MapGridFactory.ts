@@ -1,9 +1,9 @@
 import { _decorator, instantiate, Prefab, Vec3 } from 'cc';
-import { UIComp } from '../../../framework/ui/UIComp';
 import { MapMgr } from '../../base/MapMgr';
 import { ColorGrid } from '../comp/ColorGrid';
 import { CONST } from '../../base/CONST';
 import { G } from '../../base/Interface';
+import { UIComp } from '../../../../../extensions/cocos-framework/src/ui/UIComp';
 const { ccclass, property } = _decorator;
 /** 
  * @descripttion 网格绘制工厂
