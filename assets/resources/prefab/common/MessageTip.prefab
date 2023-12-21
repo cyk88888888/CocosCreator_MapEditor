@@ -187,8 +187,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 161.123046875,
-      "height": 35.2
+      "width": 161.12299900428923,
+      "height": 35.199999999999996
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -359,8 +359,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 61.123046875,
-      "height": 25.2
+      "width": 61.12299900428921,
+      "height": 25.199999999999996
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -398,7 +398,7 @@
     "_string": "tip内容",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
+    "_actualFontSize": 20.4,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 20,
@@ -445,8 +445,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 61.123046875,
-      "height": 25.2
+      "width": 61.12299900428921,
+      "height": 25.199999999999996
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -484,7 +484,7 @@
     "_string": "tip内容",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 20,
+    "_actualFontSize": 20.4,
     "_fontSize": 20,
     "_fontFamily": "Arial",
     "_lineHeight": 20,
@@ -546,7 +546,7 @@
     "fileId": "66jHXxgNlCiafpk1f2+OP+"
   },
   {
-    "__type__": "71a7aZUKn1JSptDRHKnuW6e",
+    "__type__": "30c8bmqNChNNrIN/34XrB7K",
     "_name": "",
     "_objFlags": 0,
     "__editorExtras__": {},
@@ -567,7 +567,7 @@
   },
   {
     "__type__": "cc.CompPrefabInfo",
-    "fileId": "31RyXz7NVMnKFFHPdLaBuM"
+    "fileId": "261Lkz4w9IzKt9Cjy/9euB"
   },
   {
     "__type__": "cc.PrefabInfo",
