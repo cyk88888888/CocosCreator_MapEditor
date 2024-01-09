@@ -100,6 +100,7 @@ export class MapThingFactory extends UIComp {
         } else {
             self._mapThingSelect.clear();
             self.mapMgr.curMapThingInfo = null;
+            self.mapMgr.isForbidDrawGrid = dt.gridType == CONST.GridType.GridType_none;
             self.emit(CONST.GEVT.ClearCurMapThingInfo);
         }
     }
