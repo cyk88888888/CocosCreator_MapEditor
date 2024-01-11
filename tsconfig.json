@@ -5,5 +5,8 @@
   /* Add your custom configuration here. */
   "compilerOptions": {
     "strict": false
-  }
+  },
+  "exclude": [
+    "extensions/cocos-framework/@types/**/*"
+  ]
 }
